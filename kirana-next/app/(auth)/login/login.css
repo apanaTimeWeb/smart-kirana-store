@@ -17,6 +17,12 @@
 
     /* ── Back link ────────────────────────────────────────────── */
     --login-back-hover:                 hsl(var(--primary));
+
+    /* ── Demo hint banner ────────────────────────────────────────── */
+    --login-demo-bg:                    hsl(174 25% 95%);             /* teal-50 */
+    --login-demo-border:                hsl(174 25% 82%);             /* teal-200 */
+    --login-demo-icon:                  hsl(var(--primary));
+    --login-demo-title:                 hsl(var(--primary));
   }
 
 }
