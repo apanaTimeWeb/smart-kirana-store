@@ -260,13 +260,20 @@ function KhataLedger({ customerId }: { customerId: number }) {
         </div>
       )}
 
-      {/* Scrollable History Table */}
+      {/* Ledger table — responsive */}
       <div className="flex-1 border rounded-xl [background-color:var(--customers-ledger-bg)] flex flex-col overflow-hidden">
-        <div className="grid grid-cols-[120px_1fr_130px_130px] bg-muted sticky top-0 text-xs font-semibold text-muted-foreground border-b">
+        {/* Desktop header */}
+        <div className="hidden sm:grid grid-cols-[120px_1fr_130px_130px] bg-muted sticky top-0 text-xs font-semibold text-muted-foreground border-b">
           <div className="px-6 py-3.5">Date</div>
           <div className="px-6 py-3.5">Description</div>
           <div className="px-6 py-3.5 text-right">Amount</div>
           <div className="px-6 py-3.5 text-right">Balance</div>
+        </div>
+        {/* Mobile header */}
+        <div className="sm:hidden grid grid-cols-[80px_1fr_90px] bg-muted sticky top-0 text-xs font-semibold text-muted-foreground border-b">
+          <div className="px-3 py-3">Date</div>
+          <div className="px-3 py-3">Details</div>
+          <div className="px-3 py-3 text-right">Amt / Bal</div>
         </div>
 
         <div className="flex-1 overflow-auto">
@@ -280,21 +287,41 @@ function KhataLedger({ customerId }: { customerId: number }) {
           ) : (
             <div className="divide-y">
               {ledgerRows.map((tx: any) => (
-                <div key={tx.id} className="grid grid-cols-[120px_1fr_130px_130px] hover:bg-muted/30 items-center px-6 py-4">
-                  <div className="text-sm text-muted-foreground">{format(new Date(tx.createdAt), "dd MMM yyyy")}</div>
-                  <div className="flex items-start gap-3 pr-4">
-                    <div className={cn("mt-0.5 h-6 w-6 rounded-full flex items-center justify-center shrink-0",
-                      tx.type === "credit" ? "[background-color:var(--customers-tx-credit-icon-bg)] [color:var(--customers-tx-credit-icon-text)]" : "[background-color:var(--customers-tx-payment-icon-bg)] [color:var(--customers-tx-payment-icon-text)]")}>
-                      {tx.type === "credit" ? <ArrowUpRight size={15} /> : <ArrowDownRight size={15} />}
+                <div key={tx.id} className="hover:bg-muted/30">
+                  {/* Desktop row */}
+                  <div className="hidden sm:grid grid-cols-[120px_1fr_130px_130px] items-center px-6 py-4">
+                    <div className="text-sm text-muted-foreground">{format(new Date(tx.createdAt), "dd MMM yyyy")}</div>
+                    <div className="flex items-start gap-3 pr-4">
+                      <div className={cn("mt-0.5 h-6 w-6 rounded-full flex items-center justify-center shrink-0",
+                        tx.type === "credit" ? "[background-color:var(--customers-tx-credit-icon-bg)] [color:var(--customers-tx-credit-icon-text)]" : "[background-color:var(--customers-tx-payment-icon-bg)] [color:var(--customers-tx-payment-icon-text)]")}>
+                        {tx.type === "credit" ? <ArrowUpRight size={15} /> : <ArrowDownRight size={15} />}
+                      </div>
+                      <p className="text-sm leading-tight">{tx.description}</p>
                     </div>
-                    <p className="text-sm leading-tight">{tx.description}</p>
+                    <div className="text-right font-semibold">
+                      <span className={tx.type === "credit" ? "[color:var(--customers-tx-credit-amount)]" : "[color:var(--customers-tx-payment-amount)]"}>  
+                        {tx.type === "credit" ? "+" : "-"} ₹{tx.amount.toFixed(0)}
+                      </span>
+                    </div>
+                    <div className="text-right font-bold text-base">₹{tx.balance.toFixed(0)}</div>
                   </div>
-                  <div className="text-right font-semibold">
-                    <span className={tx.type === "credit" ? "[color:var(--customers-tx-credit-amount)]" : "[color:var(--customers-tx-payment-amount)]"}>  
-                      {tx.type === "credit" ? "+" : "-"} ₹{tx.amount.toFixed(0)}
-                    </span>
+                  {/* Mobile row */}
+                  <div className="sm:hidden grid grid-cols-[80px_1fr_90px] items-center px-3 py-3">
+                    <div className="text-xs text-muted-foreground">{format(new Date(tx.createdAt), "dd MMM")}</div>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className={cn("h-5 w-5 rounded-full flex items-center justify-center shrink-0",
+                        tx.type === "credit" ? "[background-color:var(--customers-tx-credit-icon-bg)] [color:var(--customers-tx-credit-icon-text)]" : "[background-color:var(--customers-tx-payment-icon-bg)] [color:var(--customers-tx-payment-icon-text)]")}>
+                        {tx.type === "credit" ? <ArrowUpRight size={11} /> : <ArrowDownRight size={11} />}
+                      </div>
+                      <p className="text-xs truncate">{tx.description}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className={cn("text-xs font-semibold", tx.type === "credit" ? "[color:var(--customers-tx-credit-amount)]" : "[color:var(--customers-tx-payment-amount)]")}>
+                        {tx.type === "credit" ? "+" : "-"}₹{tx.amount.toFixed(0)}
+                      </div>
+                      <div className="text-xs font-bold text-foreground">₹{tx.balance.toFixed(0)}</div>
+                    </div>
                   </div>
-                  <div className="text-right font-bold text-base">₹{tx.balance.toFixed(0)}</div>
                 </div>
               ))}
             </div>
@@ -339,18 +366,18 @@ export default function Customers() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Khata (खाता)</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Khata (खाता)</h1>
           <p className="text-muted-foreground">{customers.length} Customers</p>
         </div>
-        <div className="flex gap-3">
-          <div className="relative">
+        <div className="flex gap-2">
+          <div className="relative flex-1 sm:flex-none">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Naam ya phone..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 w-72" />
+            <Input placeholder="Naam ya phone..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 w-full sm:w-64" />
           </div>
-          <Button onClick={() => setIsAddOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> Add Customer
+          <Button onClick={() => setIsAddOpen(true)} className="shrink-0">
+            <Plus className="h-4 w-4 sm:mr-2" /><span className="hidden sm:inline">Add Customer</span>
           </Button>
         </div>
       </div>

@@ -317,14 +317,14 @@ export default function Products() {
       : "0";
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold">Stock Management</h1>
-          <p className="text-muted-foreground">Out of Stock & Low Stock sabse upar</p>
+          <h1 className="text-xl sm:text-3xl font-bold">Stock</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">Low Stock sabse upar</p>
         </div>
-        <Button onClick={() => setIsAddOpen(true)} size="lg">
-          <Plus className="mr-2 h-5 w-5" /> Naya Product Add Karein
+        <Button onClick={() => setIsAddOpen(true)} size="sm" className="sm:size-lg shrink-0">
+          <Plus className="h-4 w-4 sm:mr-2" /><span className="hidden sm:inline">Naya Product Add Karein</span><span className="sm:hidden">Add</span>
         </Button>
       </div>
 
@@ -371,8 +371,48 @@ export default function Products() {
         </DialogContent>
       </Dialog>
 
-      {/* Products Table */}
-      <div className="rounded-2xl border bg-card overflow-hidden">
+      {/* Mobile: Card list | Desktop: Table */}
+
+      {/* Mobile Cards */}
+      <div className="sm:hidden space-y-2">
+        {sortedProducts.length === 0 && (
+          <div className="text-center py-10 text-muted-foreground text-sm">Koi product nahi mila</div>
+        )}
+        {sortedProducts.map((product) => {
+          const status = getStockStatus(product.currentStock, product.lowStockThreshold);
+          return (
+            <div key={product.id} className="rounded-xl border bg-card px-4 py-3 flex items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="font-semibold text-sm truncate">{product.name}</p>
+                  <Badge
+                    variant={status.variant}
+                    className={status.label === "Low Stock" ? "[background-color:var(--products-badge-lowstock-bg)] [color:var(--products-badge-lowstock-text)] [border-color:var(--products-badge-lowstock-border)] text-[10px]" : "text-[10px]"}
+                  >
+                    {status.label}
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-3 mt-1 flex-wrap">
+                  <span className="text-xs text-muted-foreground">{product.currentStock} {product.unit}</span>
+                  <span className="text-xs font-semibold [color:var(--products-selling-price)]">₹{product.sellingPrice}</span>
+                  <span className="text-xs [color:var(--products-margin)]">{margin(product)}% margin</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 shrink-0">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingProduct(product)}>
+                  <Edit className="h-3.5 w-3.5" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 [color:var(--products-btn-delete-text)]" onClick={() => handleDelete(product.id, product.name)}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop Table */}
+      <div className="hidden sm:block rounded-2xl border bg-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/60">
@@ -389,47 +429,28 @@ export default function Products() {
           <TableBody>
             {sortedProducts.map((product) => {
               const status = getStockStatus(product.currentStock, product.lowStockThreshold);
-
               return (
                 <TableRow key={product.id}>
                   <TableCell className="font-semibold">{product.name}</TableCell>
+                  <TableCell>{product.currentStock} <span className="text-xs text-muted-foreground">{product.unit}</span></TableCell>
                   <TableCell>
-                    {product.currentStock} <span className="text-xs text-muted-foreground">{product.unit}</span>
-                  </TableCell>
-
-                  <TableCell>
-                    <Badge 
-                      variant={status.variant}
-                      className={status.label === "Low Stock" ? "[background-color:var(--products-badge-lowstock-bg)] [color:var(--products-badge-lowstock-text)] [border-color:var(--products-badge-lowstock-border)]" : ""}
-                    >
+                    <Badge variant={status.variant} className={status.label === "Low Stock" ? "[background-color:var(--products-badge-lowstock-bg)] [color:var(--products-badge-lowstock-text)] [border-color:var(--products-badge-lowstock-border)]" : ""}>
                       {status.label}
                     </Badge>
                   </TableCell>
-
                   <TableCell className="text-center font-bold [color:var(--products-purchase-rate)]">₹{product.purchasePricePerKg}</TableCell>
                   <TableCell className="text-center font-semibold [color:var(--products-selling-price)]">₹{product.sellingPrice}</TableCell>
                   <TableCell className="text-center font-medium [color:var(--products-margin)]">{margin(product)}%</TableCell>
-                  <TableCell>
-                    {product.expiryDate ? new Date(product.expiryDate).toLocaleDateString('hi-IN') : "-"}
-                  </TableCell>
+                  <TableCell>{product.expiryDate ? new Date(product.expiryDate).toLocaleDateString('hi-IN') : "-"}</TableCell>
                   <TableCell className="text-right space-x-1">
-                    <Button variant="ghost" size="icon" onClick={() => setEditingProduct(product)}>
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="[color:var(--products-btn-delete-text)]" onClick={() => handleDelete(product.id, product.name)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => setEditingProduct(product)}><Edit className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" className="[color:var(--products-btn-delete-text)]" onClick={() => handleDelete(product.id, product.name)}><Trash2 className="h-4 w-4" /></Button>
                   </TableCell>
                 </TableRow>
               );
             })}
-
             {sortedProducts.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                  Koi product nahi mila
-                </TableCell>
-              </TableRow>
+              <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Koi product nahi mila</TableCell></TableRow>
             )}
           </TableBody>
         </Table>

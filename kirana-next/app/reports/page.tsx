@@ -92,7 +92,7 @@ export default function Reports() {
           <div className="flex items-center gap-2">
             <Popover open={calOpen} onOpenChange={setCalOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className={cn("h-9 gap-2 text-sm font-medium min-w-[200px] justify-start", !dateRange.from && "text-muted-foreground")} data-testid="button-date-filter">
+                <Button variant="outline" className={cn("h-9 gap-2 text-sm font-medium w-full sm:min-w-[200px] justify-start", !dateRange.from && "text-muted-foreground")} data-testid="button-date-filter">
                   <CalendarIcon className="h-4 w-4 shrink-0 text-primary" />
                   <span className="flex-1 text-left">{rangeLabelText()}</span>
                 </Button>
