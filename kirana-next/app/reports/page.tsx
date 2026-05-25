@@ -1,5 +1,6 @@
 "use client";
 
+import "./reports.css";
 import { useState } from "react";
 import type { DateRange } from "react-day-picker";
 import {
@@ -113,13 +114,13 @@ export default function Reports() {
             )}
           </div>
           {isSingleDay && (
-            <div className="flex items-center gap-2 rounded-lg border bg-amber-50 border-amber-200 px-3 py-2">
-              <Clock className="h-3.5 w-3.5 text-amber-600 shrink-0" />
-              <span className="text-xs font-medium text-amber-800">Time filter:</span>
+            <div className="flex items-center gap-2 rounded-lg border [background-color:var(--reports-timebar-bg)] [border-color:var(--reports-timebar-border)] px-3 py-2">
+              <Clock className="h-3.5 w-3.5 [color:var(--reports-timebar-icon)] shrink-0" />
+              <span className="text-xs font-medium [color:var(--reports-timebar-label)]">Time filter:</span>
               <div className="flex items-center gap-1.5">
-                <input type="time" value={fromTime} onChange={(e) => setFromTime(e.target.value)} className="rounded border border-amber-300 bg-white px-1.5 py-0.5 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-amber-400" data-testid="input-from-time" />
-                <span className="text-xs text-amber-600 font-medium">to</span>
-                <input type="time" value={toTime} onChange={(e) => setToTime(e.target.value)} className="rounded border border-amber-300 bg-white px-1.5 py-0.5 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-amber-400" data-testid="input-to-time" />
+                <input type="time" value={fromTime} onChange={(e) => setFromTime(e.target.value)} className="rounded [border-color:var(--reports-timebar-input-border)] border [background-color:var(--reports-timebar-input-bg)] px-1.5 py-0.5 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-[var(--reports-timebar-input-ring)]" data-testid="input-from-time" />
+                <span className="text-xs [color:var(--reports-timebar-sep)] font-medium">to</span>
+                <input type="time" value={toTime} onChange={(e) => setToTime(e.target.value)} className="rounded [border-color:var(--reports-timebar-input-border)] border [background-color:var(--reports-timebar-input-bg)] px-1.5 py-0.5 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-[var(--reports-timebar-input-ring)]" data-testid="input-to-time" />
               </div>
             </div>
           )}
@@ -128,10 +129,10 @@ export default function Reports() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: "कुल बिक्री", sublabel: "Total Revenue", value: `₹${(profitReport?.totalRevenue ?? 0).toFixed(0)}`, icon: IndianRupee, colorClass: "text-primary", bgClass: "bg-teal-50", borderClass: "border-teal-200" },
-          { label: "कुल मुनाफा", sublabel: "Total Profit", value: `₹${(profitReport?.totalProfit ?? 0).toFixed(0)}`, note: `${(profitReport?.profitMargin ?? 0).toFixed(1)}% margin`, icon: TrendingUp, colorClass: "text-positive", bgClass: "bg-green-50", borderClass: "border-green-200" },
-          { label: "उधार बाकी", sublabel: "Pending Khata", value: `₹${(khataReport?.totalPending ?? 0).toFixed(0)}`, note: `${khataReport?.customerCount ?? 0} customers`, icon: BookOpen, colorClass: "text-warning", bgClass: "bg-amber-50", borderClass: "border-amber-200" },
-          { label: "कम स्टॉक", sublabel: "Low Stock Items", value: `${stockReport?.length ?? 0}`, note: `${stockReport?.filter((p) => p.currentStock === 0).length ?? 0} out of stock`, icon: AlertTriangle, colorClass: "text-destructive", bgClass: "bg-red-50", borderClass: "border-red-200" },
+          { label: "कुल बिक्री", sublabel: "Total Revenue", value: `₹${(profitReport?.totalRevenue ?? 0).toFixed(0)}`, icon: IndianRupee, colorClass: "[color:var(--reports-sale-color)]", bgClass: "[background-color:var(--reports-sale-bg)]", borderClass: "[border-color:var(--reports-sale-border)]" },
+          { label: "कुल मुनाफा", sublabel: "Total Profit", value: `₹${(profitReport?.totalProfit ?? 0).toFixed(0)}`, note: `${(profitReport?.profitMargin ?? 0).toFixed(1)}% margin`, icon: TrendingUp, colorClass: "[color:var(--reports-profit-color)]", bgClass: "[background-color:var(--reports-profit-bg)]", borderClass: "[border-color:var(--reports-profit-border)]" },
+          { label: "उधार बाकी", sublabel: "Pending Khata", value: `₹${(khataReport?.totalPending ?? 0).toFixed(0)}`, note: `${khataReport?.customerCount ?? 0} customers`, icon: BookOpen, colorClass: "[color:var(--reports-khata-color)]", bgClass: "[background-color:var(--reports-khata-bg)]", borderClass: "[border-color:var(--reports-khata-border)]" },
+          { label: "कम स्टॉक", sublabel: "Low Stock Items", value: `${stockReport?.length ?? 0}`, note: `${stockReport?.filter((p) => p.currentStock === 0).length ?? 0} out of stock`, icon: AlertTriangle, colorClass: "[color:var(--reports-lowstock-color)]", bgClass: "[background-color:var(--reports-lowstock-bg)]", borderClass: "[border-color:var(--reports-lowstock-border)]" },
         ].map((card) => (
           <Card key={card.label} className={`border ${card.borderClass} ${card.bgClass}`}>
             <CardContent className="p-5">
@@ -187,15 +188,15 @@ export default function Reports() {
                 <AreaChart data={profitReport.data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="profitGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(142 60% 32%)" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="hsl(142 60% 32%)" stopOpacity={0} />
+                      <stop offset="5%" stopColor="var(--reports-profit-chart-grad)" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="var(--reports-profit-chart-grad)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                   <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} tickFormatter={(v) => v.slice(5)} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} tickFormatter={(v) => `₹${v}`} />
                   <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "8px", border: "1px solid hsl(var(--border))", fontSize: 12 }} formatter={(v: number) => [`₹${v.toFixed(0)}`, "Profit"]} />
-                  <Area type="monotone" dataKey="profit" stroke="hsl(142 60% 32%)" strokeWidth={2.5} fillOpacity={1} fill="url(#profitGrad)" />
+                  <Area type="monotone" dataKey="profit" stroke="var(--reports-profit-chart-stroke)" strokeWidth={2.5} fillOpacity={1} fill="url(#profitGrad)" />
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
@@ -209,7 +210,7 @@ export default function Reports() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <BookOpen className="h-4 w-4 text-warning" /> Pending Udhaar
+              <BookOpen className="h-4 w-4 [color:var(--reports-khata-color)]" /> Pending Udhaar
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -223,7 +224,7 @@ export default function Reports() {
                       <p className="font-semibold text-sm">{c.name}</p>
                       <p className="text-xs text-muted-foreground">{c.phone}</p>
                     </div>
-                    <span className="font-bold text-warning text-sm">₹{c.totalDue.toFixed(0)}</span>
+                    <span className="font-bold [color:var(--reports-khata-color)] text-sm">₹{c.totalDue.toFixed(0)}</span>
                   </div>
                 ))}
               </div>
@@ -254,7 +255,7 @@ export default function Reports() {
                       <p className="text-xs text-muted-foreground">{p.category}</p>
                     </div>
                     <div className="text-right">
-                      <Badge className={cn("text-[10px] font-medium", p.currentStock === 0 ? "bg-red-100 text-red-700 border-red-200" : "bg-amber-100 text-amber-700 border-amber-200")}>
+                      <Badge className={cn("text-[10px] font-medium", p.currentStock === 0 ? "[background-color:var(--reports-badge-out-bg)] [color:var(--reports-badge-out-text)] [border-color:var(--reports-badge-out-border)]" : "[background-color:var(--reports-badge-low-bg)] [color:var(--reports-badge-low-text)] [border-color:var(--reports-badge-low-border)]")}>
                         {p.currentStock === 0 ? "Out of Stock" : `${p.currentStock} left`}
                       </Badge>
                     </div>
