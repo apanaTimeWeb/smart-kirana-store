@@ -1,0 +1,20 @@
+/*
+ * settings.css — Settings Feature Color Tokens
+ *
+ * All colors for the Settings page live here.
+ * Usage in JSX: className="[color:var(--settings-device-computer)]"
+ */
+
+@layer components {
+
+  :root {
+    /* ── Section Header Icons ─────────────────────────────────── */
+    --settings-whatsapp-icon:           hsl(142 60% 35%);             /* text-green-600 */
+
+    /* ── Active Device Icons ──────────────────────────────────── */
+    --settings-device-computer:         hsl(217 91% 50%);             /* text-blue-600 */
+    --settings-device-mobile:           hsl(142 60% 35%);             /* text-green-600 */
+    --settings-device-tablet:           hsl(270 60% 50%);             /* text-purple-600 */
+  }
+
+}

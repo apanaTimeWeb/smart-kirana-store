@@ -1,5 +1,6 @@
 "use client";
 
+import "./settings.css";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -136,9 +137,9 @@ export default function Settings() {
 
   const getDeviceIcon = (type: string) => {
     switch (type) {
-      case "Computer": return <Monitor className="h-5 w-5 text-blue-600" />;
-      case "Mobile": return <Smartphone className="h-5 w-5 text-green-600" />;
-      case "Tablet": return <Tablet className="h-5 w-5 text-purple-600" />;
+      case "Computer": return <Monitor className="h-5 w-5 [color:var(--settings-device-computer)]" />;
+      case "Mobile": return <Smartphone className="h-5 w-5 [color:var(--settings-device-mobile)]" />;
+      case "Tablet": return <Tablet className="h-5 w-5 [color:var(--settings-device-tablet)]" />;
       default: return <Shield className="h-5 w-5" />;
     }
   };
@@ -227,7 +228,7 @@ export default function Settings() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <MessageCircle className="h-5 w-5 text-green-600" /> WhatsApp Settings
+            <MessageCircle className="h-5 w-5 [color:var(--settings-whatsapp-icon)]" /> WhatsApp Settings
           </CardTitle>
         </CardHeader>
         <CardContent>
