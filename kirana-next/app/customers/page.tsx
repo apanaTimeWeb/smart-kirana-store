@@ -1,5 +1,6 @@
 "use client";
 
+import "./customers.css";
 import { useState, useMemo } from "react";
 import {
   useListCustomers,
@@ -144,10 +145,10 @@ function KhataLedger({ customerId }: { customerId: number }) {
   return (
     <div className="flex flex-col h-full p-6 overflow-hidden">
       {/* Header */}
-      <div className="rounded-xl border bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200 p-5 mb-6">
+      <div className="rounded-xl border bg-gradient-to-br from-[var(--customers-header-bg-from)] to-[var(--customers-header-bg-to)] [border-color:var(--customers-header-border)] p-5 mb-6">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-2xl font-bold">
+            <div className="h-12 w-12 rounded-full [background-color:var(--customers-header-avatar-bg)] [color:var(--customers-header-avatar-text)] flex items-center justify-center text-2xl font-bold">
               {detail.name.charAt(0).toUpperCase()}
             </div>
             <div>
@@ -157,18 +158,18 @@ function KhataLedger({ customerId }: { customerId: number }) {
           </div>
           <div className="text-right">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">Total Due</p>
-            <p className="text-4xl font-bold text-amber-600">₹{detail.totalDue.toFixed(2)}</p>
+            <p className="text-4xl font-bold [color:var(--customers-header-due-amount)]">₹{detail.totalDue.toFixed(2)}</p>
           </div>
         </div>
       </div>
 
       {/* 4 Buttons - Center Aligned with Active State */}
       <div className="flex justify-center mb-6">
-        <div className="inline-flex flex-wrap gap-3 justify-center bg-white border rounded-xl p-2 shadow-sm">
+        <div className="inline-flex flex-wrap gap-3 justify-center [background-color:var(--customers-btn-panel-bg)] border rounded-xl p-2 shadow-sm">
           <Button 
             size="sm" 
             onClick={() => setMode("payment")} 
-            className={cn("transition-all", mode === "payment" && "ring-2 ring-green-500 ring-offset-2 bg-green-600")}
+            className={cn("transition-all", mode === "payment" && "ring-2 ring-offset-2 [--tw-ring-color:var(--customers-btn-payment-ring)] [background-color:var(--customers-btn-payment-active-bg)]")}
           >
             <IndianRupee className="mr-1.5 h-4 w-4" /> Payment Mila
           </Button>
@@ -177,8 +178,8 @@ function KhataLedger({ customerId }: { customerId: number }) {
             size="sm" 
             variant="outline" 
             onClick={() => setMode("credit")} 
-            className={cn("transition-all border-red-500 text-red-600 hover:bg-red-50", 
-              mode === "credit" && "ring-2 ring-red-500 ring-offset-2 bg-red-50")}
+            className={cn("transition-all [border-color:var(--customers-btn-credit-border)] [color:var(--customers-btn-credit-text)] hover:[background-color:var(--customers-btn-credit-hover-bg)]",
+              mode === "credit" && "ring-2 ring-offset-2 [--tw-ring-color:var(--customers-btn-credit-ring)] [background-color:var(--customers-btn-credit-active-bg)]")}
           >
             <CreditCard className="mr-1.5 h-4 w-4" /> Udhaar Diya
           </Button>
@@ -187,7 +188,7 @@ function KhataLedger({ customerId }: { customerId: number }) {
             size="sm" 
             variant="outline" 
             onClick={() => setIsReminderOpen(true)} 
-            className="border-green-600 text-green-700 hover:bg-green-50"
+            className="[border-color:var(--customers-btn-reminder-border)] [color:var(--customers-btn-reminder-text)] hover:[background-color:var(--customers-btn-reminder-hover-bg)]"
           >
             <MessageCircle className="mr-1.5 h-4 w-4" /> Reminder
           </Button>
@@ -207,12 +208,12 @@ function KhataLedger({ customerId }: { customerId: number }) {
         <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>WhatsApp Reminder</DialogTitle></DialogHeader>
           <div className="py-6 space-y-4">
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm whitespace-pre-line">
+            <div className="[background-color:var(--customers-reminder-msg-bg)] [border-color:var(--customers-reminder-msg-border)] border rounded-xl p-4 text-sm whitespace-pre-line">
               {reminderMessage}
             </div>
             <div className="grid grid-cols-3 gap-3">
-              <Button onClick={handleTextOnly} className="h-11 bg-green-600">Text Only</Button>
-              <Button onClick={handlePDFAndText} variant="outline" className="h-11 border-green-600 text-green-700">Bill + Text</Button>
+              <Button onClick={handleTextOnly} className="h-11 [background-color:var(--customers-reminder-send-bg)]">Text Only</Button>
+              <Button onClick={handlePDFAndText} variant="outline" className="h-11 [border-color:var(--customers-reminder-bill-border)] [color:var(--customers-reminder-bill-text)]">Bill + Text</Button>
               <Button onClick={() => setIsReminderOpen(false)} variant="destructive" className="h-11">Cancel</Button>
             </div>
           </div>
@@ -221,7 +222,7 @@ function KhataLedger({ customerId }: { customerId: number }) {
 
       {/* Payment / Udhaar Form */}
       {mode && (
-        <div className="rounded-xl border p-6 mb-6 bg-white shadow-sm">
+        <div className="rounded-xl border p-6 mb-6 [background-color:var(--customers-form-panel-bg)] shadow-sm">
           <div className="flex justify-between items-center mb-5">
             <p className="font-semibold text-lg">
               {mode === "payment" ? "💰 Payment Entry" : "📦 Udhaar Entry"}
@@ -260,7 +261,7 @@ function KhataLedger({ customerId }: { customerId: number }) {
       )}
 
       {/* Scrollable History Table */}
-      <div className="flex-1 border rounded-xl bg-white flex flex-col overflow-hidden">
+      <div className="flex-1 border rounded-xl [background-color:var(--customers-ledger-bg)] flex flex-col overflow-hidden">
         <div className="grid grid-cols-[120px_1fr_130px_130px] bg-muted sticky top-0 text-xs font-semibold text-muted-foreground border-b">
           <div className="px-6 py-3.5">Date</div>
           <div className="px-6 py-3.5">Description</div>
@@ -283,13 +284,13 @@ function KhataLedger({ customerId }: { customerId: number }) {
                   <div className="text-sm text-muted-foreground">{format(new Date(tx.createdAt), "dd MMM yyyy")}</div>
                   <div className="flex items-start gap-3 pr-4">
                     <div className={cn("mt-0.5 h-6 w-6 rounded-full flex items-center justify-center shrink-0",
-                      tx.type === "credit" ? "bg-amber-100 text-amber-600" : "bg-green-100 text-green-600")}>
+                      tx.type === "credit" ? "[background-color:var(--customers-tx-credit-icon-bg)] [color:var(--customers-tx-credit-icon-text)]" : "[background-color:var(--customers-tx-payment-icon-bg)] [color:var(--customers-tx-payment-icon-text)]")>
                       {tx.type === "credit" ? <ArrowUpRight size={15} /> : <ArrowDownRight size={15} />}
                     </div>
                     <p className="text-sm leading-tight">{tx.description}</p>
                   </div>
                   <div className="text-right font-semibold">
-                    <span className={tx.type === "credit" ? "text-amber-600" : "text-green-600"}>
+                    <span className={tx.type === "credit" ? "[color:var(--customers-tx-credit-amount)]" : "[color:var(--customers-tx-payment-amount)]"}>  
                       {tx.type === "credit" ? "+" : "-"} ₹{tx.amount.toFixed(0)}
                     </span>
                   </div>
@@ -408,13 +409,13 @@ export default function Customers() {
                 <div className="flex items-center gap-6">
                   <div className="text-right">
                     {customer.totalDue > 0 ? (
-                      <p className="text-2xl font-bold text-amber-600">₹{customer.totalDue}</p>
+                      <p className="text-2xl font-bold [color:var(--customers-list-due-text)]">₹{customer.totalDue}</p>
                     ) : (
-                      <p className="text-green-600">Clear</p>
+                      <p className="[color:var(--customers-list-clear-text)]">Clear</p>
                     )}
                   </div>
                   <button onClick={(e) => { e.stopPropagation(); onDelete(customer.id, customer.name); }}>
-                    <Trash2 className="h-4 w-4 text-muted-foreground hover:text-red-500" />
+                    <Trash2 className="h-4 w-4 text-muted-foreground hover:[color:var(--customers-list-delete-hover)]" />
                   </button>
                   <ChevronRight className="text-muted-foreground" />
                 </div>
