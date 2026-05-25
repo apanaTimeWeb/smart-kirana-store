@@ -1,10 +1,11 @@
 "use client";
 
 import { useQuery, useMutation, type UseQueryOptions } from "@tanstack/react-query";
-import { apiFetch } from "./fetch";
+import {
+  storeGetCustomers, storeGetCustomer, storeCreateCustomer,
+  storeDeleteCustomer, storeAddKhataTransaction,
+} from "./store";
 import type { Customer, CustomerDetail, KhataTransaction } from "./types";
-
-// ─── Query Keys ───────────────────────────────────────────────────────────────
 
 export function getListCustomersQueryKey(params?: { search?: string }) {
   return ["customers", "list", params ?? {}] as const;
@@ -14,17 +15,10 @@ export function getGetCustomerQueryKey(id: number) {
   return ["customers", "detail", id] as const;
 }
 
-// ─── Hooks ────────────────────────────────────────────────────────────────────
-
 export function useListCustomers(params?: { search?: string }) {
   return useQuery({
     queryKey: getListCustomersQueryKey(params),
-    queryFn: () => {
-      const url = params?.search
-        ? `/api/customers?search=${encodeURIComponent(params.search)}`
-        : "/api/customers";
-      return apiFetch<Customer[]>(url);
-    },
+    queryFn: () => Promise.resolve(storeGetCustomers(params)),
   });
 }
 
@@ -34,7 +28,7 @@ export function useGetCustomer(
 ) {
   return useQuery({
     queryKey: getGetCustomerQueryKey(id),
-    queryFn: () => apiFetch<CustomerDetail>(`/api/customers/${id}`),
+    queryFn: () => Promise.resolve(storeGetCustomer(id)),
     ...options?.query,
   });
 }
@@ -42,14 +36,16 @@ export function useGetCustomer(
 export function useCreateCustomer() {
   return useMutation({
     mutationFn: async ({ data }: { data: { name: string; phone: string; address?: string } }) =>
-      apiFetch<Customer>("/api/customers", { method: "POST", body: JSON.stringify(data) }),
+      Promise.resolve(storeCreateCustomer(data)),
   });
 }
 
 export function useDeleteCustomer() {
   return useMutation({
-    mutationFn: async ({ id }: { id: number }) =>
-      apiFetch<{ ok: boolean }>(`/api/customers/${id}`, { method: "DELETE" }),
+    mutationFn: async ({ id }: { id: number }) => {
+      storeDeleteCustomer(id);
+      return Promise.resolve({ ok: true });
+    },
   });
 }
 
@@ -61,10 +57,6 @@ export function useAddKhataTransaction() {
     }: {
       id: number;
       data: { type: "credit" | "payment"; amount: number; description: string };
-    }) =>
-      apiFetch<KhataTransaction>(`/api/customers/${id}/transactions`, {
-        method: "POST",
-        body: JSON.stringify(data),
-      }),
+    }) => Promise.resolve(storeAddKhataTransaction(id, data) as KhataTransaction),
   });
 }

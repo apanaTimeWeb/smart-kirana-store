@@ -1,18 +1,4 @@
-// ─── Base Fetch Helper ─────────────────────────────────────────────────────────
-
-export async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    let message = text;
-    try {
-      const json = JSON.parse(text);
-      message = json.message ?? text;
-    } catch {}
-    throw new Error(`API ${res.status}: ${message}`);
-  }
-  return res.json() as Promise<T>;
+// No longer used — data is served from lib/data.json via lib/api/store.ts
+export function apiFetch<T>(_url: string, _options?: RequestInit): Promise<T> {
+  return Promise.reject(new Error("apiFetch is disabled. Using local data store."));
 }

@@ -1,20 +1,16 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { apiFetch } from "./fetch";
+import { storeGetDashboard } from "./store";
 import type { DashboardSummary } from "./types";
-
-// ─── Query Keys ───────────────────────────────────────────────────────────────
 
 export function getGetDashboardSummaryQueryKey() {
   return ["dashboard", "summary"] as const;
 }
 
-// ─── Hooks ────────────────────────────────────────────────────────────────────
-
 export function useGetDashboardSummary() {
-  return useQuery({
+  return useQuery<DashboardSummary>({
     queryKey: getGetDashboardSummaryQueryKey(),
-    queryFn: () => apiFetch<DashboardSummary>("/api/dashboard"),
+    queryFn: () => Promise.resolve(storeGetDashboard()),
   });
 }

@@ -5,11 +5,12 @@ export type Product = {
   name: string;
   barcode?: string;
   category: string;
-  purchasePrice: number;
+  purchasePricePerKg: number;
   sellingPrice: number;
   currentStock: number;
   lowStockThreshold: number;
   unit: string;
+  expiryDate?: string | null;
   createdAt: string;
 };
 
@@ -48,8 +49,12 @@ export type BillInput = {
   items: BillItem[];
   totalAmount: number;
   discountAmount: number;
+  taxableValue: number;
+  gstAmount: number;
   finalAmount: number;
   paymentMode: BillInputPaymentMode;
+  enableGST: boolean;
+  gstRate: number;
 };
 
 export type Bill = {
@@ -59,8 +64,12 @@ export type Bill = {
   items: BillItem[];
   totalAmount: number;
   discountAmount: number;
+  taxableValue: number;
+  gstAmount: number;
   finalAmount: number;
   paymentMode: BillInputPaymentMode;
+  enableGST: boolean;
+  gstRate: number;
   createdAt: string;
 };
 
@@ -117,4 +126,6 @@ export type AppSettings = {
   gstEnabled: boolean;
   currency: string;
   lowStockThreshold: number;
+  whatsappNumber?: string;
+  printerName?: string;
 };

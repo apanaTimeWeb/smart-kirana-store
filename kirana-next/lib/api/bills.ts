@@ -1,27 +1,27 @@
 "use client";
 
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiFetch } from "./fetch";
+import { storeGetBills, storeCreateBill } from "./store";
 import type { Bill, BillInput } from "./types";
-
-// ─── Query Keys ───────────────────────────────────────────────────────────────
 
 export function getListBillsQueryKey() {
   return ["bills", "list"] as const;
 }
 
-// ─── Hooks ────────────────────────────────────────────────────────────────────
-
 export function useListBills() {
   return useQuery({
     queryKey: getListBillsQueryKey(),
-    queryFn: () => apiFetch<Bill[]>("/api/bills"),
+    queryFn: () => Promise.resolve(storeGetBills()),
   });
 }
 
 export function useCreateBill() {
   return useMutation({
-    mutationFn: async ({ data }: { data: BillInput }) =>
-      apiFetch<Bill>("/api/bills", { method: "POST", body: JSON.stringify(data) }),
+    mutationFn: async ({ data }: { data: BillInput }) => {
+      const customerName = data.customerId
+        ? (await import("./store")).storeGetCustomers().find((c) => c.id === data.customerId)?.name
+        : undefined;
+      return Promise.resolve(storeCreateBill({ ...data, customerName }));
+    },
   });
 }
