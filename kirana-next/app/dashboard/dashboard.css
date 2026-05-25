@@ -1,0 +1,47 @@
+/*
+ * dashboard.css — Dashboard Feature Color Tokens
+ *
+ * All colors for the Dashboard page live here.
+ * Usage in JSX: className="[color:var(--dashboard-sale-value)]"
+ */
+
+@layer components {
+
+  :root {
+    /* ── Stat Card — Today's Sale ─────────────────────────────── */
+    --dashboard-sale-value:             hsl(var(--primary));
+    --dashboard-sale-bg:                hsl(174 25% 95%);             /* bg-teal-50 */
+    --dashboard-sale-border:            hsl(174 25% 85%);             /* border-teal-200 */
+    --dashboard-sale-icon:              hsl(var(--primary));
+
+    /* ── Stat Card — Today's Profit ───────────────────────────── */
+    --dashboard-profit-value:           hsl(var(--positive, 142 60% 28%));   /* text-positive */
+    --dashboard-profit-bg:              hsl(142 60% 97%);             /* bg-green-50 */
+    --dashboard-profit-border:          hsl(142 60% 85%);             /* border-green-200 */
+    --dashboard-profit-icon:            hsl(var(--positive, 142 60% 28%));
+
+    /* ── Stat Card — Pending Khata ────────────────────────────── */
+    --dashboard-khata-value:            hsl(var(--warning, 38 90% 42%));     /* text-warning */
+    --dashboard-khata-bg:               hsl(38 90% 95%);              /* bg-amber-50 */
+    --dashboard-khata-border:           hsl(38 90% 85%);              /* border-amber-200 */
+    --dashboard-khata-icon:             hsl(var(--warning, 38 90% 42%));
+
+    /* ── Stat Card — Low Stock ────────────────────────────────── */
+    --dashboard-lowstock-value:         hsl(var(--destructive));
+    --dashboard-lowstock-bg:            hsl(0 84% 97%);               /* bg-red-50 */
+    --dashboard-lowstock-border:        hsl(0 84% 88%);               /* border-red-200 */
+    --dashboard-lowstock-icon:          hsl(var(--destructive));
+
+    /* ── Recent Bills — Payment Mode Badges ───────────────────── */
+    --dashboard-badge-khata-text:       hsl(var(--warning, 38 90% 42%));
+    --dashboard-badge-khata-border:     hsl(38 90% 70%);              /* border-amber-300 */
+    --dashboard-badge-khata-bg:         hsl(38 90% 95%);              /* bg-amber-50 */
+    --dashboard-badge-upi-text:         hsl(var(--primary));
+    --dashboard-badge-upi-border:       hsl(174 72% 70%);             /* border-teal-300 */
+    --dashboard-badge-upi-bg:           hsl(174 25% 95%);             /* bg-teal-50 */
+    --dashboard-badge-cash-text:        hsl(var(--positive, 142 60% 28%));
+    --dashboard-badge-cash-border:      hsl(142 60% 70%);             /* border-green-300 */
+    --dashboard-badge-cash-bg:          hsl(142 60% 97%);             /* bg-green-50 */
+  }
+
+}

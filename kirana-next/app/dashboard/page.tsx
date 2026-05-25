@@ -1,5 +1,6 @@
 "use client";
 
+import "./dashboard.css";
 import { useGetDashboardSummary } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -106,20 +107,20 @@ export default function Dashboard() {
           value={`₹${(summary.todaySale ?? 0).toFixed(0)}`}
           note={`${summary.todayOrderCount} orders today`}
           icon={IndianRupee}
-          colorClass="text-primary"
-          bgClass="bg-teal-50"
-          borderClass="border-teal-200"
-          iconColorClass="text-primary"
+          colorClass="[color:var(--dashboard-sale-value)]"
+          bgClass="[background-color:var(--dashboard-sale-bg)]"
+          borderClass="[border-color:var(--dashboard-sale-border)]"
+          iconColorClass="[color:var(--dashboard-sale-icon)]"
         />
         <StatCard
           title="आज का मुनाफा"
           subtitle="Today's Profit"
           value={`₹${(summary.todayProfit ?? 0).toFixed(0)}`}
           icon={TrendingUp}
-          colorClass="text-positive"
-          bgClass="bg-green-50"
-          borderClass="border-green-200"
-          iconColorClass="text-positive"
+          colorClass="[color:var(--dashboard-profit-value)]"
+          bgClass="[background-color:var(--dashboard-profit-bg)]"
+          borderClass="[border-color:var(--dashboard-profit-border)]"
+          iconColorClass="[color:var(--dashboard-profit-icon)]"
         />
         <StatCard
           title="उधार बाकी"
@@ -127,10 +128,10 @@ export default function Dashboard() {
           value={`₹${(summary.pendingKhataAmount ?? 0).toFixed(0)}`}
           note={`${summary.pendingKhataCount} customers`}
           icon={BookOpen}
-          colorClass="text-warning"
-          bgClass="bg-amber-50"
-          borderClass="border-amber-200"
-          iconColorClass="text-warning"
+          colorClass="[color:var(--dashboard-khata-value)]"
+          bgClass="[background-color:var(--dashboard-khata-bg)]"
+          borderClass="[border-color:var(--dashboard-khata-border)]"
+          iconColorClass="[color:var(--dashboard-khata-icon)]"
         />
         <StatCard
           title="कम स्टॉक"
@@ -138,10 +139,10 @@ export default function Dashboard() {
           value={`${summary.lowStockCount}`}
           note={`${summary.outOfStockCount} out of stock`}
           icon={AlertTriangle}
-          colorClass="text-destructive"
-          bgClass="bg-red-50"
-          borderClass="border-red-200"
-          iconColorClass="text-destructive"
+          colorClass="[color:var(--dashboard-lowstock-value)]"
+          bgClass="[background-color:var(--dashboard-lowstock-bg)]"
+          borderClass="[border-color:var(--dashboard-lowstock-border)]"
+          iconColorClass="[color:var(--dashboard-lowstock-icon)]"
         />
       </div>
 
@@ -175,10 +176,10 @@ export default function Dashboard() {
                         variant="outline"
                         className={
                           bill.paymentMode === "khata"
-                            ? "text-warning border-amber-300 bg-amber-50 text-[10px]"
+                            ? "[color:var(--dashboard-badge-khata-text)] [border-color:var(--dashboard-badge-khata-border)] [background-color:var(--dashboard-badge-khata-bg)] text-[10px]"
                             : bill.paymentMode === "upi"
-                            ? "text-primary border-teal-300 bg-teal-50 text-[10px]"
-                            : "text-positive border-green-300 bg-green-50 text-[10px]"
+                            ? "[color:var(--dashboard-badge-upi-text)] [border-color:var(--dashboard-badge-upi-border)] [background-color:var(--dashboard-badge-upi-bg)] text-[10px]"
+                            : "[color:var(--dashboard-badge-cash-text)] [border-color:var(--dashboard-badge-cash-border)] [background-color:var(--dashboard-badge-cash-bg)] text-[10px]"
                         }
                       >
                         {bill.paymentMode === "khata" ? "Khata" : bill.paymentMode === "upi" ? "UPI" : "Cash"}
@@ -220,7 +221,7 @@ export default function Dashboard() {
                     <div className="text-right">
                       <p
                         className={`font-bold text-sm ${
-                          product.currentStock === 0 ? "text-destructive" : "text-warning"
+                          product.currentStock === 0 ? "[color:var(--dashboard-lowstock-value)]" : "[color:var(--dashboard-khata-value)]"
                         }`}
                       >
                         {product.currentStock === 0
