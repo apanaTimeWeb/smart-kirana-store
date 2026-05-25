@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     "*.replit.dev",
     "*.sisko.replit.dev",
     "*.replit.app",
+    "10.80.122.41",
   ],
   async rewrites() {
     return [
