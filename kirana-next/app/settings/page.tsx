@@ -137,9 +137,9 @@ export default function Settings() {
 
   const getDeviceIcon = (type: string) => {
     switch (type) {
-      case "Computer": return <Monitor className="h-5 w-5 [color:var(--settings-device-computer)]" />;
-      case "Mobile": return <Smartphone className="h-5 w-5 [color:var(--settings-device-mobile)]" />;
-      case "Tablet": return <Tablet className="h-5 w-5 [color:var(--settings-device-tablet)]" />;
+      case "Computer": return <Monitor className="h-5 w-5 text-[var(--settings-device-computer)]" />;
+      case "Mobile": return <Smartphone className="h-5 w-5 text-[var(--settings-device-mobile)]" />;
+      case "Tablet": return <Tablet className="h-5 w-5 text-[var(--settings-device-tablet)]" />;
       default: return <Shield className="h-5 w-5" />;
     }
   };
@@ -228,7 +228,7 @@ export default function Settings() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <MessageCircle className="h-5 w-5 [color:var(--settings-whatsapp-icon)]" /> WhatsApp Settings
+            <MessageCircle className="h-5 w-5 text-[var(--settings-whatsapp-icon)]" /> WhatsApp Settings
           </CardTitle>
         </CardHeader>
         <CardContent>

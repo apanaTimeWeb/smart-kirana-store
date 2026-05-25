@@ -111,7 +111,7 @@ function CustomerPicker({
         onClick={openPicker}
         className={cn(
           "w-full flex items-center gap-2 rounded-md border px-3 h-10 text-sm transition-colors hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-ring",
-          required && !value ? "[border-color:var(--billing-picker-required-border)] [background-color:var(--billing-picker-required-bg)]" : "bg-background",
+          required && !value ? "border-[var(--billing-picker-required-border)] bg-[var(--billing-picker-required-bg)]" : "bg-background",
           open && "ring-2 ring-ring"
         )}
         data-testid="button-customer-picker"
@@ -132,7 +132,7 @@ function CustomerPicker({
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute bottom-full mb-1 left-0 right-0 z-50 rounded-lg border [background-color:var(--billing-cart-bg)] shadow-xl overflow-hidden">
+          <div className="absolute bottom-full mb-1 left-0 right-0 z-50 rounded-lg border bg-[var(--billing-cart-bg)] shadow-xl overflow-hidden">
             {!showAdd ? (
               <>
                 <div className="flex items-center gap-2 border-b px-3 py-2">
@@ -165,11 +165,11 @@ function CustomerPicker({
                         onClick={() => selectCustomer(c)}
                         className={cn(
                           "w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-muted/50 transition-colors",
-                          value === c.id.toString() && "[background-color:var(--billing-picker-selected-row-bg)]"
+                          value === c.id.toString() && "bg-[var(--billing-picker-selected-row-bg)]"
                         )}
                         data-testid={`option-customer-${c.id}`}
                       >
-                        <div className="h-7 w-7 rounded-full [background-color:var(--billing-picker-avatar-bg)] [color:var(--billing-picker-avatar-text)] flex items-center justify-center text-xs font-bold shrink-0">
+                        <div className="h-7 w-7 rounded-full bg-[var(--billing-picker-avatar-bg)] text-[var(--billing-picker-avatar-text)] flex items-center justify-center text-xs font-bold shrink-0">
                           {c.name[0].toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -177,7 +177,7 @@ function CustomerPicker({
                           <p className="text-[11px] text-muted-foreground">{c.phone}</p>
                         </div>
                         {c.totalDue > 0 && (
-                          <span className="text-[11px] font-semibold [color:var(--billing-picker-due-text)] shrink-0">
+                          <span className="text-[11px] font-semibold text-[var(--billing-picker-due-text)] shrink-0">
                             Due ₹{c.totalDue.toFixed(0)}
                           </span>
                         )}
@@ -189,7 +189,7 @@ function CustomerPicker({
                   <button
                     type="button"
                     onClick={() => { setShowAdd(true); setNewName(search); }}
-                    className="w-full flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium [color:var(--billing-picker-add-text)] [&:hover]:bg-[var(--billing-picker-add-hover-bg)] transition-colors"
+                    className="w-full flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-[var(--billing-picker-add-text)] [&:hover]:bg-[var(--billing-picker-add-hover-bg)] transition-colors"
                     data-testid="button-add-new-customer"
                   >
                     <UserPlus className="h-4 w-4" />
@@ -202,7 +202,7 @@ function CustomerPicker({
               <div className="p-4 space-y-3">
                 <div className="flex items-center justify-between mb-1">
                   <p className="font-semibold text-sm flex items-center gap-2">
-                    <UserPlus className="h-4 w-4 [color:var(--billing-picker-new-icon)]" /> Naya Customer
+                    <UserPlus className="h-4 w-4 text-[var(--billing-picker-new-icon)]" /> Naya Customer
                   </p>
                   <button onClick={() => setShowAdd(false)} className="text-muted-foreground hover:text-foreground">
                     <X className="h-4 w-4" />
@@ -292,7 +292,7 @@ export default function Billing() {
     try {
       const s = typeof window !== "undefined" ? localStorage.getItem("kirana_settings") : null;
       if (s) return JSON.parse(s).shopName || "Smart Kirana Store";
-    } catch {}
+    } catch { }
     return "Smart Kirana Store";
   })();
 
@@ -356,10 +356,10 @@ export default function Billing() {
         </div>
         ${billData.enableGST ? `
         <div style="display:flex;justify-content:space-between;" class="gst-details">
-          <span>CGST (${billData.gstRate/2}%):</span><span>₹${billData.cgstAmount.toFixed(0)}</span>
+          <span>CGST (${billData.gstRate / 2}%):</span><span>₹${billData.cgstAmount.toFixed(0)}</span>
         </div>
         <div style="display:flex;justify-content:space-between;" class="gst-details">
-          <span>SGST (${billData.gstRate/2}%):</span><span>₹${billData.sgstAmount.toFixed(0)}</span>
+          <span>SGST (${billData.gstRate / 2}%):</span><span>₹${billData.sgstAmount.toFixed(0)}</span>
         </div>
         ` : ''}
         <hr/>
@@ -437,7 +437,7 @@ export default function Billing() {
           printThermalBill(billData);
 
           setBillSuccess(true);
-          
+
           queryClient.invalidateQueries({ queryKey: getListBillsQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
           queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
@@ -450,7 +450,7 @@ export default function Billing() {
             setEnableGST(false);
             setBillSuccess(false);
           }, 1500);
-          
+
           toast({ title: "Bill ban gaya!" });
         },
         onError: () => toast({ title: "Bill nahi bana", variant: "destructive" }),
@@ -466,14 +466,14 @@ export default function Billing() {
   };
 
   const CartPanel = (
-    <Card className={cn("flex flex-col h-full transition-all", billSuccess && "[border-color:var(--billing-cart-success-border)]")}>
+    <Card className={cn("flex flex-col h-full transition-all", billSuccess && "border-[var(--billing-cart-success-border)]")}>
       <CardHeader className="border-b pb-3 pt-4 px-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <ShoppingCart className="h-4 w-4 text-primary" />
           Current Bill
-          {billSuccess && <CheckCircle2 className="h-5 w-5 [color:var(--billing-cart-success-icon)] ml-auto" />}
+          {billSuccess && <CheckCircle2 className="h-5 w-5 text-[var(--billing-cart-success-icon)] ml-auto" />}
           {cartCount > 0 && !billSuccess && (
-            <Badge className="ml-auto [background-color:var(--billing-cart-badge-bg)] [color:var(--billing-cart-badge-text)] px-2 py-0.5 text-xs">{cartCount}</Badge>
+            <Badge className="ml-auto bg-[var(--billing-cart-badge-bg)] text-[var(--billing-cart-badge-text)] px-2 py-0.5 text-xs">{cartCount}</Badge>
           )}
         </CardTitle>
       </CardHeader>
@@ -513,12 +513,12 @@ export default function Billing() {
         )}
       </CardContent>
 
-      <CardFooter className="flex-col border-t [background-color:var(--billing-cart-footer-bg)] px-4 py-4 gap-3">
+      <CardFooter className="flex-col border-t bg-[var(--billing-cart-footer-bg)] px-4 py-4 gap-3">
         <div className="flex justify-between w-full text-sm">
           <span className="text-muted-foreground">Subtotal</span>
           <span className="font-medium">₹{subtotal.toFixed(2)}</span>
         </div>
-        
+
         <div className="flex items-center gap-2 w-full">
           <span className="text-sm text-muted-foreground whitespace-nowrap">Discount (₹)</span>
           <Input
@@ -563,11 +563,11 @@ export default function Billing() {
               <span className="font-medium">₹{Math.max(0, subtotal - discount).toFixed(2)}</span>
             </div>
             <div className="flex justify-between w-full text-xs text-muted-foreground">
-              <span>CGST ({gstRate/2}%)</span>
+              <span>CGST ({gstRate / 2}%)</span>
               <span>₹{((Math.max(0, subtotal - discount) * gstRate / 100) / 2).toFixed(2)}</span>
             </div>
             <div className="flex justify-between w-full text-xs text-muted-foreground">
-              <span>SGST ({gstRate/2}%)</span>
+              <span>SGST ({gstRate / 2}%)</span>
               <span>₹{((Math.max(0, subtotal - discount) * gstRate / 100) / 2).toFixed(2)}</span>
             </div>
           </>
@@ -575,7 +575,7 @@ export default function Billing() {
 
         <div className="flex justify-between w-full border-t pt-3">
           <span className="font-bold">Total</span>
-          <span className="text-xl font-extrabold [color:var(--billing-cart-total-text)]">₹{finalAmount.toFixed(2)}</span>
+          <span className="text-xl font-extrabold text-[var(--billing-cart-total-text)]">₹{finalAmount.toFixed(2)}</span>
         </div>
 
         <Select value={paymentMode} onValueChange={(val) => { setPaymentMode(val as BillInputPaymentMode); if (val !== "khata") setSelectedCustomerId(""); }}>
@@ -588,11 +588,11 @@ export default function Billing() {
             <SelectItem value="khata">Khata (Udhaar)</SelectItem>
           </SelectContent>
         </Select>
-        
+
         {(paymentMode === "khata" || cart.length > 0) && (
           <CustomerPicker customers={customers} value={selectedCustomerId} onChange={setSelectedCustomerId} required={paymentMode === "khata"} />
         )}
-        
+
         <Button
           className="w-full h-12 text-base font-bold"
           disabled={cart.length === 0 || createBill.isPending || billSuccess}
@@ -605,7 +605,7 @@ export default function Billing() {
             `Bill Karo — ₹${finalAmount.toFixed(0)}`
           )}
         </Button>
-        
+
         {cart.length > 0 && (
           <button
             className="text-xs text-muted-foreground hover:text-destructive underline underline-offset-2 transition-colors"
@@ -636,7 +636,7 @@ export default function Billing() {
               />
             </div>
             {cartCount > 0 && (
-              <Badge className="[background-color:var(--billing-cart-badge-bg)] [color:var(--billing-cart-badge-text)] px-2.5 py-1 text-sm font-bold">{cartCount}</Badge>
+              <Badge className="bg-[var(--billing-cart-badge-bg)] text-[var(--billing-cart-badge-text)] px-2.5 py-1 text-sm font-bold">{cartCount}</Badge>
             )}
           </div>
 
@@ -658,26 +658,30 @@ export default function Billing() {
                     <Card
                       key={product.id}
                       data-testid={`card-product-${product.id}`}
-                      onClick={() => !outOfStock && addToCart(product)}
+                      onClick={() => {
+                        if (outOfStock) return;
+                        if (inCart) removeFromCart(product.id);
+                        else addToCart(product);
+                      }}
                       className={cn(
                         "cursor-pointer transition-all duration-150 select-none",
                         outOfStock ? "opacity-50 cursor-not-allowed" : "hover:border-primary hover:shadow-sm active:scale-[0.97]",
-                        inCart && "[border-color:var(--billing-product-in-cart-border)] [background-color:var(--billing-product-in-cart-bg)]"
+                        inCart && "border-[var(--billing-product-in-cart-border)] bg-[var(--billing-product-in-cart-bg)]"
                       )}
                     >
                       <CardContent className="p-3 space-y-1.5">
                         <p className="font-semibold text-sm leading-tight line-clamp-2">{product.name}</p>
                         <p className="text-[10px] text-muted-foreground">{product.category}</p>
                         <div className="flex items-center justify-between">
-                          <span className="text-base font-extrabold [color:var(--billing-product-price)]">₹{product.sellingPrice}</span>
+                          <span className="text-base font-extrabold text-[var(--billing-product-price)]">₹{product.sellingPrice}</span>
                           <span className={cn(
                             "text-[10px] font-medium",
-                            outOfStock ? "[color:var(--billing-stock-out)]" : product.currentStock <= product.lowStockThreshold ? "[color:var(--billing-stock-low)]" : "[color:var(--billing-stock-ok)]"
+                            outOfStock ? "text-[var(--billing-stock-out)]" : product.currentStock <= product.lowStockThreshold ? "text-[var(--billing-stock-low)]" : "text-[var(--billing-stock-ok)]"
                           )}>
                             {outOfStock ? "Khatam" : `${product.currentStock} left`}
                           </span>
                         </div>
-                        {inCart && <div className="text-[10px] font-semibold [color:var(--billing-product-in-cart-label)]">Cart: {inCart.quantity} pcs</div>}
+                        {inCart && <div className="text-[10px] font-semibold text-[var(--billing-product-in-cart-label)]">Cart: {inCart.quantity} pcs</div>}
                       </CardContent>
                     </Card>
                   );
@@ -694,14 +698,14 @@ export default function Billing() {
 
       {/* Mobile Layout */}
       <div className="flex md:hidden flex-col h-[calc(100dvh-3.5rem-4rem)] gap-0">
-        <div className="flex rounded-xl border [background-color:var(--billing-tab-bar-bg)] p-1 gap-1 shrink-0 mb-3">
+        <div className="flex rounded-xl border bg-[var(--billing-tab-bar-bg)] p-1 gap-1 shrink-0 mb-3">
           <button
             onClick={() => setMobileTab("products")}
             className={cn(
               "flex-1 flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-all",
               mobileTab === "products"
-                ? "[background-color:var(--billing-tab-active-bg)] shadow-sm [color:var(--billing-tab-active-text)]"
-                : "[color:var(--billing-tab-inactive-text)]"
+                ? "bg-[var(--billing-tab-active-bg)] shadow-sm text-[var(--billing-tab-active-text)]"
+                : "text-[var(--billing-tab-inactive-text)]"
             )}
           >
             <Search className="h-4 w-4" />
@@ -712,15 +716,15 @@ export default function Billing() {
             className={cn(
               "flex-1 flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-all",
               mobileTab === "cart"
-                ? "[background-color:var(--billing-tab-active-bg)] shadow-sm [color:var(--billing-tab-active-text)]"
-                : "[color:var(--billing-tab-inactive-text)]"
+                ? "bg-[var(--billing-tab-active-bg)] shadow-sm text-[var(--billing-tab-active-text)]"
+                : "text-[var(--billing-tab-inactive-text)]"
             )}
             data-testid="button-view-cart"
           >
             <ShoppingCart className="h-4 w-4" />
             Cart
             {cartCount > 0 && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full [background-color:var(--billing-tab-badge-bg)] text-[10px] font-bold [color:var(--billing-tab-badge-text)]">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--billing-tab-badge-bg)] text-[10px] font-bold text-[var(--billing-tab-badge-text)]">
                 {cartCount}
               </span>
             )}
@@ -759,30 +763,30 @@ export default function Billing() {
                         key={product.id}
                         data-testid={`card-product-${product.id}`}
                         onClick={() => {
-                          if (!outOfStock) {
-                            addToCart(product);
-                          }
+                          if (outOfStock) return;
+                          if (inCart) removeFromCart(product.id);
+                          else addToCart(product);
                         }}
                         className={cn(
                           "cursor-pointer transition-all duration-150 select-none active:scale-[0.96]",
                           outOfStock ? "opacity-50 cursor-not-allowed" : "hover:border-primary",
-                          inCart && "[border-color:var(--billing-product-in-cart-border)] [background-color:var(--billing-product-in-cart-bg)]"
+                          inCart && "border-[var(--billing-product-in-cart-border)] bg-[var(--billing-product-in-cart-bg)]"
                         )}
                       >
                         <CardContent className="p-3 space-y-1">
                           <p className="font-semibold text-sm leading-tight line-clamp-2">{product.name}</p>
                           <p className="text-[10px] text-muted-foreground">{product.category}</p>
                           <div className="flex items-center justify-between mt-1">
-                            <span className="text-base font-extrabold [color:var(--billing-product-price)]">₹{product.sellingPrice}</span>
+                            <span className="text-base font-extrabold text-[var(--billing-product-price)]">₹{product.sellingPrice}</span>
                             <span className={cn(
                               "text-[10px] font-medium",
-                              outOfStock ? "[color:var(--billing-stock-out)]" : product.currentStock <= product.lowStockThreshold ? "[color:var(--billing-stock-low)]" : "[color:var(--billing-stock-ok)]"
+                              outOfStock ? "text-[var(--billing-stock-out)]" : product.currentStock <= product.lowStockThreshold ? "text-[var(--billing-stock-low)]" : "text-[var(--billing-stock-ok)]"
                             )}>
                               {outOfStock ? "Khatam" : `${product.currentStock}`}
                             </span>
                           </div>
                           {inCart && (
-                            <div className="text-[10px] font-bold [color:var(--billing-product-in-cart-label)] [background-color:var(--billing-product-in-cart-label-bg)] rounded px-1.5 py-0.5 text-center">
+                            <div className="text-[10px] font-bold text-[var(--billing-product-in-cart-label)] bg-[var(--billing-product-in-cart-label-bg)] rounded px-1.5 py-0.5 text-center">
                               ✓ {inCart.quantity} in cart
                             </div>
                           )}
@@ -797,7 +801,7 @@ export default function Billing() {
             {cartCount > 0 && (
               <button
                 onClick={() => setMobileTab("cart")}
-                className="shrink-0 flex items-center justify-between w-full rounded-xl [background-color:var(--billing-sticky-btn-bg)] px-4 py-3 [color:var(--billing-sticky-btn-text)] shadow-lg active:scale-[0.98] transition-transform"
+                className="shrink-0 flex items-center justify-between w-full rounded-xl bg-[var(--billing-sticky-btn-bg)] px-4 py-3 text-[var(--billing-sticky-btn-text)] shadow-lg active:scale-[0.98] transition-transform"
                 data-testid="button-view-cart-sticky"
               >
                 <div className="flex items-center gap-2">

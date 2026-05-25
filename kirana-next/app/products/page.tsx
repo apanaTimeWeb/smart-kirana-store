@@ -113,9 +113,9 @@ function ProductForm({
         />
 
         {/* Bulk Kharidari Calculation */}
-        <div className="border-2 [border-color:var(--products-calc-border)] [background-color:var(--products-calc-bg)] rounded-2xl p-6">
+        <div className="border-2 border-[var(--products-calc-border)] bg-[var(--products-calc-bg)] rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-5">
-            <Calculator className="h-5 w-5 [color:var(--products-calc-icon)]" />
+            <Calculator className="h-5 w-5 text-[var(--products-calc-icon)]" />
             <h3 className="font-bold text-lg">Bulk Kharidari Calculation</h3>
           </div>
 
@@ -172,9 +172,9 @@ function ProductForm({
             )} />
           </div>
 
-          <div className="mt-6 [background-color:var(--products-calc-result-bg)] border-2 [border-color:var(--products-calc-result-border)] rounded-xl p-5 text-center">
-            <p className="text-sm [color:var(--products-calc-result-label)] font-medium">PURCHASE RATE (PER KG / PER L)</p>
-            <p className="text-4xl font-bold [color:var(--products-calc-result-value)] mt-1">₹{calculatedPerKg}</p>
+          <div className="mt-6 bg-[var(--products-calc-result-bg)] border-2 border-[var(--products-calc-result-border)] rounded-xl p-5 text-center">
+            <p className="text-sm text-[var(--products-calc-result-label)] font-medium">PURCHASE RATE (PER KG / PER L)</p>
+            <p className="text-4xl font-bold text-[var(--products-calc-result-value)] mt-1">₹{calculatedPerKg}</p>
           </div>
         </div>
 
@@ -387,22 +387,22 @@ export default function Products() {
                   <p className="font-semibold text-sm truncate">{product.name}</p>
                   <Badge
                     variant={status.variant}
-                    className={status.label === "Low Stock" ? "[background-color:var(--products-badge-lowstock-bg)] [color:var(--products-badge-lowstock-text)] [border-color:var(--products-badge-lowstock-border)] text-[10px]" : "text-[10px]"}
+                    className={status.label === "Low Stock" ? "bg-[var(--products-badge-lowstock-bg)] text-[var(--products-badge-lowstock-text)] border-[var(--products-badge-lowstock-border)] text-[10px]" : "text-[10px]"}
                   >
                     {status.label}
                   </Badge>
                 </div>
                 <div className="flex items-center gap-3 mt-1 flex-wrap">
                   <span className="text-xs text-muted-foreground">{product.currentStock} {product.unit}</span>
-                  <span className="text-xs font-semibold [color:var(--products-selling-price)]">₹{product.sellingPrice}</span>
-                  <span className="text-xs [color:var(--products-margin)]">{margin(product)}% margin</span>
+                  <span className="text-xs font-semibold text-[var(--products-selling-price)]">₹{product.sellingPrice}</span>
+                  <span className="text-xs text-[var(--products-margin)]">{margin(product)}% margin</span>
                 </div>
               </div>
               <div className="flex items-center gap-1 shrink-0">
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingProduct(product)}>
                   <Edit className="h-3.5 w-3.5" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 [color:var(--products-btn-delete-text)]" onClick={() => handleDelete(product.id, product.name)}>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--products-btn-delete-text)]" onClick={() => handleDelete(product.id, product.name)}>
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
               </div>
@@ -434,17 +434,17 @@ export default function Products() {
                   <TableCell className="font-semibold">{product.name}</TableCell>
                   <TableCell>{product.currentStock} <span className="text-xs text-muted-foreground">{product.unit}</span></TableCell>
                   <TableCell>
-                    <Badge variant={status.variant} className={status.label === "Low Stock" ? "[background-color:var(--products-badge-lowstock-bg)] [color:var(--products-badge-lowstock-text)] [border-color:var(--products-badge-lowstock-border)]" : ""}>
+                    <Badge variant={status.variant} className={status.label === "Low Stock" ? "bg-[var(--products-badge-lowstock-bg)] text-[var(--products-badge-lowstock-text)] border-[var(--products-badge-lowstock-border)]" : ""}>
                       {status.label}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-center font-bold [color:var(--products-purchase-rate)]">₹{product.purchasePricePerKg}</TableCell>
-                  <TableCell className="text-center font-semibold [color:var(--products-selling-price)]">₹{product.sellingPrice}</TableCell>
-                  <TableCell className="text-center font-medium [color:var(--products-margin)]">{margin(product)}%</TableCell>
+                  <TableCell className="text-center font-bold text-[var(--products-purchase-rate)]">₹{product.purchasePricePerKg}</TableCell>
+                  <TableCell className="text-center font-semibold text-[var(--products-selling-price)]">₹{product.sellingPrice}</TableCell>
+                  <TableCell className="text-center font-medium text-[var(--products-margin)]">{margin(product)}%</TableCell>
                   <TableCell>{product.expiryDate ? new Date(product.expiryDate).toLocaleDateString('hi-IN') : "-"}</TableCell>
                   <TableCell className="text-right space-x-1">
                     <Button variant="ghost" size="icon" onClick={() => setEditingProduct(product)}><Edit className="h-4 w-4" /></Button>
-                    <Button variant="ghost" size="icon" className="[color:var(--products-btn-delete-text)]" onClick={() => handleDelete(product.id, product.name)}><Trash2 className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" className="text-[var(--products-btn-delete-text)]" onClick={() => handleDelete(product.id, product.name)}><Trash2 className="h-4 w-4" /></Button>
                   </TableCell>
                 </TableRow>
               );
