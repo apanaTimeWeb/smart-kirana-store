@@ -1,0 +1,34 @@
+/*
+ * products.css — Products Feature Color Tokens
+ *
+ * All colors for the Products page live here.
+ * Usage in JSX: className="[color:var(--products-purchase-rate)]"
+ */
+
+@layer components {
+
+  :root {
+    /* ── Bulk Calculation Box ──────────────────────────────────── */
+    --products-calc-border:             hsl(217 91% 80%);             /* border-blue-200 */
+    --products-calc-bg:                 hsl(217 91% 97%);             /* bg-blue-50/70 */
+    --products-calc-icon:               hsl(217 91% 50%);             /* text-blue-600 */
+    --products-calc-result-border:      hsl(142 60% 40%);             /* border-green-500 */
+    --products-calc-result-bg:          hsl(var(--card));             /* bg-white */
+    --products-calc-result-label:       hsl(142 60% 28%);             /* text-green-700 */
+    --products-calc-result-value:       hsl(142 60% 28%);             /* text-green-700 */
+
+    /* ── Table Columns ────────────────────────────────────────── */
+    --products-purchase-rate:           hsl(217 91% 35%);             /* text-blue-700 */
+    --products-selling-price:           hsl(142 60% 28%);             /* text-green-700 */
+    --products-margin:                  hsl(152 60% 35%);             /* text-emerald-600 */
+
+    /* ── Stock Status Badge ───────────────────────────────────── */
+    --products-badge-lowstock-bg:       hsl(24 90% 93%);              /* bg-orange-100 */
+    --products-badge-lowstock-text:     hsl(24 90% 35%);              /* text-orange-700 */
+    --products-badge-lowstock-border:   hsl(24 90% 75%);              /* border-orange-200 */
+
+    /* ── Delete Button ────────────────────────────────────────── */
+    --products-btn-delete-text:         hsl(var(--destructive));      /* text-red-600 */
+  }
+
+}

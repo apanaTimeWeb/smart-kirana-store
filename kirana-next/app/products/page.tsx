@@ -1,5 +1,6 @@
 "use client";
 
+import "./products.css";
 import { useState, useMemo } from "react";
 import {
   useListProducts,
@@ -112,9 +113,9 @@ function ProductForm({
         />
 
         {/* Bulk Kharidari Calculation */}
-        <div className="border-2 border-blue-200 bg-blue-50/70 rounded-2xl p-6">
+        <div className="border-2 [border-color:var(--products-calc-border)] [background-color:var(--products-calc-bg)] rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-5">
-            <Calculator className="h-5 w-5 text-blue-600" />
+            <Calculator className="h-5 w-5 [color:var(--products-calc-icon)]" />
             <h3 className="font-bold text-lg">Bulk Kharidari Calculation</h3>
           </div>
 
@@ -171,9 +172,9 @@ function ProductForm({
             )} />
           </div>
 
-          <div className="mt-6 bg-white border-2 border-green-500 rounded-xl p-5 text-center">
-            <p className="text-sm text-green-700 font-medium">PURCHASE RATE (PER KG / PER L)</p>
-            <p className="text-4xl font-bold text-green-700 mt-1">₹{calculatedPerKg}</p>
+          <div className="mt-6 [background-color:var(--products-calc-result-bg)] border-2 [border-color:var(--products-calc-result-border)] rounded-xl p-5 text-center">
+            <p className="text-sm [color:var(--products-calc-result-label)] font-medium">PURCHASE RATE (PER KG / PER L)</p>
+            <p className="text-4xl font-bold [color:var(--products-calc-result-value)] mt-1">₹{calculatedPerKg}</p>
           </div>
         </div>
 
@@ -399,15 +400,15 @@ export default function Products() {
                   <TableCell>
                     <Badge 
                       variant={status.variant}
-                      className={status.label === "Low Stock" ? "bg-orange-100 text-orange-700 border-orange-200" : ""}
+                      className={status.label === "Low Stock" ? "[background-color:var(--products-badge-lowstock-bg)] [color:var(--products-badge-lowstock-text)] [border-color:var(--products-badge-lowstock-border)]" : ""}
                     >
                       {status.label}
                     </Badge>
                   </TableCell>
 
-                  <TableCell className="text-center font-bold text-blue-700">₹{product.purchasePricePerKg}</TableCell>
-                  <TableCell className="text-center font-semibold text-green-700">₹{product.sellingPrice}</TableCell>
-                  <TableCell className="text-center font-medium text-emerald-600">{margin(product)}%</TableCell>
+                  <TableCell className="text-center font-bold [color:var(--products-purchase-rate)]">₹{product.purchasePricePerKg}</TableCell>
+                  <TableCell className="text-center font-semibold [color:var(--products-selling-price)]">₹{product.sellingPrice}</TableCell>
+                  <TableCell className="text-center font-medium [color:var(--products-margin)]">{margin(product)}%</TableCell>
                   <TableCell>
                     {product.expiryDate ? new Date(product.expiryDate).toLocaleDateString('hi-IN') : "-"}
                   </TableCell>
@@ -415,7 +416,7 @@ export default function Products() {
                     <Button variant="ghost" size="icon" onClick={() => setEditingProduct(product)}>
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="text-red-600" onClick={() => handleDelete(product.id, product.name)}>
+                    <Button variant="ghost" size="icon" className="[color:var(--products-btn-delete-text)]" onClick={() => handleDelete(product.id, product.name)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </TableCell>
