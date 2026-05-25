@@ -132,7 +132,7 @@ function CustomerPicker({
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute bottom-full mb-1 left-0 right-0 z-50 rounded-lg border bg-white shadow-xl overflow-hidden">
+          <div className="absolute bottom-full mb-1 left-0 right-0 z-50 rounded-lg border [background-color:var(--billing-cart-bg)] shadow-xl overflow-hidden">
             {!showAdd ? (
               <>
                 <div className="flex items-center gap-2 border-b px-3 py-2">
