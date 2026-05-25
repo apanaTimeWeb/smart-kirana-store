@@ -284,7 +284,7 @@ function KhataLedger({ customerId }: { customerId: number }) {
                   <div className="text-sm text-muted-foreground">{format(new Date(tx.createdAt), "dd MMM yyyy")}</div>
                   <div className="flex items-start gap-3 pr-4">
                     <div className={cn("mt-0.5 h-6 w-6 rounded-full flex items-center justify-center shrink-0",
-                      tx.type === "credit" ? "[background-color:var(--customers-tx-credit-icon-bg)] [color:var(--customers-tx-credit-icon-text)]" : "[background-color:var(--customers-tx-payment-icon-bg)] [color:var(--customers-tx-payment-icon-text)]")>
+                      tx.type === "credit" ? "[background-color:var(--customers-tx-credit-icon-bg)] [color:var(--customers-tx-credit-icon-text)]" : "[background-color:var(--customers-tx-payment-icon-bg)] [color:var(--customers-tx-payment-icon-text)]")}>
                       {tx.type === "credit" ? <ArrowUpRight size={15} /> : <ArrowDownRight size={15} />}
                     </div>
                     <p className="text-sm leading-tight">{tx.description}</p>
