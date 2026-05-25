@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -12,6 +12,7 @@ import {
   Store,
   MoreHorizontal,
   X,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -75,7 +76,12 @@ function SidebarNavItem({
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [moreOpen, setMoreOpen] = useState(false);
+
+  const handleLogout = () => {
+    router.push("/");
+  };
 
   const isActive = (href: string) =>
     href === "/dashboard"
@@ -102,8 +108,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <SidebarNavItem key={item.href} item={item} isActive={isActive(item.href)} />
           ))}
         </nav>
-        <div className="border-t border-sidebar-border px-4 py-3">
-          <p className="text-[10px] text-muted-foreground text-center">
+        <div className="border-t border-sidebar-border px-3 py-3 space-y-1">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-150"
+          >
+            <LogOut className="h-5 w-5 flex-shrink-0" />
+            <div className="flex flex-col leading-tight text-left">
+              <span className="text-sm">Logout</span>
+              <span className="text-[11px] font-normal">बाहर जाएं</span>
+            </div>
+          </button>
+          <p className="text-[10px] text-muted-foreground text-center pt-1">
             Vyapar jitna useful · Khatabook jitna simple
           </p>
         </div>
@@ -221,6 +237,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </Link>
               ))}
             </div>
+            <button
+              onClick={() => { setMoreOpen(false); handleLogout(); }}
+              className="mt-3 w-full flex items-center gap-3 rounded-xl border border-destructive/20 p-4 text-destructive hover:bg-destructive/10 transition-colors"
+            >
+              <LogOut className="h-5 w-5 shrink-0" />
+              <div>
+                <p className="font-semibold text-sm">Logout</p>
+                <p className="text-[10px] opacity-70">बाहर जाएं</p>
+              </div>
+            </button>
           </div>
         </>
       )}

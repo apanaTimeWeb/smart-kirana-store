@@ -1,11 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
-import { Layout } from "@/components/layout";
 
 export const metadata: Metadata = {
   title: "Smart Kirana Store",
-  description: "Smart POS for Kirana shops",
+  description: "Smart POS for Kirana shops — Billing, Khata, Stock sab ek jagah",
 };
 
 export const viewport: Viewport = {
@@ -16,17 +15,11 @@ export const viewport: Viewport = {
   themeColor: "#0d9488",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <Providers>
-          <Layout>{children}</Layout>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

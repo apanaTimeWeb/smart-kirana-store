@@ -5,6 +5,11 @@ const API_URL = process.env.NEST_API_URL || "http://localhost:3000";
 const nextConfig: NextConfig = {
   serverExternalPackages: ["pg"],
   outputFileTracingRoot: process.cwd(),
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "images.unsplash.com" },
+    ],
+  },
   allowedDevOrigins: [
     "*.replit.dev",
     "*.sisko.replit.dev",
