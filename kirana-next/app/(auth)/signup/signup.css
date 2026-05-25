@@ -1,0 +1,22 @@
+/*
+ * signup.css — Signup Page Color Tokens
+ *
+ * All colors for the Signup page live here.
+ * Usage in JSX: className="bg-[var(--signup-logo-bg)]"
+ */
+
+@layer components {
+
+  :root {
+    /* ── Logo ─────────────────────────────────────────────────── */
+    --signup-logo-bg:                   hsl(var(--primary));
+    --signup-logo-text:                 hsl(var(--primary-foreground));
+
+    /* ── Form ─────────────────────────────────────────────────── */
+    --signup-link-text:                 hsl(var(--primary));
+
+    /* ── Back link ────────────────────────────────────────────── */
+    --signup-back-hover:                hsl(var(--primary));
+  }
+
+}

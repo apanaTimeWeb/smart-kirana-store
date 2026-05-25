@@ -1,5 +1,6 @@
 "use client";
 
+import "./login.css";
 import Link from "next/link";
 import { useState } from "react";
 import { Store, Eye, EyeOff, ArrowRight } from "lucide-react";
@@ -17,17 +18,13 @@ export default function LoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      router.push("/dashboard");
-    }, 800);
+    setTimeout(() => { setLoading(false); router.push("/dashboard"); }, 800);
   };
 
   return (
     <div className="w-full max-w-sm">
-      {/* Logo */}
       <div className="flex flex-col items-center mb-8">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg mb-3">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--login-logo-bg)] text-[var(--login-logo-text)] shadow-lg mb-3">
           <Store className="h-7 w-7" />
         </div>
         <h1 className="text-2xl font-bold tracking-tight">Smart Kirana</h1>
@@ -61,7 +58,7 @@ export default function LoginPage() {
 
           <div className="mt-5 text-center text-sm text-muted-foreground">
             Naya account?{" "}
-            <Link href="/signup" className="text-primary font-semibold hover:underline">
+            <Link href="/signup" className="text-[var(--login-link-text)] font-semibold hover:underline">
               Register Karein
             </Link>
           </div>
@@ -69,7 +66,7 @@ export default function LoginPage() {
       </Card>
 
       <p className="text-center text-xs text-muted-foreground mt-6">
-        <Link href="/" className="hover:text-primary transition-colors">← Wapas Home Par</Link>
+        <Link href="/" className="hover:text-[var(--login-back-hover)] transition-colors">← Wapas Home Par</Link>
       </p>
     </div>
   );

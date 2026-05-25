@@ -1,5 +1,6 @@
 "use client";
 
+import "./signup.css";
 import Link from "next/link";
 import { useState } from "react";
 import { Store, Eye, EyeOff, ArrowRight } from "lucide-react";
@@ -17,17 +18,13 @@ export default function SignupPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      router.push("/dashboard");
-    }, 800);
+    setTimeout(() => { setLoading(false); router.push("/dashboard"); }, 800);
   };
 
   return (
     <div className="w-full max-w-sm">
-      {/* Logo */}
       <div className="flex flex-col items-center mb-8">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg mb-3">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--signup-logo-bg)] text-[var(--signup-logo-text)] shadow-lg mb-3">
           <Store className="h-7 w-7" />
         </div>
         <h1 className="text-2xl font-bold tracking-tight">Smart Kirana</h1>
@@ -69,7 +66,7 @@ export default function SignupPage() {
 
           <div className="mt-5 text-center text-sm text-muted-foreground">
             Pehle se account hai?{" "}
-            <Link href="/login" className="text-primary font-semibold hover:underline">
+            <Link href="/login" className="text-[var(--signup-link-text)] font-semibold hover:underline">
               Login Karein
             </Link>
           </div>
@@ -77,7 +74,7 @@ export default function SignupPage() {
       </Card>
 
       <p className="text-center text-xs text-muted-foreground mt-6">
-        <Link href="/" className="hover:text-primary transition-colors">← Wapas Home Par</Link>
+        <Link href="/" className="hover:text-[var(--signup-back-hover)] transition-colors">← Wapas Home Par</Link>
       </p>
     </div>
   );

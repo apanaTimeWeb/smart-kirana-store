@@ -1,0 +1,82 @@
+/*
+ * landing.css — Landing Page Color Tokens
+ *
+ * All colors for the Landing page live here.
+ * Usage in JSX: className="bg-[var(--landing-hero-badge-bg)]"
+ */
+
+@layer components {
+
+  :root {
+    /* ── Navbar ───────────────────────────────────────────────── */
+    --landing-nav-bg:                   hsl(var(--card) / 0.80);
+
+    /* ── Hero ─────────────────────────────────────────────────── */
+    --landing-hero-badge-bg:            hsl(var(--primary) / 0.10);
+    --landing-hero-badge-text:          hsl(var(--primary));
+    --landing-hero-badge-border:        hsl(var(--primary) / 0.20);
+    --landing-hero-highlight:           hsl(var(--primary));
+
+    /* ── Stats Bar ────────────────────────────────────────────── */
+    --landing-stats-value:              hsl(var(--primary));
+
+    /* ── Feature Cards ────────────────────────────────────────── */
+    --landing-feature-billing-bg:       hsl(174 25% 95%);            /* teal-50 */
+    --landing-feature-billing-border:   hsl(174 25% 85%);            /* teal-200 */
+    --landing-feature-billing-text:     hsl(var(--primary));
+
+    --landing-feature-khata-bg:         hsl(38 90% 95%);             /* amber-50 */
+    --landing-feature-khata-border:     hsl(38 90% 85%);             /* amber-200 */
+    --landing-feature-khata-text:       hsl(38 90% 42%);             /* warning */
+
+    --landing-feature-stock-bg:         hsl(0 84% 97%);              /* red-50 */
+    --landing-feature-stock-border:     hsl(0 84% 88%);              /* red-200 */
+    --landing-feature-stock-text:       hsl(var(--destructive));
+
+    --landing-feature-reports-bg:       hsl(142 60% 97%);            /* green-50 */
+    --landing-feature-reports-border:   hsl(142 60% 85%);            /* green-200 */
+    --landing-feature-reports-text:     hsl(142 60% 28%);            /* positive */
+
+    /* ── Problem/Solution Cards ───────────────────────────────── */
+    --landing-problem-icon-bg:          hsl(var(--destructive) / 0.10);
+    --landing-problem-icon:             hsl(var(--destructive));
+    --landing-solution-icon-bg:         hsl(142 60% 97%);            /* green-50 */
+    --landing-solution-icon:            hsl(142 60% 28%);            /* positive */
+
+    /* ── Section Badges ───────────────────────────────────────── */
+    --landing-badge-problems-bg:        hsl(0 84% 97%);
+    --landing-badge-problems-text:      hsl(var(--destructive));
+    --landing-badge-problems-border:    hsl(0 84% 88%);
+
+    --landing-badge-features-bg:        hsl(174 25% 95%);
+    --landing-badge-features-text:      hsl(var(--primary));
+    --landing-badge-features-border:    hsl(174 25% 85%);
+
+    --landing-badge-steps-bg:           hsl(38 90% 95%);
+    --landing-badge-steps-text:         hsl(38 90% 42%);
+    --landing-badge-steps-border:       hsl(38 90% 85%);
+
+    --landing-badge-reviews-bg:         hsl(142 60% 97%);
+    --landing-badge-reviews-text:       hsl(142 60% 28%);
+    --landing-badge-reviews-border:     hsl(142 60% 85%);
+
+    /* ── How It Works Steps ───────────────────────────────────── */
+    --landing-step1-bg:                 hsl(174 25% 95%);
+    --landing-step1-text:               hsl(var(--primary));
+    --landing-step1-border:             hsl(174 25% 85%);
+
+    --landing-step2-bg:                 hsl(38 90% 95%);
+    --landing-step2-text:               hsl(38 90% 42%);
+    --landing-step2-border:             hsl(38 90% 85%);
+
+    --landing-step3-bg:                 hsl(142 60% 97%);
+    --landing-step3-text:               hsl(142 60% 28%);
+    --landing-step3-border:             hsl(142 60% 85%);
+
+    /* ── Testimonials ─────────────────────────────────────────── */
+    --landing-star-color:               hsl(38 90% 42%);             /* amber/warning */
+    --landing-avatar-bg:                hsl(var(--primary) / 0.10);
+    --landing-avatar-text:              hsl(var(--primary));
+  }
+
+}
