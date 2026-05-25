@@ -18,14 +18,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Search, ShoppingCart, Trash2, Plus, Minus, CheckCircle2,
-  UserPlus, X, ChevronDown, User, ArrowLeft,
+  UserPlus, X, ChevronDown, User,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 type CartItem = {
   productId: number;
@@ -239,6 +241,8 @@ export default function Billing() {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>("");
   const [billSuccess, setBillSuccess] = useState(false);
   const [mobileTab, setMobileTab] = useState<"products" | "cart">("products");
+  const [enableGST, setEnableGST] = useState(false);
+  const [gstRate, setGstRate] = useState(18); // 18% GST
 
   const filteredProducts = useMemo(() => {
     if (!search) return products;
@@ -274,9 +278,112 @@ export default function Billing() {
     setCart((prev) => prev.filter((item) => item.productId !== productId));
   };
 
-  const totalAmount = cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-  const finalAmount = Math.max(0, totalAmount - discount);
+  const subtotal = cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+  const taxableValue = Math.max(0, subtotal - discount);
+  const gstAmount = enableGST ? (taxableValue * gstRate) / 100 : 0;
+  const cgstAmount = gstAmount / 2;
+  const sgstAmount = gstAmount / 2;
+  const finalAmount = taxableValue + gstAmount;
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  // Get shop name from localStorage
+  const shopName = (() => {
+    try {
+      const s = typeof window !== "undefined" ? localStorage.getItem("kirana_settings") : null;
+      if (s) return JSON.parse(s).shopName || "Smart Kirana Store";
+    } catch {}
+    return "Smart Kirana Store";
+  })();
+
+  // GST Bill Print Function
+  const printThermalBill = (billData: {
+    items: CartItem[];
+    customerName?: string;
+    subtotal: number;
+    discount: number;
+    taxableValue: number;
+    gstAmount: number;
+    cgstAmount: number;
+    sgstAmount: number;
+    finalAmount: number;
+    paymentMode: string;
+    enableGST: boolean;
+    gstRate: number;
+  }) => {
+    const win = window.open("", "_blank", "width=400,height=600");
+    if (!win) return;
+
+    const rows = billData.items.map((item) => `
+      <tr>
+        <td style="padding:3px 0;">${item.productName}</td>
+        <td style="padding:3px 0; text-align:right;">${item.quantity} x ₹${item.unitPrice}</td>
+        <td style="padding:3px 0; text-align:right;">₹${(item.quantity * item.unitPrice).toFixed(0)}</td>
+      </tr>
+    `).join("");
+
+    win.document.write(`
+      <html><head><title>Tax Invoice</title>
+      <style>
+        body { font-family: monospace; font-size: 13px; width: 300px; margin: 0 auto; padding: 10px; }
+        .center { text-align: center; }
+        .bold { font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 4px 0; }
+        hr { border: none; border-top: 1px dashed #000; margin: 8px 0; }
+        .gst-details { font-size: 11px; margin-top: 5px; }
+      </style>
+      </head><body>
+        <div class="center bold"><h2>${shopName}</h2><p>Tax Invoice</p></div>
+        <hr/>
+        <p><strong>Date:</strong> ${format(new Date(), "dd MMM yyyy, hh:mm a")}</p>
+        ${billData.customerName ? `<p><strong>Customer:</strong> ${billData.customerName}</p>` : ''}
+        <hr/>
+        <table>
+          <thead><tr><th>Item</th><th style="text-align:right">Qty x Rate</th><th style="text-align:right">Amt</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <hr/>
+        <div style="display:flex;justify-content:space-between;">
+          <span>Subtotal:</span><span>₹${billData.subtotal.toFixed(0)}</span>
+        </div>
+        ${billData.discount > 0 ? `
+        <div style="display:flex;justify-content:space-between;">
+          <span>Discount:</span><span>-₹${billData.discount.toFixed(0)}</span>
+        </div>` : ''}
+        <div style="display:flex;justify-content:space-between;">
+          <span>Taxable Value:</span><span>₹${billData.taxableValue.toFixed(0)}</span>
+        </div>
+        ${billData.enableGST ? `
+        <div style="display:flex;justify-content:space-between;" class="gst-details">
+          <span>CGST (${billData.gstRate/2}%):</span><span>₹${billData.cgstAmount.toFixed(0)}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;" class="gst-details">
+          <span>SGST (${billData.gstRate/2}%):</span><span>₹${billData.sgstAmount.toFixed(0)}</span>
+        </div>
+        ` : ''}
+        <hr/>
+        <div class="bold" style="display:flex;justify-content:space-between;font-size:15px;">
+          <span>Total :</span><span>₹${billData.finalAmount.toFixed(0)}</span>
+        </div>
+        <hr/>
+        <div style="display:flex;justify-content:space-between;">
+          <span>Payment Mode:</span><span>${billData.paymentMode === 'cash' ? 'Cash' : billData.paymentMode === 'upi' ? 'UPI' : 'Khata'}</span>
+        </div>
+        ${billData.enableGST ? `
+        <div class="gst-details center" style="margin-top:8px;">
+          GSTIN: 27AAAAA1234A1Z<br/>
+          HSN/SAC: As per invoice
+        </div>
+        ` : ''}
+        <hr/>
+        <div class="center" style="margin-top:15px;font-size:12px;">Thank You! Visit Again</div>
+      </body></html>
+    `);
+    win.document.close();
+    setTimeout(() => {
+      win.print();
+    }, 100);
+  };
 
   const handleCheckout = () => {
     if (cart.length === 0) return;
@@ -284,6 +391,10 @@ export default function Billing() {
       toast({ title: "Khata ke liye customer select karein", variant: "destructive" });
       return;
     }
+
+    const taxableValueCalc = Math.max(0, subtotal - discount);
+    const gstAmountCalc = enableGST ? (taxableValueCalc * gstRate) / 100 : 0;
+    const finalAmountCalc = taxableValueCalc + gstAmountCalc;
 
     createBill.mutate(
       {
@@ -295,30 +406,62 @@ export default function Billing() {
             unitPrice: item.unitPrice,
             totalPrice: item.unitPrice * item.quantity,
           })),
-          totalAmount,
+          totalAmount: subtotal,
           discountAmount: discount,
-          finalAmount,
+          taxableValue: taxableValueCalc,
+          gstAmount: gstAmountCalc,
+          finalAmount: finalAmountCalc,
           paymentMode,
+          enableGST,
+          gstRate: enableGST ? gstRate : 0,
         },
       },
       {
         onSuccess: () => {
+          const billData = {
+            items: [...cart],
+            customerName: customers.find(c => c.id.toString() === selectedCustomerId)?.name,
+            subtotal,
+            discount,
+            taxableValue: taxableValueCalc,
+            gstAmount: gstAmountCalc,
+            cgstAmount: gstAmountCalc / 2,
+            sgstAmount: gstAmountCalc / 2,
+            finalAmount: finalAmountCalc,
+            paymentMode,
+            enableGST,
+            gstRate,
+          };
+
+          printThermalBill(billData);
+
           setBillSuccess(true);
+          
+          queryClient.invalidateQueries({ queryKey: getListBillsQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
+
           setTimeout(() => {
-            setBillSuccess(false);
             setCart([]);
             setDiscount(0);
             setSelectedCustomerId("");
             setPaymentMode("cash");
-            setMobileTab("products");
-          }, 1200);
-          queryClient.invalidateQueries({ queryKey: getListBillsQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
+            setEnableGST(false);
+            setBillSuccess(false);
+          }, 1500);
+          
+          toast({ title: "Bill ban gaya!" });
         },
         onError: () => toast({ title: "Bill nahi bana", variant: "destructive" }),
       }
     );
+  };
+
+  const resetCart = () => {
+    setCart([]);
+    setDiscount(0);
+    setSelectedCustomerId("");
+    setEnableGST(false);
   };
 
   const CartPanel = (
@@ -372,8 +515,9 @@ export default function Billing() {
       <CardFooter className="flex-col border-t bg-muted/30 px-4 py-4 gap-3">
         <div className="flex justify-between w-full text-sm">
           <span className="text-muted-foreground">Subtotal</span>
-          <span className="font-medium">₹{totalAmount.toFixed(2)}</span>
+          <span className="font-medium">₹{subtotal.toFixed(2)}</span>
         </div>
+        
         <div className="flex items-center gap-2 w-full">
           <span className="text-sm text-muted-foreground whitespace-nowrap">Discount (₹)</span>
           <Input
@@ -382,10 +526,57 @@ export default function Billing() {
             className="h-8 text-right flex-1" data-testid="input-discount"
           />
         </div>
+
+        {/* GST Toggle */}
+        <div className="flex items-center justify-between w-full border-t pt-2">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="enableGST"
+              checked={enableGST}
+              onCheckedChange={(checked) => setEnableGST(checked as boolean)}
+              className="h-4 w-4"
+            />
+            <label htmlFor="enableGST" className="text-sm font-medium cursor-pointer">
+              Enable GST ({gstRate}%)
+            </label>
+          </div>
+          {enableGST && (
+            <Select value={gstRate.toString()} onValueChange={(val) => setGstRate(Number(val))}>
+              <SelectTrigger className="w-24 h-8 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="5">5%</SelectItem>
+                <SelectItem value="12">12%</SelectItem>
+                <SelectItem value="18">18%</SelectItem>
+                <SelectItem value="28">28%</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+
+        {enableGST && (
+          <>
+            <div className="flex justify-between w-full text-sm">
+              <span className="text-muted-foreground">Taxable Value</span>
+              <span className="font-medium">₹{Math.max(0, subtotal - discount).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between w-full text-xs text-muted-foreground">
+              <span>CGST ({gstRate/2}%)</span>
+              <span>₹{((Math.max(0, subtotal - discount) * gstRate / 100) / 2).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between w-full text-xs text-muted-foreground">
+              <span>SGST ({gstRate/2}%)</span>
+              <span>₹{((Math.max(0, subtotal - discount) * gstRate / 100) / 2).toFixed(2)}</span>
+            </div>
+          </>
+        )}
+
         <div className="flex justify-between w-full border-t pt-3">
           <span className="font-bold">Total</span>
           <span className="text-xl font-extrabold text-primary">₹{finalAmount.toFixed(2)}</span>
         </div>
+
         <Select value={paymentMode} onValueChange={(val) => { setPaymentMode(val as BillInputPaymentMode); if (val !== "khata") setSelectedCustomerId(""); }}>
           <SelectTrigger className="w-full" data-testid="select-payment-mode">
             <SelectValue placeholder="Payment tarika" />
@@ -396,9 +587,11 @@ export default function Billing() {
             <SelectItem value="khata">Khata (Udhaar)</SelectItem>
           </SelectContent>
         </Select>
+        
         {(paymentMode === "khata" || cart.length > 0) && (
           <CustomerPicker customers={customers} value={selectedCustomerId} onChange={setSelectedCustomerId} required={paymentMode === "khata"} />
         )}
+        
         <Button
           className="w-full h-12 text-base font-bold"
           disabled={cart.length === 0 || createBill.isPending || billSuccess}
@@ -407,12 +600,15 @@ export default function Billing() {
         >
           {billSuccess ? (
             <span className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5" /> Bill Hua!</span>
-          ) : createBill.isPending ? "Processing..." : `Bill Karo — ₹${finalAmount.toFixed(0)}`}
+          ) : (
+            `Bill Karo — ₹${finalAmount.toFixed(0)}`
+          )}
         </Button>
+        
         {cart.length > 0 && (
           <button
             className="text-xs text-muted-foreground hover:text-destructive underline underline-offset-2 transition-colors"
-            onClick={() => { setCart([]); setDiscount(0); setSelectedCustomerId(""); }}
+            onClick={resetCart}
           >
             Cart clear karein
           </button>
@@ -423,9 +619,8 @@ export default function Billing() {
 
   return (
     <>
-      {/* ── Desktop Layout ── */}
+      {/* Desktop Layout */}
       <div className="hidden md:flex h-[calc(100dvh-2*1.5rem)] gap-5">
-        {/* Left: Product Grid */}
         <div className="flex flex-1 flex-col gap-3 min-h-0">
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
@@ -491,15 +686,13 @@ export default function Billing() {
           </div>
         </div>
 
-        {/* Right: Cart */}
         <div className="w-80 lg:w-96 shrink-0 flex flex-col">
           {CartPanel}
         </div>
       </div>
 
-      {/* ── Mobile Layout ── */}
+      {/* Mobile Layout */}
       <div className="flex md:hidden flex-col h-[calc(100dvh-3.5rem-4rem)] gap-0">
-        {/* Mobile Tab Switcher */}
         <div className="flex rounded-xl border bg-muted/40 p-1 gap-1 shrink-0 mb-3">
           <button
             onClick={() => setMobileTab("products")}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   useListProducts,
   useCreateProduct,
@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, Edit, Trash2, Package, Calendar, Calculator } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Package, Calculator } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,7 +33,6 @@ const productSchema = z.object({
   lowStockThreshold: z.coerce.number().min(0, "Low stock alert 0 se kam nahi ho sakta"),
   unit: z.string().min(1, "Unit select karna zaruri hai"),
   expiryDate: z.string().optional(),
-  // Bulk Calculation Fields
   totalQuantity: z.coerce.number().min(0, "Quantity 0 se kam nahi ho sakti").optional(),
   totalAmountPaid: z.coerce.number().min(0, "Amount 0 se kam nahi ho sakta").optional(),
   quantityPerPack: z.coerce.number().min(0.01, "Ek pack mein weight/volume positive hona chahiye").optional(),
@@ -55,6 +54,7 @@ const UNITS = [
   { value: "bottle", label: "Bottle" },
 ];
 
+// ====================== PRODUCT FORM ======================
 function ProductForm({
   onSubmit,
   isPending,
@@ -97,7 +97,6 @@ function ProductForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onFormSubmit)} className="space-y-6">
-        
         <FormField
           control={form.control}
           name="name"
@@ -112,7 +111,7 @@ function ProductForm({
           )}
         />
 
-        {/* ==================== BULK KHARIDARI CALCULATION ==================== */}
+        {/* Bulk Kharidari Calculation */}
         <div className="border-2 border-blue-200 bg-blue-50/70 rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-5">
             <Calculator className="h-5 w-5 text-blue-600" />
@@ -120,89 +119,64 @@ function ProductForm({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="totalQuantity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Total Bags / Bora / Cartoon</FormLabel>
-                  <FormControl>
-                    <Input type="number" min="0" placeholder="50" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormField control={form.control} name="totalQuantity" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Total Bags / Bora / Cartoon</FormLabel>
+                <FormControl>
+                  <Input type="number" min="0" placeholder="50" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
 
-            <FormField
-              control={form.control}
-              name="quantityPerPack"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Ek Pack Mein Kitna (kg/l)</FormLabel>
-                  <FormControl>
-                    <Input type="number" step="0.01" min="0.01" placeholder="25" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormField control={form.control} name="quantityPerPack" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Ek Pack Mein Kitna (kg/l)</FormLabel>
+                <FormControl>
+                  <Input type="number" step="0.01" min="0.01" placeholder="25" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
 
-            <FormField
-              control={form.control}
-              name="totalAmountPaid"
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>Total Amount Paid (₹)</FormLabel>
-                  <FormControl>
-                    <Input type="number" min="0" placeholder="5555" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormField control={form.control} name="totalAmountPaid" render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>Total Amount Paid (₹)</FormLabel>
+                <FormControl>
+                  <Input type="number" min="0" placeholder="5555" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
 
-            <FormField
-              control={form.control}
-              name="unit"
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>Unit</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Unit select karein" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {UNITS.map((u) => (
-                        <SelectItem key={u.value} value={u.value}>
-                          {u.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormField control={form.control} name="unit" render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>Unit</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Unit select karein" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {UNITS.map((u) => (
+                      <SelectItem key={u.value} value={u.value}>
+                        {u.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )} />
           </div>
 
-          {/* Auto Calculated Purchase Rate */}
           <div className="mt-6 bg-white border-2 border-green-500 rounded-xl p-5 text-center">
             <p className="text-sm text-green-700 font-medium">PURCHASE RATE (PER KG / PER L)</p>
             <p className="text-4xl font-bold text-green-700 mt-1">₹{calculatedPerKg}</p>
-            <p className="text-xs text-muted-foreground mt-1">Auto calculate ho raha hai</p>
-          </div>
-
-          {/* Auto Margin */}
-          <div className="mt-4 bg-white border border-emerald-400 rounded-xl p-4 text-center">
-            <p className="text-sm text-emerald-700">Auto Margin</p>
-            <p className="text-2xl font-bold text-emerald-700">{autoMargin}%</p>
           </div>
         </div>
 
-        {/* Selling Price */}
         <FormField
           control={form.control}
           name="sellingPrice"
@@ -210,49 +184,33 @@ function ProductForm({
             <FormItem>
               <FormLabel>Selling Price (Manual) ₹</FormLabel>
               <FormControl>
-                <Input 
-                  type="number" 
-                  step="0.01" 
-                  min="0"
-                  placeholder="Jaise: 48" 
-                  {...field} 
-                  className="text-lg" 
-                />
+                <Input type="number" step="0.01" min="0" placeholder="Jaise: 48" {...field} className="text-lg" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Stock Fields - Restored */}
         <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="currentStock"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Current Stock</FormLabel>
-                <FormControl>
-                  <Input type="number" min="0" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <FormField control={form.control} name="currentStock" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Current Stock</FormLabel>
+              <FormControl>
+                <Input type="number" min="0" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
 
-          <FormField
-            control={form.control}
-            name="lowStockThreshold"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Low Stock Alert</FormLabel>
-                <FormControl>
-                  <Input type="number" min="0" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <FormField control={form.control} name="lowStockThreshold" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Low Stock Alert</FormLabel>
+              <FormControl>
+                <Input type="number" min="0" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
         </div>
 
         <FormField
@@ -295,6 +253,26 @@ export default function Products() {
     queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
     queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
   };
+
+  // ==================== STOCK STATUS & SORTING ====================
+  const getStockStatus = (stock: number, threshold: number) => {
+    if (stock <= 0) return { label: "Out of Stock", variant: "destructive" as const, priority: 1 };
+    if (stock <= threshold) return { label: "Low Stock", variant: "secondary" as const, priority: 2 };
+    return { label: "In Stock", variant: "default" as const, priority: 3 };
+  };
+
+  // Sorted Products - Out of Stock & Low Stock first
+  const sortedProducts = useMemo(() => {
+    return [...products].sort((a, b) => {
+      const statusA = getStockStatus(a.currentStock, a.lowStockThreshold);
+      const statusB = getStockStatus(b.currentStock, b.lowStockThreshold);
+      
+      if (statusA.priority !== statusB.priority) {
+        return statusA.priority - statusB.priority; // Lower priority number = higher in list
+      }
+      return a.name.localeCompare(b.name); // Same status mein naam se sort
+    });
+  }, [products]);
 
   const defaultAdd: ProductFormValues = {
     name: "",
@@ -342,7 +320,7 @@ export default function Products() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Stock Management</h1>
-          <p className="text-muted-foreground">Kirana Store - Bulk Rate Auto Calculate</p>
+          <p className="text-muted-foreground">Out of Stock & Low Stock sabse upar</p>
         </div>
         <Button onClick={() => setIsAddOpen(true)} size="lg">
           <Plus className="mr-2 h-5 w-5" /> Naya Product Add Karein
@@ -399,6 +377,7 @@ export default function Products() {
             <TableRow className="bg-muted/60">
               <TableHead>Product</TableHead>
               <TableHead>Stock</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-center">Purchase Rate/kg</TableHead>
               <TableHead className="text-center">Selling Price</TableHead>
               <TableHead className="text-center">Margin %</TableHead>
@@ -407,28 +386,50 @@ export default function Products() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell className="font-semibold">{product.name}</TableCell>
-                <TableCell>
-                  {product.currentStock} <span className="text-xs text-muted-foreground">{product.unit}</span>
-                </TableCell>
-                <TableCell className="text-center font-bold text-blue-700">₹{product.purchasePricePerKg}</TableCell>
-                <TableCell className="text-center font-semibold text-green-700">₹{product.sellingPrice}</TableCell>
-                <TableCell className="text-center font-medium text-emerald-600">{margin(product)}%</TableCell>
-                <TableCell>
-                  {product.expiryDate ? new Date(product.expiryDate).toLocaleDateString('hi-IN') : "-"}
-                </TableCell>
-                <TableCell className="text-right space-x-1">
-                  <Button variant="ghost" size="icon" onClick={() => setEditingProduct(product)}>
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="text-red-600" onClick={() => handleDelete(product.id, product.name)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+            {sortedProducts.map((product) => {
+              const status = getStockStatus(product.currentStock, product.lowStockThreshold);
+
+              return (
+                <TableRow key={product.id}>
+                  <TableCell className="font-semibold">{product.name}</TableCell>
+                  <TableCell>
+                    {product.currentStock} <span className="text-xs text-muted-foreground">{product.unit}</span>
+                  </TableCell>
+
+                  <TableCell>
+                    <Badge 
+                      variant={status.variant}
+                      className={status.label === "Low Stock" ? "bg-orange-100 text-orange-700 border-orange-200" : ""}
+                    >
+                      {status.label}
+                    </Badge>
+                  </TableCell>
+
+                  <TableCell className="text-center font-bold text-blue-700">₹{product.purchasePricePerKg}</TableCell>
+                  <TableCell className="text-center font-semibold text-green-700">₹{product.sellingPrice}</TableCell>
+                  <TableCell className="text-center font-medium text-emerald-600">{margin(product)}%</TableCell>
+                  <TableCell>
+                    {product.expiryDate ? new Date(product.expiryDate).toLocaleDateString('hi-IN') : "-"}
+                  </TableCell>
+                  <TableCell className="text-right space-x-1">
+                    <Button variant="ghost" size="icon" onClick={() => setEditingProduct(product)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="text-red-600" onClick={() => handleDelete(product.id, product.name)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+
+            {sortedProducts.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                  Koi product nahi mila
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>
