@@ -1,17 +1,90 @@
 // ─── Shared Types ─────────────────────────────────────────────────────────────
 
+export type BaseUnit = "gram" | "ml" | "piece";
+
+export type SellingMode = "khula" | "fixed" | "variant" | "wholesale";
+
+export type UnitType =
+  | "GRAM"
+  | "KG"
+  | "ML"
+  | "LITRE"
+  | "PIECE"
+  | "PACKET"
+  | "BOX"
+  | "CARTON"
+  | "TIN"
+  | "DABBA"
+  | "BORA"
+  | "BAG"
+  | "DOZEN"
+  | "BUNDLE"
+  | string;
+
 export type Product = {
   id: number;
+  productId: number;
+  productName: string;
+  variantName: string;
   name: string;
   barcode?: string;
   category: string;
+  brand?: string;
+  searchKeywords?: string[];
+  shortcut?: string;
+  unitType: UnitType;
+  baseUnit: BaseUnit;
+  baseQuantity: number;
+  sellingMode: SellingMode;
+  mrp?: number;
+  purchasePrice: number;
   purchasePricePerKg: number;
   sellingPrice: number;
+  quickSelect: boolean;
+  stockInBaseUnit: number;
+  lowStockThresholdInBaseUnit: number;
   currentStock: number;
   lowStockThreshold: number;
   unit: string;
+  presetBaseQuantities?: number[];
+  popularBaseQuantities?: number[];
+  usageCount?: number;
+  isActive: boolean;
   expiryDate?: string | null;
   createdAt: string;
+};
+
+export type ProductVariantInput = {
+  id?: number;
+  variantName: string;
+  unitType: UnitType;
+  baseUnit: BaseUnit;
+  baseQuantity: number;
+  sellingMode: SellingMode;
+  mrp?: number;
+  purchasePrice: number;
+  sellingPrice: number;
+  quickSelect: boolean;
+  barcode?: string;
+  stockInBaseUnit: number;
+  lowStockThresholdInBaseUnit: number;
+  presetBaseQuantities?: number[];
+};
+
+export type ProductInput = {
+  name: string;
+  category: string;
+  brand?: string;
+  searchKeywords?: string[];
+  shortcut?: string;
+  barcode?: string;
+  variants: ProductVariantInput[];
+};
+
+export type PurchaseEntryInput = {
+  variantId: number;
+  quantity: number;
+  purchasePrice?: number;
 };
 
 export type Customer = {
@@ -39,7 +112,13 @@ export type BillInputPaymentMode = "cash" | "upi" | "khata";
 
 export type BillItem = {
   productId: number;
+  productName?: string;
+  variantName?: string;
   quantity: number;
+  unit?: string;
+  displayQuantity?: string;
+  stockDeltaBaseUnit?: number;
+  selectedBaseQuantity?: number;
   unitPrice: number;
   totalPrice: number;
 };

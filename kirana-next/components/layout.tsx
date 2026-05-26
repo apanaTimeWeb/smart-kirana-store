@@ -74,6 +74,22 @@ function SidebarNavItem({
   );
 }
 
+function SidebarLogoutButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="mt-1 w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-150"
+      data-testid="nav-logout"
+    >
+      <LogOut className="h-5 w-5 flex-shrink-0" />
+      <div className="flex flex-col leading-tight text-left">
+        <span className="text-sm">Logout</span>
+        <span className="text-[11px] font-normal">बाहर जाएं</span>
+      </div>
+    </button>
+  );
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -107,18 +123,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {sidebarNav.map((item) => (
             <SidebarNavItem key={item.href} item={item} isActive={isActive(item.href)} />
           ))}
+          <SidebarLogoutButton onClick={handleLogout} />
         </nav>
         <div className="border-t border-sidebar-border px-3 py-3 space-y-1">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-150"
-          >
-            <LogOut className="h-5 w-5 flex-shrink-0" />
-            <div className="flex flex-col leading-tight text-left">
-              <span className="text-sm">Logout</span>
-              <span className="text-[11px] font-normal">बाहर जाएं</span>
-            </div>
-          </button>
           <p className="text-[10px] text-muted-foreground text-center pt-1">
             Vyapar jitna useful · Khatabook jitna simple
           </p>

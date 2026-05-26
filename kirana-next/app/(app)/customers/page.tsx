@@ -42,6 +42,8 @@ const txSchema = z.object({
   description: z.string().min(1, "Description required"),
 });
 
+type TxFormValues = z.infer<typeof txSchema>;
+
 function KhataLedger({ customerId }: { customerId: number }) {
   const { data: detail, isLoading } = useGetCustomer(customerId);
   const addTx = useAddKhataTransaction();
@@ -51,7 +53,7 @@ function KhataLedger({ customerId }: { customerId: number }) {
   const [mode, setMode] = useState<"payment" | "credit" | null>(null);
   const [isReminderOpen, setIsReminderOpen] = useState(false);
 
-  const form = useForm({
+  const form = useForm<TxFormValues>({
     resolver: zodResolver(txSchema),
     defaultValues: { type: "payment", amount: 0, description: "" },
   });
@@ -232,9 +234,10 @@ function KhataLedger({ customerId }: { customerId: number }) {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit((values) => {
-              addTx.mutate({ id: customerId, data: values }, {
+              const data = { ...values, type: mode ?? values.type };
+              addTx.mutate({ id: customerId, data }, {
                 onSuccess: () => {
-                  toast({ title: values.type === "payment" ? "Payment recorded" : "Udhaar added" });
+                  toast({ title: data.type === "payment" ? "Payment recorded" : "Udhaar added" });
                   queryClient.invalidateQueries({ queryKey: getGetCustomerQueryKey(customerId) });
                   setMode(null);
                 }
