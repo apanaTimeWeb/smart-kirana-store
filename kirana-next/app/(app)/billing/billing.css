@@ -66,6 +66,12 @@
     /* ── Mobile Sticky Cart Button ────────────────────────────── */
     --billing-sticky-btn-bg:            hsl(var(--primary));
     --billing-sticky-btn-text:          hsl(var(--primary-foreground));
+
+    --billing-quick-bg:                 hsl(38 90% 95%);
+    --billing-quick-text:               hsl(38 90% 34%);
+    --billing-khula-rate-bg:            hsl(174 25% 95%);
+    --billing-khula-chip-bg:            hsl(174 25% 95%);
+    --billing-khula-chip-text:          hsl(174 70% 24%);
   }
 
 }

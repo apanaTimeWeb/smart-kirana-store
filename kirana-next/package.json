@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "clean": "node scripts/clean-next-cache.mjs",
+    "predev": "npm run clean",
     "dev": "next dev -p 5000",
+    "prebuild": "npm run clean",
     "build": "next build",
-    "start": "next start -p 5000",
+    "start": "npm run build && next start -p 5000",
+    "serve": "next start -p 5000",
     "lint": "next lint"
   },
   "dependencies": {

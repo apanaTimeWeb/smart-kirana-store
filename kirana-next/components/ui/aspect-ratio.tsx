@@ -1,5 +1,19 @@
-import * as AspectRatioPrimitive from "@radix-ui/react-aspect-ratio"
+import * as React from "react";
 
-const AspectRatio = AspectRatioPrimitive.Root
+import { cn } from "@/lib/utils";
 
-export { AspectRatio }
+type AspectRatioProps = React.HTMLAttributes<HTMLDivElement> & {
+  ratio?: number;
+};
+
+function AspectRatio({ ratio = 1, className, style, ...props }: AspectRatioProps) {
+  return (
+    <div
+      className={cn("relative w-full overflow-hidden", className)}
+      style={{ aspectRatio: ratio, ...style }}
+      {...props}
+    />
+  );
+}
+
+export { AspectRatio };

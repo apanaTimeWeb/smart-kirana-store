@@ -38,6 +38,9 @@ export class DbService implements OnModuleDestroy {
         id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         category TEXT NOT NULL DEFAULT 'General',
+        brand TEXT,
+        search_keywords TEXT[] NOT NULL DEFAULT '{}',
+        shortcut TEXT,
         unit TEXT NOT NULL DEFAULT 'piece',
         buying_price NUMERIC(10,2) NOT NULL DEFAULT 0,
         selling_price NUMERIC(10,2) NOT NULL DEFAULT 0,
@@ -45,6 +48,65 @@ export class DbService implements OnModuleDestroy {
         min_stock_level INTEGER NOT NULL DEFAULT 5,
         barcode TEXT,
         is_active BOOLEAN NOT NULL DEFAULT true,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+
+    await this.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS brand TEXT`);
+    await this.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS search_keywords TEXT[] NOT NULL DEFAULT '{}'`);
+    await this.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS shortcut TEXT`);
+
+    await this.query(`
+      CREATE TABLE IF NOT EXISTS unit_master (
+        id SERIAL PRIMARY KEY,
+        code TEXT NOT NULL UNIQUE,
+        label TEXT NOT NULL,
+        is_base_unit BOOLEAN NOT NULL DEFAULT false,
+        is_active BOOLEAN NOT NULL DEFAULT true,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+
+    await this.query(`
+      CREATE TABLE IF NOT EXISTS unit_conversions (
+        id SERIAL PRIMARY KEY,
+        parent_unit TEXT NOT NULL REFERENCES unit_master(code),
+        child_unit TEXT NOT NULL REFERENCES unit_master(code),
+        multiplier NUMERIC(12,3) NOT NULL CHECK (multiplier > 0),
+        UNIQUE (parent_unit, child_unit)
+      )
+    `);
+
+    await this.query(`
+      CREATE TABLE IF NOT EXISTS product_variants (
+        id SERIAL PRIMARY KEY,
+        product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+        variant_name TEXT NOT NULL,
+        unit_type TEXT NOT NULL,
+        base_unit TEXT NOT NULL CHECK (base_unit IN ('gram','ml','piece')),
+        base_quantity NUMERIC(12,3) NOT NULL CHECK (base_quantity > 0),
+        selling_mode TEXT NOT NULL CHECK (selling_mode IN ('khula','fixed','variant','wholesale')),
+        mrp NUMERIC(10,2) NOT NULL DEFAULT 0,
+        purchase_price NUMERIC(10,2) NOT NULL DEFAULT 0,
+        selling_price NUMERIC(10,2) NOT NULL DEFAULT 0,
+        quick_select BOOLEAN NOT NULL DEFAULT false,
+        barcode TEXT,
+        stock_in_base_unit NUMERIC(14,3) NOT NULL DEFAULT 0,
+        low_stock_threshold_in_base_unit NUMERIC(14,3) NOT NULL DEFAULT 0,
+        usage_count INTEGER NOT NULL DEFAULT 0,
+        preset_base_quantities NUMERIC(12,3)[] NOT NULL DEFAULT '{}',
+        is_active BOOLEAN NOT NULL DEFAULT true,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+
+    await this.query(`
+      CREATE TABLE IF NOT EXISTS purchase_entries (
+        id SERIAL PRIMARY KEY,
+        variant_id INTEGER NOT NULL REFERENCES product_variants(id) ON DELETE CASCADE,
+        purchase_quantity NUMERIC(12,3) NOT NULL CHECK (purchase_quantity > 0),
+        added_base_quantity NUMERIC(14,3) NOT NULL CHECK (added_base_quantity > 0),
+        purchase_price NUMERIC(10,2),
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
@@ -91,7 +153,11 @@ export class DbService implements OnModuleDestroy {
         id SERIAL PRIMARY KEY,
         bill_id INTEGER NOT NULL REFERENCES bills(id) ON DELETE CASCADE,
         product_id INTEGER REFERENCES products(id),
+        variant_id INTEGER REFERENCES product_variants(id),
         product_name TEXT NOT NULL,
+        variant_name TEXT,
+        display_quantity TEXT,
+        stock_delta_base_unit NUMERIC(14,3),
         quantity NUMERIC(10,3) NOT NULL,
         unit TEXT NOT NULL DEFAULT 'piece',
         buying_price NUMERIC(10,2) NOT NULL DEFAULT 0,
@@ -99,6 +165,11 @@ export class DbService implements OnModuleDestroy {
         total NUMERIC(10,2) NOT NULL DEFAULT 0
       )
     `);
+
+    await this.query(`ALTER TABLE bill_items ADD COLUMN IF NOT EXISTS variant_id INTEGER REFERENCES product_variants(id)`);
+    await this.query(`ALTER TABLE bill_items ADD COLUMN IF NOT EXISTS variant_name TEXT`);
+    await this.query(`ALTER TABLE bill_items ADD COLUMN IF NOT EXISTS display_quantity TEXT`);
+    await this.query(`ALTER TABLE bill_items ADD COLUMN IF NOT EXISTS stock_delta_base_unit NUMERIC(14,3)`);
 
     await this.query(`
       CREATE TABLE IF NOT EXISTS app_settings (
@@ -115,7 +186,55 @@ export class DbService implements OnModuleDestroy {
       )
     `);
 
+    await this.seedUnitsAndConversions();
     await this.seedIfEmpty();
+  }
+
+  private async seedUnitsAndConversions(): Promise<void> {
+    const units = [
+      ['GRAM', 'Gram', true],
+      ['KG', 'Kilogram', false],
+      ['ML', 'Millilitre', true],
+      ['LITRE', 'Litre', false],
+      ['PIECE', 'Piece', true],
+      ['PACKET', 'Packet', false],
+      ['BOX', 'Box', false],
+      ['CARTON', 'Carton', false],
+      ['TIN', 'Tin', false],
+      ['DABBA', 'Dabba', false],
+      ['BORA', 'Bora', false],
+      ['BAG', 'Bag', false],
+      ['DOZEN', 'Dozen', false],
+      ['BUNDLE', 'Bundle', false],
+    ];
+
+    for (const unit of units) {
+      await this.query(
+        `INSERT INTO unit_master (code, label, is_base_unit)
+         VALUES ($1,$2,$3)
+         ON CONFLICT (code) DO NOTHING`,
+        unit,
+      );
+    }
+
+    const conversions = [
+      ['KG', 'GRAM', 1000],
+      ['LITRE', 'ML', 1000],
+      ['BORA', 'KG', 50],
+      ['CARTON', 'BOX', 20],
+      ['BOX', 'PACKET', 10],
+      ['TIN', 'LITRE', 15],
+      ['DOZEN', 'PIECE', 12],
+    ];
+
+    for (const conversion of conversions) {
+      await this.query(
+        `INSERT INTO unit_conversions (parent_unit, child_unit, multiplier)
+         VALUES ($1,$2,$3)
+         ON CONFLICT (parent_unit, child_unit) DO NOTHING`,
+        conversion,
+      );
+    }
   }
 
   private async seedIfEmpty(): Promise<void> {

@@ -2,9 +2,13 @@
 
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
-  storeGetProducts, storeCreateProduct, storeUpdateProduct, storeDeleteProduct,
+  storeAddPurchaseEntry,
+  storeCreateProduct,
+  storeDeleteProduct,
+  storeGetProducts,
+  storeUpdateProduct,
 } from "./store";
-import type { Product } from "./types";
+import type { Product, ProductInput, ProductVariantInput, PurchaseEntryInput } from "./types";
 
 export function getListProductsQueryKey(params?: { search?: string; lowStock?: boolean }) {
   return ["products", "list", params ?? {}] as const;
@@ -19,14 +23,14 @@ export function useListProducts(params?: { search?: string; lowStock?: boolean }
 
 export function useCreateProduct() {
   return useMutation({
-    mutationFn: async ({ data }: { data: Omit<Product, "id" | "createdAt"> }) =>
+    mutationFn: async ({ data }: { data: ProductInput }) =>
       Promise.resolve(storeCreateProduct(data)),
   });
 }
 
 export function useUpdateProduct() {
   return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: Omit<Product, "id" | "createdAt"> }) =>
+    mutationFn: async ({ id, data }: { id: number; data: Partial<ProductVariantInput> }) =>
       Promise.resolve(storeUpdateProduct(id, data)),
   });
 }
@@ -37,5 +41,12 @@ export function useDeleteProduct() {
       storeDeleteProduct(id);
       return Promise.resolve({ ok: true });
     },
+  });
+}
+
+export function useAddPurchaseEntry() {
+  return useMutation({
+    mutationFn: async ({ data }: { data: PurchaseEntryInput }) =>
+      Promise.resolve(storeAddPurchaseEntry(data)),
   });
 }

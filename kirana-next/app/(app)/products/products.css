@@ -29,6 +29,31 @@
 
     /* ── Delete Button ────────────────────────────────────────── */
     --products-btn-delete-text:         hsl(var(--destructive));      /* text-red-600 */
+
+    --products-type-bg:                 hsl(210 20% 97%);
+    --products-stat-icon:               hsl(var(--primary));
+    --products-purchase-preview-bg:     hsl(142 60% 96%);
+    --products-purchase-preview-text:   hsl(142 60% 28%);
+
+    --products-stock-ok-bg:             hsl(142 60% 96%);
+    --products-stock-ok-text:           hsl(142 60% 28%);
+    --products-stock-ok-border:         hsl(142 60% 74%);
+    --products-stock-out-bg:            hsl(0 76% 96%);
+    --products-stock-out-text:          hsl(var(--destructive));
+    --products-stock-out-border:        hsl(0 76% 82%);
+
+    --products-mode-khula-bg:           hsl(174 45% 94%);
+    --products-mode-khula-text:         hsl(174 70% 24%);
+    --products-mode-khula-border:       hsl(174 45% 72%);
+    --products-mode-fixed-bg:           hsl(220 70% 96%);
+    --products-mode-fixed-text:         hsl(220 70% 34%);
+    --products-mode-fixed-border:       hsl(220 70% 82%);
+    --products-mode-variant-bg:         hsl(38 90% 95%);
+    --products-mode-variant-text:       hsl(38 90% 34%);
+    --products-mode-variant-border:     hsl(38 90% 76%);
+    --products-mode-wholesale-bg:       hsl(285 35% 96%);
+    --products-mode-wholesale-text:     hsl(285 44% 34%);
+    --products-mode-wholesale-border:   hsl(285 35% 78%);
   }
 
 }
