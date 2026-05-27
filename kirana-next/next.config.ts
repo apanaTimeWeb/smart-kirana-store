@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["pg"],
   outputFileTracingRoot: process.cwd(),
   images: {
+    unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
     ],

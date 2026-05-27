@@ -267,6 +267,7 @@ export default function LandingPage() {
             fill
             className="object-cover opacity-10"
             priority
+            unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/75 to-background" />
         </div>
@@ -321,6 +322,7 @@ export default function LandingPage() {
               width={1200}
               height={550}
               className="w-full object-cover"
+              unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 flex-wrap justify-center px-3">
@@ -527,6 +529,7 @@ export default function LandingPage() {
             alt="background"
             fill
             className="object-cover opacity-5"
+            unoptimized
           />
         </div>
         <div className="relative z-10 mx-auto max-w-xl text-center">
