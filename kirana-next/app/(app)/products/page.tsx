@@ -155,7 +155,7 @@ function variantDraft(overrides: Partial<VariantDraft> = {}): VariantDraft {
     quickSelect: overrides.quickSelect ?? false,
     barcode: overrides.barcode ?? "",
     stockInBaseUnit: overrides.stockInBaseUnit ?? 0,
-    lowStockThresholdInBaseUnit: overrides.lowStockThresholdInBaseUnit ?? 0,
+    lowStockThresholdInBaseUnit: overrides.lowStockThresholdInBaseUnit ?? defaultBaseQuantity(unitType) * 5,
     presetBaseQuantities: overrides.presetBaseQuantities ?? defaultPresetsFor(baseUnit),
   };
 }
@@ -599,6 +599,7 @@ export default function Products() {
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
     queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+    queryClient.invalidateQueries({ queryKey: ["reports"] });
   };
 
   const sortedProducts = useMemo(() => {

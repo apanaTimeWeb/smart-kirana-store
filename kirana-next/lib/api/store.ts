@@ -168,6 +168,35 @@ function compareProducts(a: Product, b: Product): number {
   return a.name.localeCompare(b.name);
 }
 
+function dateInRange(date: string, from?: string, to?: string) {
+  if (from && date < from) return false;
+  if (to && date > to) return false;
+  return true;
+}
+
+function sortByDate<T extends { date: string }>(rows: T[]): T[] {
+  return [...rows].sort((a, b) => a.date.localeCompare(b.date));
+}
+
+function addDailyMetrics(bill: Bill, profit: number) {
+  const date = bill.createdAt.split("T")[0];
+  const salesRow = data.salesReportData.find((row) => row.date === date);
+  if (salesRow) {
+    salesRow.sales += bill.finalAmount;
+    salesRow.orders += 1;
+  } else {
+    data.salesReportData.push({ date, sales: bill.finalAmount, orders: 1 });
+  }
+
+  const profitRow = data.profitReportData.find((row) => row.date === date);
+  if (profitRow) {
+    profitRow.revenue += bill.finalAmount;
+    profitRow.profit += profit;
+  } else {
+    data.profitReportData.push({ date, revenue: bill.finalAmount, profit });
+  }
+}
+
 function sharedStockGroup(product: Product) {
   return (candidate: Product) =>
     candidate.productId === product.productId &&
@@ -514,6 +543,14 @@ export function storeGetBills(): Bill[] {
 export function storeCreateBill(d: Omit<Bill, "id" | "createdAt">): Bill {
   const bill: Bill = { ...d, id: nextBillId++, createdAt: new Date().toISOString() };
   data.bills.push(bill);
+  const productsBeforeSale = getComputedProducts();
+  const billCost = d.items.reduce((cost, item) => {
+    const product = productsBeforeSale.find((p) => p.id === item.productId);
+    if (!product) return cost;
+    const costPerBaseUnit = product.purchasePrice / Math.max(1, product.baseQuantity);
+    const stockDelta = item.stockDeltaBaseUnit ?? product.baseQuantity * item.quantity;
+    return cost + costPerBaseUnit * stockDelta;
+  }, 0);
 
   for (const item of d.items) {
     const idx = data.products.findIndex((p) => p.id === item.productId);
@@ -556,6 +593,7 @@ export function storeCreateBill(d: Omit<Bill, "id" | "createdAt">): Bill {
     }
   }
 
+  addDailyMetrics(bill, bill.finalAmount - billCost);
   persist();
   return bill;
 }
@@ -608,15 +646,7 @@ export function storeGetDashboard() {
 }
 
 export function storeGetSalesReport(params: { from?: string; to?: string }) {
-  const fromDate = params.from ? new Date(params.from) : null;
-  const toDate = params.to ? new Date(params.to) : null;
-
-  const filtered = data.salesReportData.filter((d) => {
-    const date = new Date(d.date);
-    if (fromDate && date < fromDate) return false;
-    if (toDate && date > toDate) return false;
-    return true;
-  });
+  const filtered = sortByDate(data.salesReportData).filter((d) => dateInRange(d.date, params.from, params.to));
 
   return {
     totalSales: filtered.reduce((s, d) => s + d.sales, 0),
@@ -626,15 +656,7 @@ export function storeGetSalesReport(params: { from?: string; to?: string }) {
 }
 
 export function storeGetProfitReport(params: { from?: string; to?: string }) {
-  const fromDate = params.from ? new Date(params.from) : null;
-  const toDate = params.to ? new Date(params.to) : null;
-
-  const filtered = data.profitReportData.filter((d) => {
-    const date = new Date(d.date);
-    if (fromDate && date < fromDate) return false;
-    if (toDate && date > toDate) return false;
-    return true;
-  });
+  const filtered = sortByDate(data.profitReportData).filter((d) => dateInRange(d.date, params.from, params.to));
 
   const totalRevenue = filtered.reduce((s, d) => s + d.revenue, 0);
   const totalProfit = filtered.reduce((s, d) => s + d.profit, 0);

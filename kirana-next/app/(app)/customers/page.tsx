@@ -8,6 +8,8 @@ import {
   useDeleteCustomer,
   useGetCustomer,
   useAddKhataTransaction,
+  useGetSettings,
+  getGetDashboardSummaryQueryKey,
   getListCustomersQueryKey,
   getGetCustomerQueryKey,
 } from "@/lib/api";
@@ -46,6 +48,7 @@ type TxFormValues = z.infer<typeof txSchema>;
 
 function KhataLedger({ customerId }: { customerId: number }) {
   const { data: detail, isLoading } = useGetCustomer(customerId);
+  const { data: settings } = useGetSettings();
   const addTx = useAddKhataTransaction();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -67,13 +70,7 @@ function KhataLedger({ customerId }: { customerId: number }) {
     });
   }, [detail?.transactions]);
 
-  const shopName = (() => {
-    try {
-      const s = typeof window !== "undefined" ? localStorage.getItem("kirana_settings") : null;
-      if (s) return JSON.parse(s).shopName || "Smart Kirana Store";
-    } catch {}
-    return "Smart Kirana Store";
-  })();
+  const shopName = settings?.shopName?.trim() || "Smart Kirana Store";
 
   const reminderMessage = useMemo(() => {
     if (!detail) return "";
@@ -105,7 +102,12 @@ function KhataLedger({ customerId }: { customerId: number }) {
         hr { border: none; border-top: 1px dashed #000; margin: 8px 0; }
       </style>
       </head><body>
-        <div class="center bold"><h2>${shopName}</h2><p>Khata Ledger</p></div>
+        <div class="center bold">
+          <h2>${shopName}</h2>
+          <p>Khata Ledger</p>
+          ${settings?.shopAddress ? `<p>${settings.shopAddress}</p>` : ""}
+          ${settings?.shopPhone ? `<p>Phone: ${settings.shopPhone}</p>` : ""}
+        </div>
         <hr/>
         <p><strong>Customer:</strong> ${detail.name}</p>
         <p><strong>Phone:</strong> ${detail.phone}</p>
@@ -155,7 +157,7 @@ function KhataLedger({ customerId }: { customerId: number }) {
             </div>
             <div>
               <p className="font-bold text-xl">{detail.name}</p>
-              <p className="text-muted-foreground">📞 {detail.phone}</p>
+              <p className="text-muted-foreground">{detail.phone}</p>
             </div>
           </div>
           <div className="text-right">
@@ -227,7 +229,7 @@ function KhataLedger({ customerId }: { customerId: number }) {
         <div className="rounded-xl border p-6 mb-6 bg-[var(--customers-form-panel-bg)] shadow-sm">
           <div className="flex justify-between items-center mb-5">
             <p className="font-semibold text-lg">
-              {mode === "payment" ? "💰 Payment Entry" : "📦 Udhaar Entry"}
+              {mode === "payment" ? "Payment Entry" : "Udhaar Entry"}
             </p>
             <button onClick={() => setMode(null)}><X className="h-5 w-5" /></button>
           </div>
@@ -239,6 +241,10 @@ function KhataLedger({ customerId }: { customerId: number }) {
                 onSuccess: () => {
                   toast({ title: data.type === "payment" ? "Payment recorded" : "Udhaar added" });
                   queryClient.invalidateQueries({ queryKey: getGetCustomerQueryKey(customerId) });
+                  queryClient.invalidateQueries({ queryKey: getListCustomersQueryKey() });
+                  queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+                  queryClient.invalidateQueries({ queryKey: ["reports"] });
+                  form.reset({ type: data.type, amount: 0, description: "" });
                   setMode(null);
                 }
               });
@@ -364,7 +370,18 @@ export default function Customers() {
 
   const onDelete = (id: number, name: string) => {
     if (!confirm(`"${name}" delete karna chahte hain?`)) return;
-    deleteCustomer.mutate({ id });
+    deleteCustomer.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          toast({ title: "Customer delete ho gaya" });
+          queryClient.invalidateQueries({ queryKey: getListCustomersQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+          queryClient.invalidateQueries({ queryKey: ["reports"] });
+        },
+        onError: () => toast({ title: "Customer delete nahi hua", variant: "destructive" }),
+      }
+    );
   };
 
   return (
@@ -433,7 +450,7 @@ export default function Customers() {
                   </div>
                   <div>
                     <p className="font-semibold">{customer.name}</p>
-                    <p className="text-sm text-muted-foreground">📞 {customer.phone}</p>
+                    <p className="text-sm text-muted-foreground">{customer.phone}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-6">

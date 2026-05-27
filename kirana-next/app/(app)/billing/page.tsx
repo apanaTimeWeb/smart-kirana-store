@@ -12,6 +12,7 @@ import {
   type Product,
   useCreateBill,
   useCreateCustomer,
+  useGetSettings,
   useListCustomers,
   useListProducts,
 } from "@/lib/api";
@@ -246,6 +247,7 @@ function KhulaPicker({
 export default function Billing() {
   const { data: products = [], isLoading } = useListProducts();
   const { data: customers = [] } = useListCustomers();
+  const { data: settings } = useGetSettings();
   const createBill = useCreateBill();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -447,13 +449,7 @@ export default function Billing() {
   const finalAmount = taxableValue + gstAmount;
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const shopName = (() => {
-    try {
-      const s = typeof window !== "undefined" ? localStorage.getItem("kirana_settings") : null;
-      if (s) return JSON.parse(s).shopName || "Smart Kirana Store";
-    } catch {}
-    return "Smart Kirana Store";
-  })();
+  const shopName = settings?.shopName?.trim() || "Smart Kirana Store";
 
   const printThermalBill = (billData: {
     items: CartItem[];
@@ -490,7 +486,13 @@ export default function Billing() {
         small { color: #333; }
       </style>
       </head><body>
-        <div class="center bold"><h2>${shopName}</h2><p>Retail Invoice</p></div>
+        <div class="center bold">
+          <h2>${shopName}</h2>
+          <p>Retail Invoice</p>
+          ${settings?.shopAddress ? `<p>${settings.shopAddress}</p>` : ""}
+          ${settings?.shopPhone ? `<p>Phone: ${settings.shopPhone}</p>` : ""}
+          ${settings?.gstEnabled && settings.gstNumber ? `<p>GSTIN: ${settings.gstNumber}</p>` : ""}
+        </div>
         <hr/>
         <p><strong>Date:</strong> ${format(new Date(), "dd MMM yyyy, hh:mm a")}</p>
         ${billData.customerName ? `<p><strong>Customer:</strong> ${billData.customerName}</p>` : ""}
@@ -568,6 +570,8 @@ export default function Billing() {
           queryClient.invalidateQueries({ queryKey: getListBillsQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
           queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getListCustomersQueryKey() });
+          queryClient.invalidateQueries({ queryKey: ["reports"] });
 
           setTimeout(() => {
             setCart([]);

@@ -5,13 +5,11 @@ import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "Smart Kirana Store",
-  description: "Smart POS for Kirana shops — Billing, Khata, Stock sab ek jagah",
+  description: "Smart POS for Kirana shops - billing, khata, stock, and reports in one place.",
 };
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   themeColor: "#0d9488",
 };
 
