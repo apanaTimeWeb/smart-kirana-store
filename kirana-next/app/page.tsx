@@ -1,5 +1,6 @@
 "use client";
 
+// @ts-ignore: allow side-effect CSS import without type declarations
 import "./landing.css";
 import Link from "next/link";
 import Image from "next/image";
@@ -265,30 +266,31 @@ export default function LandingPage() {
             src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=1600&q=80&auto=format&fit=crop"
             alt="Kirana store"
             fill
-            className="object-cover opacity-10"
+            className="object-cover"
             priority
             unoptimized
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/75 to-background" />
+          <div className="absolute inset-0 bg-black/60" />
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
         </div>
 
         <div className="relative z-10 mx-auto max-w-5xl px-4 pt-12 pb-10 md:pt-20 md:pb-16 text-center">
-          <Badge className="mb-4 bg-[var(--landing-hero-badge-bg)] text-[var(--landing-hero-badge-text)] border-[var(--landing-hero-badge-border)] px-3 py-1 text-xs font-medium">
+          <Badge className="mb-4 bg-white/20 text-white border-white/30 px-3 py-1 text-xs font-medium">
             🇮🇳 India ke Kirana Shops ke liye
           </Badge>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-4 text-white">
             Apni Dukaan Ko{" "}
             <span className="text-[var(--landing-hero-highlight)]">Smart</span>{" "}
             Banao
           </h1>
 
-          <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto mb-2">
+          <p className="text-base sm:text-lg text-white/90 font-bold max-w-xl mx-auto mb-2">
             Billing, Khata, Stock, Reports — sab ek app mein.
           </p>
-          <p className="text-sm text-muted-foreground max-w-md mx-auto mb-7">
+          <p className="text-sm text-white/80 font-bold max-w-md mx-auto mb-7">
             आज से ही अपनी दुकान का हिसाब डिजिटल करो।{" "}
-            <strong className="text-foreground">बिलकुल फ्री.</strong>
+            <strong className="text-white">बिलकुल फ्री.</strong>
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
@@ -304,14 +306,14 @@ export default function LandingPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="w-full sm:w-auto px-7 font-semibold"
+                className="w-full sm:w-auto px-7 font-semibold bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white"
               >
                 Login करें
               </Button>
             </Link>
           </div>
 
-          <p className="mt-4 text-xs text-muted-foreground">
+          <p className="mt-4 text-xs font-medium text-white/60">
             No credit card · 2 minute setup · Mobile friendly
           </p>
 
@@ -352,7 +354,7 @@ export default function LandingPage() {
               <p className="text-xl sm:text-2xl font-extrabold text-[var(--landing-stats-value)]">
                 {s.value}
               </p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
+              <p className="text-[11px] text-muted-foreground font-medium mt-0.5">
                 {s.label}
               </p>
             </div>
@@ -370,7 +372,7 @@ export default function LandingPage() {
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
               ये समस्याएँ आपको भी होती हैं?
             </h2>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            <p className="text-sm text-muted-foreground font-medium max-w-md mx-auto">
               हर किराना दुकान वाले को ये समस्याएं होती हैं - स्मार्ट किराना
               इन्हें हल करता है
             </p>
@@ -386,7 +388,7 @@ export default function LandingPage() {
                   <div className="h-7 w-7 rounded-full bg-[var(--landing-problem-icon-bg)] flex items-center justify-center shrink-0 mt-0.5">
                     <X className="h-3.5 w-3.5 text-[var(--landing-problem-icon)]" />
                   </div>
-                  <p className="text-xs text-muted-foreground leading-snug pt-0.5">
+                  <p className="text-xs text-muted-foreground font-medium leading-snug pt-0.5">
                     {p.problem}
                   </p>
                 </div>
@@ -414,7 +416,7 @@ export default function LandingPage() {
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
               सब कुछ एक जगह
             </h2>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            <p className="text-sm text-muted-foreground font-medium max-w-md mx-auto">
               अलग-अलग ऐप्स की ज़रूरत नहीं - बिलिंग से रिपोर्ट तक सब स्मार्ट
               किराना में
             </p>
@@ -439,7 +441,7 @@ export default function LandingPage() {
                   <p className={cn("text-[11px] font-medium mb-1", f.sub)}>
                     {f.hindiTitle}
                   </p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
+                  <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                     {f.desc}
                   </p>
                 </div>
@@ -472,7 +474,7 @@ export default function LandingPage() {
                   {s.step}
                 </div>
                 <h3 className="font-bold text-sm">{s.title}</h3>
-                <p className="text-xs text-muted-foreground">{s.desc}</p>
+                <p className="text-xs text-muted-foreground font-medium">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -501,7 +503,7 @@ export default function LandingPage() {
                     />
                   ))}
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
+                <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                   "{t.text}"
                 </p>
                 <div className="flex items-center gap-2.5">
@@ -522,21 +524,22 @@ export default function LandingPage() {
       </section>
 
       {/* ── Final CTA ── */}
-      <section className="py-14 px-4 relative overflow-hidden">
+      <section className="py-16 px-4 relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
             src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=1600&q=80&auto=format&fit=crop"
             alt="background"
             fill
-            className="object-cover opacity-5"
+            className="object-cover"
             unoptimized
           />
+          <div className="absolute inset-0 bg-black/60" />
         </div>
         <div className="relative z-10 mx-auto max-w-xl text-center">
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-3">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-3 text-white">
             आज से ही शुरू करो
           </h2>
-          <p className="text-muted-foreground mb-6 text-sm">
+          <p className="text-white/80 font-medium mb-6 text-sm">
             हजारों किराना दुकान वाले पहले से ही उपयोग कर रहे हैं। आप कब शुरू
             करेंगे?
           </p>
@@ -553,13 +556,13 @@ export default function LandingPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="w-full sm:w-auto px-8 font-semibold"
+                  className="w-full sm:w-auto px-8 font-semibold bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white"
               >
                 Login करे
               </Button>
             </Link>
           </div>
-          <p className="mt-4 text-xs text-muted-foreground">
+          <p className="mt-4 text-xs font-medium text-white/60">
             Free है · No credit card · कभी भी बंद करो
           </p>
         </div>
