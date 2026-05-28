@@ -60,6 +60,7 @@ type CartItem = {
 type BillData = {
   items: CartItem[];
   customerName?: string;
+  customerPhone?: string;
   subtotal: number;
   discount: number;
   taxableValue: number;
@@ -86,9 +87,12 @@ function WhatsAppDialog({
   const [phone, setPhone] = useState("");
   const { toast } = useToast();
 
-  // Reset phone each time a new bill opens
+  // Reset phone each time a new bill opens and prefill if customer has phone
   useEffect(() => {
-    if (billData) setPhone("");
+    if (billData) {
+      const rawPhone = (billData.customerPhone ?? "").replace(/\D/g, "").replace(/^91/, "").slice(0, 10);
+      setPhone(rawPhone);
+    }
   }, [billData]);
 
   const buildMessage = () => {
@@ -129,7 +133,7 @@ function WhatsAppDialog({
 
   return (
     <Dialog open={Boolean(billData)} onOpenChange={(open) => { if (!open) handleClose(); }}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="max-w-sm pointer-events-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <MessageCircle className="h-5 w-5 text-[#25D366]" />
@@ -161,6 +165,7 @@ function WhatsAppDialog({
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                 className="rounded-l-none flex-1"
+                autoFocus
                 onKeyDown={(e) => { if (e.key === "Enter") handleSend(); }}
               />
             </div>
@@ -632,10 +637,12 @@ export default function Billing() {
         <hr/>
         <div style="display:flex;justify-content:space-between;"><span>Payment:</span><span>${billData.paymentMode}</span></div>
         <div class="center" style="margin-top:15px;font-size:12px;">Thank You! Visit Again</div>
+        <script>
+          setTimeout(() => { window.print(); }, 100);
+        </script>
       </body></html>
     `);
     win.document.close();
-    setTimeout(() => win.print(), 100);
   };
 
   const handleCheckout = () => {
@@ -678,6 +685,7 @@ export default function Billing() {
           const billData = {
             items: [...cart],
             customerName: selectedCustomer?.name,
+            customerPhone: selectedCustomer?.phone,
             subtotal,
             discount,
             taxableValue,
