@@ -52,7 +52,7 @@ export function TransactionForm({ customerId, mode, onClose }: TransactionFormPr
   };
 
   return (
-    <div className="rounded-xl border p-6 mb-6 bg-[var(--customers-form-panel-bg)] shadow-sm">
+    <div className="rounded-xl border p-6 mb-6 bg-[var(--khata-form-panel-bg)] shadow-sm">
       <div className="flex justify-between items-center mb-5">
         <p className="font-semibold text-lg">
           {mode === "payment" ? "Payment Entry" : "Udhaar Entry"}

@@ -1,7 +1,7 @@
 "use client";
 
-import "./customers.css";
-import { CustomerList } from "./customers_components/CustomerList";
+import "./khata.css";
+import { CustomerList } from "./khata_components/CustomerList";
 
 export default function Customers() {
   return <CustomerList />;

@@ -26,20 +26,20 @@ export function ReminderDialog({
           <DialogTitle>WhatsApp Reminder</DialogTitle>
         </DialogHeader>
         <div className="py-6 space-y-4">
-          <div className="bg-[var(--customers-reminder-msg-bg)] border-[var(--customers-reminder-msg-border)] border rounded-xl p-4 text-sm whitespace-pre-line">
+          <div className="bg-[var(--khata-reminder-msg-bg)] border-[var(--khata-reminder-msg-border)] border rounded-xl p-4 text-sm whitespace-pre-line">
             {reminderMessage}
           </div>
           <div className="grid grid-cols-3 gap-3">
             <Button
               onClick={onTextOnly}
-              className="h-11 bg-[var(--customers-reminder-send-bg)]"
+              className="h-11 bg-[var(--khata-reminder-send-bg)]"
             >
               Text Only
             </Button>
             <Button
               onClick={onBillAndText}
               variant="outline"
-              className="h-11 border-[var(--customers-reminder-bill-border)] text-[var(--customers-reminder-bill-text)]"
+              className="h-11 border-[var(--khata-reminder-bill-border)] text-[var(--khata-reminder-bill-text)]"
             >
               Bill + Text
             </Button>

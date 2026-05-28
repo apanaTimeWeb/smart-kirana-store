@@ -36,8 +36,8 @@ export function LedgerTable({ rows }: LedgerTableProps) {
                 className={cn(
                   "mt-0.5 h-6 w-6 rounded-full flex items-center justify-center shrink-0",
                   tx.type === "credit"
-                    ? "bg-[var(--customers-tx-credit-icon-bg)] text-[var(--customers-tx-credit-icon-text)]"
-                    : "bg-[var(--customers-tx-payment-icon-bg)] text-[var(--customers-tx-payment-icon-text)]"
+                    ? "bg-[var(--khata-tx-credit-icon-bg)] text-[var(--khata-tx-credit-icon-text)]"
+                    : "bg-[var(--khata-tx-payment-icon-bg)] text-[var(--khata-tx-payment-icon-text)]"
                 )}
               >
                 {tx.type === "credit" ? <ArrowUpRight size={15} /> : <ArrowDownRight size={15} />}
@@ -48,8 +48,8 @@ export function LedgerTable({ rows }: LedgerTableProps) {
               <span
                 className={
                   tx.type === "credit"
-                    ? "text-[var(--customers-tx-credit-amount)]"
-                    : "text-[var(--customers-tx-payment-amount)]"
+                    ? "text-[var(--khata-tx-credit-amount)]"
+                    : "text-[var(--khata-tx-payment-amount)]"
                 }
               >
                 {tx.type === "credit" ? "+" : "-"} ₹{tx.amount.toFixed(0)}
@@ -68,8 +68,8 @@ export function LedgerTable({ rows }: LedgerTableProps) {
                 className={cn(
                   "h-5 w-5 rounded-full flex items-center justify-center shrink-0",
                   tx.type === "credit"
-                    ? "bg-[var(--customers-tx-credit-icon-bg)] text-[var(--customers-tx-credit-icon-text)]"
-                    : "bg-[var(--customers-tx-payment-icon-bg)] text-[var(--customers-tx-payment-icon-text)]"
+                    ? "bg-[var(--khata-tx-credit-icon-bg)] text-[var(--khata-tx-credit-icon-text)]"
+                    : "bg-[var(--khata-tx-payment-icon-bg)] text-[var(--khata-tx-payment-icon-text)]"
                 )}
               >
                 {tx.type === "credit" ? <ArrowUpRight size={11} /> : <ArrowDownRight size={11} />}
@@ -81,8 +81,8 @@ export function LedgerTable({ rows }: LedgerTableProps) {
                 className={cn(
                   "text-xs font-semibold",
                   tx.type === "credit"
-                    ? "text-[var(--customers-tx-credit-amount)]"
-                    : "text-[var(--customers-tx-payment-amount)]"
+                    ? "text-[var(--khata-tx-credit-amount)]"
+                    : "text-[var(--khata-tx-payment-amount)]"
                 )}
               >
                 {tx.type === "credit" ? "+" : "-"}₹{tx.amount.toFixed(0)}

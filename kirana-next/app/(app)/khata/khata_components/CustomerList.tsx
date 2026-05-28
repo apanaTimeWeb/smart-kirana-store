@@ -109,11 +109,11 @@ export function CustomerList() {
                 <div className="flex items-center gap-6">
                   <div className="text-right">
                     {customer.totalDue > 0 ? (
-                      <p className="text-2xl font-bold text-[var(--customers-list-due-text)]">
+                      <p className="text-2xl font-bold text-[var(--khata-list-due-text)]">
                         ₹{customer.totalDue}
                       </p>
                     ) : (
-                      <p className="text-[var(--customers-list-clear-text)]">Clear</p>
+                      <p className="text-[var(--khata-list-clear-text)]">Clear</p>
                     )}
                   </div>
                   <button
@@ -122,7 +122,7 @@ export function CustomerList() {
                       onDelete(customer.id, customer.name);
                     }}
                   >
-                    <Trash2 className="h-4 w-4 text-muted-foreground hover:text-[var(--customers-list-delete-hover)]" />
+                    <Trash2 className="h-4 w-4 text-muted-foreground hover:text-[var(--khata-list-delete-hover)]" />
                   </button>
                   <ChevronRight className="text-muted-foreground" />
                 </div>

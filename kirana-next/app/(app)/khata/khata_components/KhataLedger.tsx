@@ -106,10 +106,10 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
   return (
     <div className="flex flex-col h-full p-6 overflow-hidden">
       {/* Header */}
-      <div className="rounded-xl border bg-gradient-to-br from-[var(--customers-header-bg-from)] to-[var(--customers-header-bg-to)] border-[var(--customers-header-border)] p-5 mb-6">
+      <div className="rounded-xl border bg-gradient-to-br from-[var(--khata-header-bg-from)] to-[var(--khata-header-bg-to)] border-[var(--khata-header-border)] p-5 mb-6">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-full bg-[var(--customers-header-avatar-bg)] text-[var(--customers-header-avatar-text)] flex items-center justify-center text-2xl font-bold">
+            <div className="h-12 w-12 rounded-full bg-[var(--khata-header-avatar-bg)] text-[var(--khata-header-avatar-text)] flex items-center justify-center text-2xl font-bold">
               {detail.name.charAt(0).toUpperCase()}
             </div>
             <div>
@@ -119,7 +119,7 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
           </div>
           <div className="text-right">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">Total Due</p>
-            <p className="text-4xl font-bold text-[var(--customers-header-due-amount)]">
+            <p className="text-4xl font-bold text-[var(--khata-header-due-amount)]">
               ₹{detail.totalDue.toFixed(2)}
             </p>
           </div>
@@ -128,14 +128,14 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
 
       {/* Action buttons */}
       <div className="flex justify-center mb-6">
-        <div className="inline-flex flex-wrap gap-3 justify-center bg-[var(--customers-btn-panel-bg)] border rounded-xl p-2 shadow-sm">
+        <div className="inline-flex flex-wrap gap-3 justify-center bg-[var(--khata-btn-panel-bg)] border rounded-xl p-2 shadow-sm">
           <Button
             size="sm"
             onClick={() => setMode("payment")}
             className={cn(
               "transition-all",
               mode === "payment" &&
-                "ring-2 ring-offset-2 [--tw-ring-color:var(--customers-btn-payment-ring)] bg-[var(--customers-btn-payment-active-bg)]"
+                "ring-2 ring-offset-2 [--tw-ring-color:var(--khata-btn-payment-ring)] bg-[var(--khata-btn-payment-active-bg)]"
             )}
           >
             <IndianRupee className="mr-1.5 h-4 w-4" /> Payment Mila
@@ -146,9 +146,9 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
             variant="outline"
             onClick={() => setMode("credit")}
             className={cn(
-              "transition-all border-[var(--customers-btn-credit-border)] text-[var(--customers-btn-credit-text)] hover:bg-[var(--customers-btn-credit-hover-bg)]",
+              "transition-all border-[var(--khata-btn-credit-border)] text-[var(--khata-btn-credit-text)] hover:bg-[var(--khata-btn-credit-hover-bg)]",
               mode === "credit" &&
-                "ring-2 ring-offset-2 [--tw-ring-color:var(--customers-btn-credit-ring)] bg-[var(--customers-btn-credit-active-bg)]"
+                "ring-2 ring-offset-2 [--tw-ring-color:var(--khata-btn-credit-ring)] bg-[var(--khata-btn-credit-active-bg)]"
             )}
           >
             <CreditCard className="mr-1.5 h-4 w-4" /> Udhaar Diya
@@ -158,7 +158,7 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
             size="sm"
             variant="outline"
             onClick={() => setIsReminderOpen(true)}
-            className="border-[var(--customers-btn-reminder-border)] text-[var(--customers-btn-reminder-text)] hover:bg-[var(--customers-btn-reminder-hover-bg)]"
+            className="border-[var(--khata-btn-reminder-border)] text-[var(--khata-btn-reminder-text)] hover:bg-[var(--khata-btn-reminder-hover-bg)]"
           >
             <MessageCircle className="mr-1.5 h-4 w-4" /> Reminder
           </Button>
@@ -197,7 +197,7 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
       )}
 
       {/* Ledger table */}
-      <div className="flex-1 border rounded-xl bg-[var(--customers-ledger-bg)] flex flex-col overflow-hidden">
+      <div className="flex-1 border rounded-xl bg-[var(--khata-ledger-bg)] flex flex-col overflow-hidden">
         {/* Desktop header */}
         <div className="hidden sm:grid grid-cols-[120px_1fr_130px_130px] bg-muted sticky top-0 text-xs font-semibold text-muted-foreground border-b">
           <div className="px-6 py-3.5">Date</div>
