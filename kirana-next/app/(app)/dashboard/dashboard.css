@@ -44,4 +44,36 @@
     --dashboard-badge-cash-bg:          hsl(142 60% 97%);             /* bg-green-50 */
   }
 
+  .dark {
+    --dashboard-sale-value:             hsl(var(--primary));
+    --dashboard-sale-bg:                hsl(174 72% 15%);
+    --dashboard-sale-border:            hsl(174 72% 25%);
+    --dashboard-sale-icon:              hsl(var(--primary));
+
+    --dashboard-profit-value:           hsl(142 60% 50%);
+    --dashboard-profit-bg:              hsl(142 60% 15%);
+    --dashboard-profit-border:          hsl(142 60% 25%);
+    --dashboard-profit-icon:            hsl(142 60% 50%);
+
+    --dashboard-khata-value:            hsl(38 90% 60%);
+    --dashboard-khata-bg:               hsl(38 90% 15%);
+    --dashboard-khata-border:           hsl(38 90% 25%);
+    --dashboard-khata-icon:             hsl(38 90% 60%);
+
+    --dashboard-lowstock-value:         hsl(0 84% 65%);
+    --dashboard-lowstock-bg:            hsl(0 84% 15%);
+    --dashboard-lowstock-border:        hsl(0 84% 25%);
+    --dashboard-lowstock-icon:          hsl(0 84% 65%);
+
+    --dashboard-badge-khata-text:       hsl(38 90% 60%);
+    --dashboard-badge-khata-border:     hsl(38 90% 30%);
+    --dashboard-badge-khata-bg:         hsl(38 90% 15%);
+    --dashboard-badge-upi-text:         hsl(var(--primary));
+    --dashboard-badge-upi-border:       hsl(174 72% 30%);
+    --dashboard-badge-upi-bg:           hsl(174 72% 15%);
+    --dashboard-badge-cash-text:        hsl(142 60% 50%);
+    --dashboard-badge-cash-border:      hsl(142 60% 30%);
+    --dashboard-badge-cash-bg:          hsl(142 60% 15%);
+  }
+
 }

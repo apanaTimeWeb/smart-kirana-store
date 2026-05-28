@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { ThemeToggle } from "./theme-toggle";
 
 const sidebarNav = [
   { name: "Dashboard", hindiName: "डैशबोर्ड", href: "/dashboard", icon: LayoutDashboard },
@@ -123,7 +124,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {sidebarNav.map((item) => (
             <SidebarNavItem key={item.href} item={item} isActive={isActive(item.href)} />
           ))}
-          <SidebarLogoutButton onClick={handleLogout} />
+          <div className="mt-auto flex flex-col gap-1">
+            <ThemeToggle />
+            <SidebarLogoutButton onClick={handleLogout} />
+          </div>
         </nav>
         <div className="border-t border-sidebar-border px-3 py-3 space-y-1">
           <p className="text-[10px] text-muted-foreground text-center pt-1">
@@ -244,16 +248,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </Link>
               ))}
             </div>
-            <button
-              onClick={() => { setMoreOpen(false); handleLogout(); }}
-              className="mt-3 w-full flex items-center gap-3 rounded-xl border border-destructive/20 p-4 text-destructive hover:bg-destructive/10 transition-colors"
-            >
-              <LogOut className="h-5 w-5 shrink-0" />
-              <div>
-                <p className="font-semibold text-sm">Logout</p>
-                <p className="text-[10px] opacity-70">बाहर जाएं</p>
+            <div className="mt-3 flex flex-col gap-2">
+              <div className="rounded-xl border p-2">
+                <ThemeToggle />
               </div>
-            </button>
+              <button
+                onClick={() => { setMoreOpen(false); handleLogout(); }}
+                className="w-full flex items-center gap-3 rounded-xl border border-destructive/20 p-4 text-destructive hover:bg-destructive/10 transition-colors"
+              >
+                <LogOut className="h-5 w-5 shrink-0" />
+                <div>
+                  <p className="font-semibold text-sm">Logout</p>
+                  <p className="text-[10px] opacity-70">बाहर जाएं</p>
+                </div>
+              </button>
+            </div>
           </div>
         </>
       )}

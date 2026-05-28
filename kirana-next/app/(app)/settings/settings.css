@@ -17,4 +17,12 @@
     --settings-device-tablet:           hsl(270 60% 50%);             /* text-purple-600 */
   }
 
+  .dark {
+    --settings-whatsapp-icon:           hsl(142 60% 50%);
+
+    --settings-device-computer:         hsl(217 91% 60%);
+    --settings-device-mobile:           hsl(142 60% 50%);
+    --settings-device-tablet:           hsl(270 60% 65%);
+  }
+
 }

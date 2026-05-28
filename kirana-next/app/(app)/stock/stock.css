@@ -56,4 +56,49 @@
     --stock-mode-wholesale-border:   hsl(285 35% 78%);
   }
 
+  .dark {
+    --stock-calc-border:             hsl(217 91% 30%);
+    --stock-calc-bg:                 hsl(217 91% 15%);
+    --stock-calc-icon:               hsl(217 91% 60%);
+    --stock-calc-result-border:      hsl(142 60% 40%);
+    --stock-calc-result-bg:          hsl(var(--card));
+    --stock-calc-result-label:       hsl(142 60% 50%);
+    --stock-calc-result-value:       hsl(142 60% 50%);
+
+    --stock-purchase-rate:           hsl(217 91% 60%);
+    --stock-selling-price:           hsl(142 60% 50%);
+    --stock-margin:                  hsl(152 60% 50%);
+
+    --stock-badge-lowstock-bg:       hsl(24 90% 15%);
+    --stock-badge-lowstock-text:     hsl(24 90% 60%);
+    --stock-badge-lowstock-border:   hsl(24 90% 30%);
+
+    --stock-btn-delete-text:         hsl(0 62% 65%);
+
+    --stock-type-bg:                 hsl(210 20% 15%);
+    --stock-stat-icon:               hsl(var(--primary));
+    --stock-purchase-preview-bg:     hsl(142 60% 15%);
+    --stock-purchase-preview-text:   hsl(142 60% 50%);
+
+    --stock-stock-ok-bg:             hsl(142 60% 15%);
+    --stock-stock-ok-text:           hsl(142 60% 50%);
+    --stock-stock-ok-border:         hsl(142 60% 30%);
+    --stock-stock-out-bg:            hsl(0 76% 15%);
+    --stock-stock-out-text:          hsl(0 62% 65%);
+    --stock-stock-out-border:        hsl(0 76% 30%);
+
+    --stock-mode-khula-bg:           hsl(174 45% 15%);
+    --stock-mode-khula-text:         hsl(174 45% 60%);
+    --stock-mode-khula-border:       hsl(174 45% 30%);
+    --stock-mode-fixed-bg:           hsl(220 70% 15%);
+    --stock-mode-fixed-text:         hsl(220 70% 60%);
+    --stock-mode-fixed-border:       hsl(220 70% 30%);
+    --stock-mode-variant-bg:         hsl(38 90% 15%);
+    --stock-mode-variant-text:       hsl(38 90% 60%);
+    --stock-mode-variant-border:     hsl(38 90% 30%);
+    --stock-mode-wholesale-bg:       hsl(285 35% 15%);
+    --stock-mode-wholesale-text:     hsl(285 35% 60%);
+    --stock-mode-wholesale-border:   hsl(285 35% 30%);
+  }
+
 }

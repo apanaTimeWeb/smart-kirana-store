@@ -54,4 +54,45 @@
     --khata-list-delete-hover:      hsl(var(--destructive));      /* hover:text-red-500 */
   }
 
+  .dark {
+    --khata-header-bg-from:         hsl(38 90% 15%);
+    --khata-header-bg-to:           hsl(24 90% 10%);
+    --khata-header-border:          hsl(38 90% 25%);
+    --khata-header-avatar-bg:       hsl(38 90% 25%);
+    --khata-header-avatar-text:     hsl(38 90% 60%);
+    --khata-header-due-amount:      hsl(38 90% 60%);
+
+    --khata-btn-panel-bg:           hsl(var(--card));
+    --khata-btn-payment-ring:       hsl(142 60% 50%);
+    --khata-btn-payment-active-bg:  hsl(142 60% 40%);
+    --khata-btn-credit-border:      hsl(0 62% 65%);
+    --khata-btn-credit-text:        hsl(0 62% 65%);
+    --khata-btn-credit-hover-bg:    hsl(0 62% 15%);
+    --khata-btn-credit-ring:        hsl(0 62% 65%);
+    --khata-btn-credit-active-bg:   hsl(0 62% 15%);
+    --khata-btn-reminder-border:    hsl(142 60% 50%);
+    --khata-btn-reminder-text:      hsl(142 60% 60%);
+    --khata-btn-reminder-hover-bg:  hsl(142 60% 15%);
+
+    --khata-reminder-msg-bg:        hsl(142 60% 15%);
+    --khata-reminder-msg-border:    hsl(142 60% 25%);
+    --khata-reminder-send-bg:       hsl(142 60% 40%);
+    --khata-reminder-bill-border:   hsl(142 60% 40%);
+    --khata-reminder-bill-text:     hsl(142 60% 60%);
+
+    --khata-form-panel-bg:          hsl(var(--card));
+
+    --khata-ledger-bg:              hsl(var(--card));
+    --khata-tx-credit-icon-bg:      hsl(38 90% 15%);
+    --khata-tx-credit-icon-text:    hsl(38 90% 60%);
+    --khata-tx-credit-amount:       hsl(38 90% 60%);
+    --khata-tx-payment-icon-bg:     hsl(142 60% 15%);
+    --khata-tx-payment-icon-text:   hsl(142 60% 50%);
+    --khata-tx-payment-amount:      hsl(142 60% 50%);
+
+    --khata-list-due-text:          hsl(38 90% 60%);
+    --khata-list-clear-text:        hsl(142 60% 50%);
+    --khata-list-delete-hover:      hsl(0 62% 65%);
+  }
+
 }
