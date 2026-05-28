@@ -1,9 +1,8 @@
 "use client";
 
 import "./dashboard.css";
-import { useGetDashboardSummary } from "@/lib/api";
+import data from "@/lib/data.json";
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { IndianRupee, TrendingUp, BookOpen, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
 import { StatCard } from "./dashboard_components/StatCard";
@@ -11,44 +10,28 @@ import { RecentBillsList } from "./dashboard_components/RecentBillsList";
 import { LowStockList } from "./dashboard_components/LowStockList";
 
 export default function Dashboard() {
-  const { data: summary, isLoading, error } = useGetDashboardSummary();
+  const todaySaleData = data.salesReportData[data.salesReportData.length - 1];
+  const todayProfitData = data.profitReportData[data.profitReportData.length - 1];
 
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <Skeleton className="h-7 w-72 mb-1" />
-          <Skeleton className="h-4 w-40" />
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Card key={i}>
-              <CardContent className="p-5">
-                <Skeleton className="h-20 w-full" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          {[1, 2].map((i) => (
-            <Card key={i}>
-              <CardContent className="p-5">
-                <Skeleton className="h-48 w-full" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  }
+  const pendingKhataCustomers = data.customers.filter(c => c.totalDue > 0);
+  const pendingKhataAmount = pendingKhataCustomers.reduce((sum, c) => sum + c.totalDue, 0);
+  const pendingKhataCount = pendingKhataCustomers.length;
 
-  if (error || !summary) {
-    return (
-      <div className="flex h-64 items-center justify-center text-muted-foreground">
-        Dashboard load nahi hua. Page refresh karein.
-      </div>
-    );
-  }
+  const lowStockItems = data.products.filter(p => p.currentStock <= p.lowStockThreshold);
+  const lowStockCount = lowStockItems.filter(p => p.currentStock > 0).length;
+  const outOfStockCount = lowStockItems.filter(p => p.currentStock === 0).length;
+
+  const summary = {
+    todaySale: todaySaleData?.sales || 0,
+    todayOrderCount: todaySaleData?.orders || 0,
+    todayProfit: todayProfitData?.profit || 0,
+    pendingKhataAmount,
+    pendingKhataCount,
+    lowStockCount,
+    outOfStockCount,
+    recentBills: data.bills,
+    lowStockProducts: lowStockItems,
+  };
 
   const today = format(new Date(), "EEEE, dd MMM yyyy");
 
