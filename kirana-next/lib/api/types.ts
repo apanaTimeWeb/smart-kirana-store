@@ -121,6 +121,7 @@ export type BillItem = {
   selectedBaseQuantity?: number;
   unitPrice: number;
   totalPrice: number;
+  returnedQuantity?: number;
 };
 
 export type BillInput = {
@@ -150,6 +151,16 @@ export type Bill = {
   enableGST: boolean;
   gstRate: number;
   createdAt: string;
+};
+
+export type ReturnBillItemInput = {
+  productId: number;
+  quantityToReturn: number;
+};
+
+export type ReturnBillInput = {
+  billId: number;
+  items: ReturnBillItemInput[];
 };
 
 export type DashboardSummary = {

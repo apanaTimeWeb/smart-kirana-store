@@ -13,6 +13,7 @@ import {
   MoreHorizontal,
   X,
   LogOut,
+  History,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -24,6 +25,7 @@ const sidebarNav = [
   { name: "Stock", hindiName: "स्टॉक", href: "/stock", icon: Package },
   { name: "Khata", hindiName: "खाता", href: "/khata", icon: BookOpen },
   { name: "Reports", hindiName: "रिपोर्ट", href: "/reports", icon: BarChart3 },
+  { name: "History", hindiName: "इतिहास", href: "/history", icon: History },
   { name: "Settings", hindiName: "सेटिंग", href: "/settings", icon: Settings },
 ];
 
@@ -37,6 +39,7 @@ const bottomNav = [
 
 const moreItems = [
   { name: "Reports", hindiName: "रिपोर्ट", href: "/reports", icon: BarChart3 },
+  { name: "History", hindiName: "इतिहास", href: "/history", icon: History },
   { name: "Settings", hindiName: "सेटिंग", href: "/settings", icon: Settings },
 ];
 

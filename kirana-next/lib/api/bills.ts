@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { storeGetBills, storeCreateBill } from "./store";
 import type { Bill, BillInput } from "./types";
 
@@ -25,3 +25,22 @@ export function useCreateBill() {
     },
   });
 }
+
+export function useReturnBillItems() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ data }: { data: import("./types").ReturnBillInput }) => {
+      const { storeReturnBillItems } = await import("./store");
+      return Promise.resolve(storeReturnBillItems(data));
+    },
+    onSuccess: () => {
+      // Invalidate relevant queries so the UI updates
+      queryClient.invalidateQueries({ queryKey: getListBillsQueryKey() });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["reports"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
+    },
+  });
+}
+

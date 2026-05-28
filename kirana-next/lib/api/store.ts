@@ -9,6 +9,7 @@ import type {
   ProductInput,
   ProductVariantInput,
   PurchaseEntryInput,
+  ReturnBillInput,
 } from "./types";
 
 type ProductMaster = {
@@ -692,4 +693,87 @@ export function storeUpdateSettings(d: Partial<AppSettings>): AppSettings {
   Object.assign(data.settings, d);
   persist();
   return data.settings as AppSettings;
+}
+
+export function storeReturnBillItems(input: ReturnBillInput): Bill {
+  const billIndex = data.bills.findIndex(b => b.id === input.billId);
+  if (billIndex === -1) throw new Error("Bill not found");
+
+  const bill = data.bills[billIndex] as Bill;
+  let totalRefundAmount = 0;
+  let totalRefundProfit = 0;
+
+  // Process each returned item
+  for (const returned of input.items) {
+    if (returned.quantityToReturn <= 0) continue;
+
+    const billItem = bill.items.find(i => i.productId === returned.productId);
+    if (!billItem) continue;
+
+    const previousReturnQty = billItem.returnedQuantity ?? 0;
+    const maxReturnable = billItem.quantity - previousReturnQty;
+    const actualReturnQty = Math.min(returned.quantityToReturn, maxReturnable);
+
+    if (actualReturnQty <= 0) continue;
+
+    billItem.returnedQuantity = previousReturnQty + actualReturnQty;
+
+    const productIdx = data.products.findIndex(p => p.id === billItem.productId);
+    if (productIdx !== -1) {
+      const p = data.products[productIdx];
+      // Stock delta for the returned quantity
+      const stockDelta = billItem.stockDeltaBaseUnit
+        ? (billItem.stockDeltaBaseUnit / billItem.quantity) * actualReturnQty
+        : p.baseQuantity * actualReturnQty;
+
+      // Add stock back
+      const updatedProduct = withComputedFields({
+        ...p,
+        stockInBaseUnit: p.stockInBaseUnit + stockDelta,
+      });
+      data.products[productIdx] = updatedProduct;
+      applySharedStock(updatedProduct, updatedProduct.stockInBaseUnit);
+
+      // Calculate profit to revert
+      const costPerBaseUnit = p.purchasePrice / Math.max(1, p.baseQuantity);
+      const costForReturn = costPerBaseUnit * stockDelta;
+      const refundRevenue = billItem.unitPrice * actualReturnQty;
+      
+      totalRefundAmount += refundRevenue;
+      totalRefundProfit += (refundRevenue - costForReturn);
+    }
+  }
+
+  // Adjust khata if needed
+  if (bill.paymentMode === "khata" && bill.customerId && totalRefundAmount > 0) {
+    const c = data.customers.find(customer => customer.id === bill.customerId) as any;
+    if (c) {
+      c.totalDue = Math.max(0, (c.totalDue ?? 0) - totalRefundAmount);
+      c.transactions = c.transactions ?? [];
+      c.transactions.push({
+        id: nextTxId++,
+        type: "payment",
+        amount: totalRefundAmount,
+        description: `Refund for returned items in Bill #${bill.id}`,
+        createdAt: new Date().toISOString(),
+      });
+    }
+  }
+
+  // Adjust Daily Metrics for the date of the original bill
+  if (totalRefundAmount > 0) {
+    const date = bill.createdAt.split("T")[0];
+    const salesRow = data.salesReportData.find((row) => row.date === date);
+    if (salesRow) {
+      salesRow.sales = Math.max(0, salesRow.sales - totalRefundAmount);
+    }
+    const profitRow = data.profitReportData.find((row) => row.date === date);
+    if (profitRow) {
+      profitRow.revenue = Math.max(0, profitRow.revenue - totalRefundAmount);
+      profitRow.profit -= totalRefundProfit; // Profit can be negative
+    }
+  }
+
+  persist();
+  return bill;
 }
