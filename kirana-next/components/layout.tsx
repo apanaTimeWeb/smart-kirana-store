@@ -20,7 +20,7 @@ import { useState } from "react";
 const sidebarNav = [
   { name: "Dashboard", hindiName: "डैशबोर्ड", href: "/dashboard", icon: LayoutDashboard },
   { name: "Billing", hindiName: "बिलिंग", href: "/billing", icon: ShoppingCart },
-  { name: "Stock", hindiName: "स्टॉक", href: "/products", icon: Package },
+  { name: "Stock", hindiName: "स्टॉक", href: "/stock", icon: Package },
   { name: "Khata", hindiName: "खाता", href: "/khata", icon: BookOpen },
   { name: "Reports", hindiName: "रिपोर्ट", href: "/reports", icon: BarChart3 },
   { name: "Settings", hindiName: "सेटिंग", href: "/settings", icon: Settings },
@@ -29,7 +29,7 @@ const sidebarNav = [
 const bottomNav = [
   { name: "Home", hindiName: "होम", href: "/dashboard", icon: LayoutDashboard },
   { name: "Billing", hindiName: "बिलिंग", href: "/billing", icon: ShoppingCart },
-  { name: "Stock", hindiName: "स्टॉक", href: "/products", icon: Package },
+  { name: "Stock", hindiName: "स्टॉक", href: "/stock", icon: Package },
   { name: "Khata", hindiName: "खाता", href: "/khata", icon: BookOpen },
   { name: "More", hindiName: "अधिक", href: "#more", icon: MoreHorizontal },
 ];

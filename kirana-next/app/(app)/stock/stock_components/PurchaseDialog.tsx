@@ -80,9 +80,9 @@ export function PurchaseDialog({
           </div>
 
           {selected && (
-            <div className="rounded-lg border bg-[var(--products-purchase-preview-bg)] p-4">
+            <div className="rounded-lg border bg-[var(--stock-purchase-preview-bg)] p-4">
               <p className="text-sm font-semibold">{quantity} x {selected.variantName}</p>
-              <p className="mt-1 text-2xl font-extrabold text-[var(--products-purchase-preview-text)]">
+              <p className="mt-1 text-2xl font-extrabold text-[var(--stock-purchase-preview-text)]">
                 + {formatBaseUnits(addedBase, selected.baseUnit)}
               </p>
               <p className="text-xs text-muted-foreground">

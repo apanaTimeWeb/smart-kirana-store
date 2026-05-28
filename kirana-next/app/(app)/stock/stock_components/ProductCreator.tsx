@@ -122,7 +122,7 @@ export function ProductCreator({
               </div>
             </div>
 
-            <div className="rounded-lg border bg-[var(--products-type-bg)] p-3">
+            <div className="rounded-lg border bg-[var(--stock-type-bg)] p-3">
               <p className="mb-3 text-sm font-semibold">Selling type</p>
               <div className="grid gap-2">
                 {([
@@ -177,7 +177,7 @@ export function ProductCreator({
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-[var(--products-btn-delete-text)]"
+                        className="h-8 w-8 text-[var(--stock-btn-delete-text)]"
                         onClick={() =>
                           setDraft({
                             ...draft,

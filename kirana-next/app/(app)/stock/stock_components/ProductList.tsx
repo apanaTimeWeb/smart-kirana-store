@@ -152,7 +152,7 @@ export function ProductList() {
           <div key={item.label} className="rounded-lg border bg-card p-3">
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs font-medium text-muted-foreground">{item.label}</p>
-              <item.icon className="h-4 w-4 text-[var(--products-stat-icon)]" />
+              <item.icon className="h-4 w-4 text-[var(--stock-stat-icon)]" />
             </div>
             <p className="mt-2 text-2xl font-extrabold">{item.value}</p>
           </div>
@@ -228,13 +228,13 @@ export function ProductList() {
                   <p className="text-xs text-muted-foreground">{formatBaseUnits(product.stockInBaseUnit, product.baseUnit)}</p>
                 </TableCell>
                 <TableCell>
-                  <p className="font-semibold text-[var(--products-selling-price)]">Rs {product.sellingPrice}</p>
+                  <p className="font-semibold text-[var(--stock-selling-price)]">Rs {product.sellingPrice}</p>
                   <p className="text-xs text-muted-foreground">Buy Rs {product.purchasePrice}</p>
                 </TableCell>
                 <TableCell><StockBadge product={product} /></TableCell>
                 <TableCell className="text-right">
                   <Button variant="ghost" size="icon" onClick={() => setEditingProduct(product)}><Edit className="h-4 w-4" /></Button>
-                  <Button variant="ghost" size="icon" className="text-[var(--products-btn-delete-text)]" onClick={() => remove(product)}><Trash2 className="h-4 w-4" /></Button>
+                  <Button variant="ghost" size="icon" className="text-[var(--stock-btn-delete-text)]" onClick={() => remove(product)}><Trash2 className="h-4 w-4" /></Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -269,7 +269,7 @@ export function ProductList() {
             </div>
             <div className="mt-3 flex justify-end gap-1">
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingProduct(product)}><Edit className="h-4 w-4" /></Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--products-btn-delete-text)]" onClick={() => remove(product)}><Trash2 className="h-4 w-4" /></Button>
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--stock-btn-delete-text)]" onClick={() => remove(product)}><Trash2 className="h-4 w-4" /></Button>
             </div>
           </div>
         ))}

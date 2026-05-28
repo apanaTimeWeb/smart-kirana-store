@@ -11,9 +11,9 @@ export function StockBadge({ product }: { product: Product }) {
       variant="outline"
       className={cn(
         "font-semibold",
-        out && "bg-[var(--products-stock-out-bg)] text-[var(--products-stock-out-text)] border-[var(--products-stock-out-border)]",
-        low && "bg-[var(--products-badge-lowstock-bg)] text-[var(--products-badge-lowstock-text)] border-[var(--products-badge-lowstock-border)]",
-        !out && !low && "bg-[var(--products-stock-ok-bg)] text-[var(--products-stock-ok-text)] border-[var(--products-stock-ok-border)]"
+        out && "bg-[var(--stock-stock-out-bg)] text-[var(--stock-stock-out-text)] border-[var(--stock-stock-out-border)]",
+        low && "bg-[var(--stock-badge-lowstock-bg)] text-[var(--stock-badge-lowstock-text)] border-[var(--stock-badge-lowstock-border)]",
+        !out && !low && "bg-[var(--stock-stock-ok-bg)] text-[var(--stock-stock-ok-text)] border-[var(--stock-stock-ok-border)]"
       )}
     >
       {out ? "Out" : low ? "Low" : "OK"}
