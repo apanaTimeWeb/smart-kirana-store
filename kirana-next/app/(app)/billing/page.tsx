@@ -1,7 +1,7 @@
 "use client";
 
 import "./billing.css";
-import { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   getGetDashboardSummaryQueryKey,
   getListBillsQueryKey,
@@ -29,8 +29,10 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import {
   CheckCircle2,
+  MessageCircle,
   Minus,
   PackageCheck,
+  Phone,
   Plus,
   Search,
   ShoppingCart,
@@ -54,6 +56,134 @@ type CartItem = {
   stockDeltaBaseUnit: number;
   selectedBaseQuantity?: number;
 };
+
+type BillData = {
+  items: CartItem[];
+  customerName?: string;
+  subtotal: number;
+  discount: number;
+  taxableValue: number;
+  gstAmount: number;
+  finalAmount: number;
+  paymentMode: string;
+  enableGST: boolean;
+  gstRate: number;
+};
+
+function WhatsAppDialog({
+  billData,
+  shopName,
+  shopAddress,
+  shopPhone,
+  onClose,
+}: {
+  billData: BillData | null;
+  shopName: string;
+  shopAddress?: string;
+  shopPhone?: string;
+  onClose: () => void;
+}) {
+  const [phone, setPhone] = useState("");
+  const { toast } = useToast();
+
+  // Reset phone each time a new bill opens
+  useEffect(() => {
+    if (billData) setPhone("");
+  }, [billData]);
+
+  const buildMessage = () => {
+    if (!billData) return "";
+    const lines = billData.items
+      .map((item) => `\u2022 ${item.displayName} (${item.quantity > 1 ? `${item.quantity} x ${item.displayQuantity}` : item.displayQuantity}) \u2014 Rs ${item.totalPrice.toFixed(0)}`)
+      .join("\n");
+    let msg = `\uD83D\uDED2 *${shopName}*\n`;
+    if (shopAddress) msg += `\uD83D\uDCCD ${shopAddress}\n`;
+    if (shopPhone) msg += `\uD83D\uDCDE ${shopPhone}\n`;
+    msg += `\n*Bill Date:* ${format(new Date(), "dd MMM yyyy, hh:mm a")}\n`;
+    if (billData.customerName) msg += `*Customer:* ${billData.customerName}\n`;
+    msg += `\n*Items:*\n${lines}\n`;
+    msg += `\n*Subtotal:* Rs ${billData.subtotal.toFixed(0)}`;
+    if (billData.discount > 0) msg += `\n*Discount:* -Rs ${billData.discount.toFixed(0)}`;
+    if (billData.enableGST) msg += `\n*GST (${billData.gstRate}%):* Rs ${billData.gstAmount.toFixed(0)}`;
+    msg += `\n\n\uD83D\uDCB0 *Total: Rs ${billData.finalAmount.toFixed(0)}*`;
+    msg += `\n\uD83D\uDCB3 *Payment:* ${billData.paymentMode.toUpperCase()}`;
+    msg += `\n\nThank you for shopping with us! \uD83D\uDE4F`;
+    return msg;
+  };
+
+  const handleSend = () => {
+    if (phone.length < 10) {
+      toast({ title: "Valid 10-digit number daalo", variant: "destructive" });
+      return;
+    }
+    const url = `https://wa.me/91${phone}?text=${encodeURIComponent(buildMessage())}`;
+    window.open(url, "_blank");
+    setPhone("");
+    onClose();
+  };
+
+  const handleClose = () => {
+    setPhone("");
+    onClose();
+  };
+
+  return (
+    <Dialog open={Boolean(billData)} onOpenChange={(open) => { if (!open) handleClose(); }}>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <MessageCircle className="h-5 w-5 text-[#25D366]" />
+            Bill WhatsApp pe bhejein?
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <div className="rounded-xl border border-[#25D366]/30 bg-[#25D366]/5 p-4">
+            <p className="text-sm text-muted-foreground">
+              Customer ko bill ka summary WhatsApp pe directly bhej sakte hain.
+              Ek click mein WhatsApp open hoga message ke saath.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <label className="flex items-center gap-2 text-sm font-semibold">
+              <Phone className="h-4 w-4 text-muted-foreground" />
+              WhatsApp Number
+            </label>
+            <div className="flex">
+              <div className="flex h-10 items-center rounded-l-md border border-r-0 bg-muted px-3 text-sm text-muted-foreground select-none">
+                +91
+              </div>
+              <Input
+                type="tel"
+                inputMode="numeric"
+                placeholder="10-digit mobile number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                className="rounded-l-none flex-1"
+                onKeyDown={(e) => { if (e.key === "Enter") handleSend(); }}
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <Button variant="outline" className="flex-1" onClick={handleClose}>
+              Skip
+            </Button>
+            <Button
+              className="flex-1 gap-2 bg-[#25D366] text-white hover:bg-[#1ebe5d] active:scale-[0.98]"
+              onClick={handleSend}
+              disabled={phone.length < 10}
+            >
+              <MessageCircle className="h-4 w-4" />
+              WhatsApp pe Bhejo
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 type BillingFilter = "all" | "khula" | "fixed" | "variant" | "wholesale" | "in" | "low";
 
@@ -264,6 +394,9 @@ export default function Billing() {
   const [khulaProduct, setKhulaProduct] = useState<Product | null>(null);
   const [filter, setFilter] = useState<BillingFilter>("all");
 
+  // WhatsApp: null = closed, BillData = open
+  const [whatsappBillData, setWhatsappBillData] = useState<BillData | null>(null);
+
   const filteredProducts = useMemo(() => {
     const stockRank = (product: Product) => {
       if (product.stockInBaseUnit <= 0 || product.currentStock <= 0) return 2;
@@ -451,18 +584,7 @@ export default function Billing() {
 
   const shopName = settings?.shopName?.trim() || "Smart Kirana Store";
 
-  const printThermalBill = (billData: {
-    items: CartItem[];
-    customerName?: string;
-    subtotal: number;
-    discount: number;
-    taxableValue: number;
-    gstAmount: number;
-    finalAmount: number;
-    paymentMode: string;
-    enableGST: boolean;
-    gstRate: number;
-  }) => {
+  const printThermalBill = (billData: BillData) => {
     const win = window.open("", "_blank", "width=400,height=600");
     if (!win) return;
 
@@ -553,7 +675,7 @@ export default function Billing() {
       },
       {
         onSuccess: () => {
-          printThermalBill({
+          const billData = {
             items: [...cart],
             customerName: selectedCustomer?.name,
             subtotal,
@@ -564,7 +686,9 @@ export default function Billing() {
             paymentMode,
             enableGST,
             gstRate,
-          });
+          };
+
+          printThermalBill(billData);
 
           setBillSuccess(true);
           queryClient.invalidateQueries({ queryKey: getListBillsQueryKey() });
@@ -572,6 +696,9 @@ export default function Billing() {
           queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
           queryClient.invalidateQueries({ queryKey: getListCustomersQueryKey() });
           queryClient.invalidateQueries({ queryKey: ["reports"] });
+
+          // Show WhatsApp dialog — all phone input state lives inside WhatsAppDialog component
+          setWhatsappBillData(billData);
 
           setTimeout(() => {
             setCart([]);
@@ -853,6 +980,14 @@ export default function Billing() {
       </div>
 
       <KhulaPicker product={khulaProduct} open={Boolean(khulaProduct)} onOpenChange={(open) => !open && setKhulaProduct(null)} onAdd={addKhula} />
+
+      <WhatsAppDialog
+        billData={whatsappBillData}
+        shopName={shopName}
+        shopAddress={settings?.shopAddress}
+        shopPhone={settings?.shopPhone}
+        onClose={() => setWhatsappBillData(null)}
+      />
     </>
   );
 }
