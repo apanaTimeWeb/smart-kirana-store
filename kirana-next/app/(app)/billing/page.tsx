@@ -77,22 +77,62 @@ export function buildWhatsAppMessage(
   shopAddress?: string,
   shopPhone?: string
 ) {
-  const lines = billData.items
-    .map((item) => `• ${item.displayName} (${item.quantity > 1 ? `${item.quantity} x ${item.displayQuantity}` : item.displayQuantity}) — Rs ${item.totalPrice.toFixed(0)}`)
-    .join("\n");
+  const W = 34;
+  const padCenter = (str: string, width: number) => {
+    if (str.length >= width) return str.substring(0, width);
+    const left = Math.floor((width - str.length) / 2);
+    const right = width - str.length - left;
+    return " ".repeat(left) + str + " ".repeat(right);
+  };
+  const padRight = (str: string, width: number) => {
+    if (str.length >= width) return str.substring(0, width);
+    return str + " ".repeat(width - str.length);
+  };
+  const padLeft = (str: string, width: number) => {
+    if (str.length >= width) return str.substring(0, width);
+    return " ".repeat(width - str.length) + str;
+  };
 
-  let msg = `🛒 *${shopName}*\n`;
-  if (shopAddress) msg += `📍 ${shopAddress}\n`;
-  if (shopPhone) msg += `📞 ${shopPhone}\n`;
-  msg += `\n*Bill Date:* ${format(new Date(), "dd MMM yyyy, hh:mm a")}\n`;
-  if (billData.customerName) msg += `*Customer:* ${billData.customerName}\n`;
-  msg += `\n*Items:*\n${lines}\n`;
-  msg += `\n*Subtotal:* Rs ${billData.subtotal.toFixed(0)}`;
-  if (billData.discount > 0) msg += `\n*Discount:* -Rs ${billData.discount.toFixed(0)}`;
-  if (billData.enableGST) msg += `\n*GST (${billData.gstRate}%):* Rs ${billData.gstAmount.toFixed(0)}`;
-  msg += `\n\n💰 *Total: Rs ${billData.finalAmount.toFixed(0)}*`;
-  msg += `\n💳 *Payment:* ${billData.paymentMode.toUpperCase()}`;
-  msg += `\n\nThank you for shopping with us! 🙏`;
+  let msg = "```\n";
+  msg += padCenter(shopName, W) + "\n";
+  msg += padCenter("Retail Invoice", W) + "\n";
+  if (shopAddress) msg += padCenter(shopAddress, W) + "\n";
+  if (shopPhone) msg += padCenter(`Phone: ${shopPhone}`, W) + "\n";
+  msg += "-".repeat(W) + "\n";
+  
+  msg += `Date: ${format(new Date(), "dd MMM yyyy, hh:mm a")}\n`;
+  if (billData.customerName) msg += `Customer: ${billData.customerName}\n`;
+  msg += "-".repeat(W) + "\n";
+
+  // Header: Item (18) + Space (1) + Rate (8) + Space (1) + Amt (6) = 34
+  msg += padRight("Item", 18) + " " + padLeft("Rate", 8) + " " + padLeft("Amt", 6) + "\n";
+  
+  billData.items.forEach((item) => {
+    let name = item.displayName;
+    if (name.length > 18) name = name.substring(0, 18);
+    
+    const rateStr = item.unitPrice % 1 === 0 ? item.unitPrice.toFixed(0) : item.unitPrice.toFixed(2);
+    const totalStr = item.totalPrice.toFixed(0);
+    const quantityLabel = item.quantity > 1 ? `${item.quantity} x ${item.displayQuantity}` : item.displayQuantity;
+
+    msg += padRight(name, 18) + " " + padLeft(`Rs ${rateStr}`, 8) + " " + padLeft(`Rs ${totalStr}`, 6) + "\n";
+    msg += padRight(quantityLabel, W) + "\n";
+  });
+
+  msg += "-".repeat(W) + "\n";
+  msg += padRight("Subtotal:", 20) + padLeft(`Rs ${billData.subtotal.toFixed(0)}`, 14) + "\n";
+  if (billData.discount > 0) {
+    msg += padRight("Discount:", 20) + padLeft(`-Rs ${billData.discount.toFixed(0)}`, 14) + "\n";
+  }
+  if (billData.enableGST) {
+    msg += padRight(`GST (${billData.gstRate}%):`, 20) + padLeft(`Rs ${billData.gstAmount.toFixed(0)}`, 14) + "\n";
+  }
+  msg += "-".repeat(W) + "\n";
+  msg += padRight("Total:", 20) + padLeft(`Rs ${billData.finalAmount.toFixed(0)}`, 14) + "\n";
+  msg += "-".repeat(W) + "\n";
+  msg += padRight("Payment:", 16) + padLeft(billData.paymentMode.toUpperCase(), 18) + "\n\n";
+  msg += padCenter("Thank You! Visit Again", W) + "\n";
+  msg += "```";
 
   return msg;
 }
@@ -706,8 +746,6 @@ export default function Billing() {
             gstRate,
           };
 
-          printThermalBill(billData);
-
           setBillSuccess(true);
           queryClient.invalidateQueries({ queryKey: getListBillsQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
@@ -722,8 +760,11 @@ export default function Billing() {
             const msg = buildWhatsAppMessage(billData, shopName, settings?.shopAddress, settings?.shopPhone);
             const url = `https://wa.me/91${rawPhone}?text=${encodeURIComponent(msg)}`;
             window.open(url, "_blank");
+            
+            // Print directly since there's no dialog to block
+            printThermalBill(billData);
           } else {
-            // Show WhatsApp dialog if no valid phone
+            // Show WhatsApp dialog if no valid phone (Printing will happen after it closes)
             setWhatsappBillData(billData);
           }
 
@@ -1028,7 +1069,12 @@ export default function Billing() {
         shopName={shopName}
         shopAddress={settings?.shopAddress}
         shopPhone={settings?.shopPhone}
-        onClose={() => setWhatsappBillData(null)}
+        onClose={() => {
+          if (whatsappBillData) {
+            printThermalBill(whatsappBillData);
+          }
+          setWhatsappBillData(null);
+        }}
       />
     </>
   );
