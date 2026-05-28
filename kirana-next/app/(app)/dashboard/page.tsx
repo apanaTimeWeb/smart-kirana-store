@@ -1,37 +1,19 @@
 "use client";
 
 import "./dashboard.css";
-import data from "@/lib/data.json";
 import { Card, CardContent } from "@/components/ui/card";
-import { IndianRupee, TrendingUp, BookOpen, AlertTriangle } from "lucide-react";
+import { IndianRupee, TrendingUp, BookOpen, AlertTriangle, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { StatCard } from "./dashboard_components/StatCard";
 import { RecentBillsList } from "./dashboard_components/RecentBillsList";
 import { LowStockList } from "./dashboard_components/LowStockList";
+import { ExpiringSoonList } from "./dashboard_components/ExpiringSoonList";
+import { useGetDashboardSummary } from "@/lib/api";
 
 export default function Dashboard() {
-  const todaySaleData = data.salesReportData[data.salesReportData.length - 1];
-  const todayProfitData = data.profitReportData[data.profitReportData.length - 1];
+  const { data: summary } = useGetDashboardSummary();
 
-  const pendingKhataCustomers = data.customers.filter(c => c.totalDue > 0);
-  const pendingKhataAmount = pendingKhataCustomers.reduce((sum, c) => sum + c.totalDue, 0);
-  const pendingKhataCount = pendingKhataCustomers.length;
-
-  const lowStockItems = data.products.filter(p => p.currentStock <= p.lowStockThreshold);
-  const lowStockCount = lowStockItems.filter(p => p.currentStock > 0).length;
-  const outOfStockCount = lowStockItems.filter(p => p.currentStock === 0).length;
-
-  const summary = {
-    todaySale: todaySaleData?.sales || 0,
-    todayOrderCount: todaySaleData?.orders || 0,
-    todayProfit: todayProfitData?.profit || 0,
-    pendingKhataAmount,
-    pendingKhataCount,
-    lowStockCount,
-    outOfStockCount,
-    recentBills: data.bills,
-    lowStockProducts: lowStockItems,
-  };
+  if (!summary) return <div className="p-4 text-muted-foreground">Loading dashboard...</div>;
 
   const today = format(new Date(), "EEEE, dd MMM yyyy");
 
@@ -46,7 +28,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard
           title="आज की बिक्री"
           subtitle="Today's Sale"
@@ -90,12 +72,24 @@ export default function Dashboard() {
           borderClass="border-[var(--dashboard-lowstock-border)]"
           iconColorClass="text-[var(--dashboard-lowstock-icon)]"
         />
+        <StatCard
+          title="एक्सपायरी अलर्ट"
+          subtitle="Expiring Soon"
+          value={`${summary.expiringProducts?.length || 0}`}
+          note="items expiring in 15 days"
+          icon={Clock}
+          colorClass="text-[var(--dashboard-expiry-value)]"
+          bgClass="bg-[var(--dashboard-expiry-bg)]"
+          borderClass="border-[var(--dashboard-expiry-border)]"
+          iconColorClass="text-[var(--dashboard-expiry-icon)]"
+        />
       </div>
 
       {/* Lists */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-3">
         <RecentBillsList bills={summary.recentBills ?? []} />
         <LowStockList products={summary.lowStockProducts ?? []} />
+        <ExpiringSoonList products={summary.expiringProducts ?? []} />
       </div>
     </div>
   );

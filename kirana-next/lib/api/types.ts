@@ -85,6 +85,8 @@ export type PurchaseEntryInput = {
   variantId: number;
   quantity: number;
   purchasePrice?: number;
+  supplierId?: number;
+  expiryDate?: string | null;
 };
 
 export type Customer = {
@@ -101,6 +103,27 @@ export type CustomerDetail = Customer & {
 };
 
 export type KhataTransaction = {
+  id: number;
+  type: "credit" | "payment";
+  amount: number;
+  description: string;
+  createdAt: string;
+};
+
+export type Supplier = {
+  id: number;
+  name: string;
+  phone: string;
+  address?: string;
+  totalDue: number;
+  createdAt: string;
+};
+
+export type SupplierDetail = Supplier & {
+  transactions: SupplierTransaction[];
+};
+
+export type SupplierTransaction = {
   id: number;
   type: "credit" | "payment";
   amount: number;
@@ -185,6 +208,13 @@ export type DashboardSummary = {
     currentStock: number;
     lowStockThreshold: number;
     unit: string;
+  }[];
+  expiringProducts: {
+    id: number;
+    name: string;
+    variantName: string;
+    expiryDate: string;
+    daysLeft: number;
   }[];
 };
 
