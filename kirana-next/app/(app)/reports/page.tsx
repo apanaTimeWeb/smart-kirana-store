@@ -4,31 +4,17 @@ import "./reports.css";
 import { useState } from "react";
 import type { DateRange } from "react-day-picker";
 import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import {
-  AlertTriangle,
-  BookOpen,
   CalendarIcon,
   IndianRupee,
   TrendingUp,
   X,
+  BookOpen,
+  AlertTriangle,
 } from "lucide-react";
 import { format, isSameDay, subDays } from "date-fns";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import {
   useGetLowStockReport,
@@ -36,6 +22,12 @@ import {
   useGetProfitReport,
   useGetSalesReport,
 } from "@/lib/api";
+
+import { StatCard } from "./reports_components/StatCard";
+import { SalesChart } from "./reports_components/SalesChart";
+import { ProfitChart } from "./reports_components/ProfitChart";
+import { PendingKhataList } from "./reports_components/PendingKhataList";
+import { LowStockList } from "./reports_components/LowStockList";
 
 function dateToStr(date: Date) {
   return format(date, "yyyy-MM-dd");
@@ -205,171 +197,31 @@ export default function Reports() {
           </Popover>
           {dateRange.from && (
             <button
-              onClick={clearFilter}
-              className="flex h-9 w-9 items-center justify-center rounded-md border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              title="Filter clear karein"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {statCards.map((card) => (
-          <Card key={card.label} className={`border ${card.borderClass} ${card.bgClass}`}>
-            <CardContent className="p-5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    {card.label}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">{card.sublabel}</p>
-                </div>
-                <card.icon className={`h-4 w-4 ${card.colorClass}`} />
-              </div>
-              {isLoading ? (
-                <Skeleton className="mt-3 h-8 w-24" />
-              ) : (
-                <div className={`mt-3 text-2xl font-extrabold ${card.colorClass}`}>
-                  {card.value}
-                </div>
-              )}
-              {card.note && <p className="mt-1 text-xs text-muted-foreground">{card.note}</p>}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Daily Sales Trend</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[220px]">
-            {salesLoading ? (
-              <Skeleton className="h-full w-full" />
-            ) : salesReport?.data.length ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={salesReport.data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                  <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} tickFormatter={(value) => String(value).slice(5)} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} tickFormatter={(value) => money(Number(value))} />
-                  <Tooltip cursor={{ fill: "hsl(var(--muted))" }} contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "8px", border: "1px solid hsl(var(--border))", fontSize: 12 }} formatter={(value) => [money(Number(value)), "Sales"]} />
-                  <Bar dataKey="sales" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                Is period mein koi sales nahi.
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Profit Trend</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[220px]">
-            {profitLoading ? (
-              <Skeleton className="h-full w-full" />
-            ) : profitReport?.data.length ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={profitReport.data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="profitGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--reports-profit-chart-grad)" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="var(--reports-profit-chart-grad)" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                  <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} tickFormatter={(value) => String(value).slice(5)} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} tickFormatter={(value) => money(Number(value))} />
-                  <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "8px", border: "1px solid hsl(var(--border))", fontSize: 12 }} formatter={(value) => [money(Number(value)), "Profit"]} />
-                  <Area type="monotone" dataKey="profit" stroke="var(--reports-profit-chart-stroke)" strokeWidth={2.5} fillOpacity={1} fill="url(#profitGrad)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                Is period mein koi profit data nahi.
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <BookOpen className="h-4 w-4 text-[var(--reports-khata-color)]" />
-              Pending Udhaar
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            {khataLoading ? (
-              <div className="space-y-2 p-5">
-                {[1, 2, 3].map((item) => <Skeleton key={item} className="h-10 w-full" />)}
-              </div>
-            ) : pendingCustomers.length > 0 ? (
-              <div className="divide-y">
-                {pendingCustomers.slice(0, 6).map((customer) => (
-                  <div key={customer.id} className="flex items-center justify-between px-5 py-3 hover:bg-muted/20" data-testid={`row-khata-${customer.id}`}>
-                    <div>
-                      <p className="text-sm font-semibold">{customer.name}</p>
-                      <p className="text-xs text-muted-foreground">{customer.phone}</p>
-                    </div>
-                    <span className="text-sm font-bold text-[var(--reports-khata-color)]">{money(customer.totalDue)}</span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
-                <BookOpen className="mb-2 h-8 w-8 opacity-20" />
-                <p className="text-sm">Koi udhaar nahi, sab clear hai.</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base text-destructive">
-              <AlertTriangle className="h-4 w-4" />
-              Low Stock Alert
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            {stockLoading ? (
-              <div className="space-y-2 p-5">
-                {[1, 2, 3].map((item) => <Skeleton key={item} className="h-10 w-full" />)}
-              </div>
-            ) : lowStockProducts.length > 0 ? (
-              <div className="divide-y">
-                {lowStockProducts.slice(0, 6).map((product) => (
-                  <div key={product.id} className="flex items-center justify-between px-5 py-3 hover:bg-muted/20" data-testid={`row-lowstock-${product.id}`}>
-                    <div>
-                      <p className="text-sm font-semibold">{product.name}</p>
-                      <p className="text-xs text-muted-foreground">{product.category}</p>
-                    </div>
-                    <Badge className={cn("text-[10px] font-medium", product.currentStock === 0 || product.stockInBaseUnit <= 0 ? "bg-[var(--reports-badge-out-bg)] text-[var(--reports-badge-out-text)] border-[var(--reports-badge-out-border)]" : "bg-[var(--reports-badge-low-bg)] text-[var(--reports-badge-low-text)] border-[var(--reports-badge-low-border)]")}>
-                      {product.currentStock === 0 || product.stockInBaseUnit <= 0
-                        ? "Out of Stock"
-                        : `${product.currentStock} ${product.unit} left`}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
-                <AlertTriangle className="mb-2 h-8 w-8 opacity-20" />
-                <p className="text-sm">Sab stock sahi level par hai.</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-}
+               onClick={clearFilter}
+               className="flex h-9 w-9 items-center justify-center rounded-md border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+               title="Filter clear karein"
+             >
+               <X className="h-3.5 w-3.5" />
+             </button>
+           )}
+         </div>
+       </div>
+ 
+       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+         {statCards.map((card) => (
+           <StatCard key={card.label} {...card} isLoading={isLoading} />
+         ))}
+       </div>
+ 
+       <div className="grid gap-4 md:grid-cols-2">
+         <SalesChart isLoading={salesLoading} data={salesReport?.data} moneyFormatter={money} />
+         <ProfitChart isLoading={profitLoading} data={profitReport?.data} moneyFormatter={money} />
+       </div>
+ 
+       <div className="grid gap-4 md:grid-cols-2">
+         <PendingKhataList isLoading={khataLoading} customers={pendingCustomers} moneyFormatter={money} />
+         <LowStockList isLoading={stockLoading} products={lowStockProducts} />
+       </div>
+     </div>
+   );
+ }

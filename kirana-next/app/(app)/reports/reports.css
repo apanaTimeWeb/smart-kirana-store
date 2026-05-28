@@ -48,4 +48,41 @@
     --reports-badge-low-border:         hsl(38 90% 75%);              /* border-amber-200 */
   }
 
+  .dark {
+    --reports-sale-color:               hsl(var(--primary));
+    --reports-sale-bg:                  hsl(174 72% 15%);
+    --reports-sale-border:              hsl(174 72% 25%);
+
+    --reports-profit-color:             hsl(142 60% 50%);
+    --reports-profit-bg:                hsl(142 60% 15%);
+    --reports-profit-border:            hsl(142 60% 25%);
+
+    --reports-khata-color:              hsl(38 90% 60%);
+    --reports-khata-bg:                 hsl(38 90% 15%);
+    --reports-khata-border:             hsl(38 90% 25%);
+
+    --reports-lowstock-color:           hsl(0 84% 65%);
+    --reports-lowstock-bg:              hsl(0 84% 15%);
+    --reports-lowstock-border:          hsl(0 84% 25%);
+
+    --reports-timebar-bg:               hsl(38 90% 15%);
+    --reports-timebar-border:           hsl(38 90% 25%);
+    --reports-timebar-icon:             hsl(38 90% 60%);
+    --reports-timebar-label:            hsl(38 90% 75%);
+    --reports-timebar-input-border:     hsl(38 90% 30%);
+    --reports-timebar-input-bg:         hsl(var(--card));
+    --reports-timebar-input-ring:       hsl(38 90% 50%);
+    --reports-timebar-sep:              hsl(38 90% 60%);
+
+    --reports-profit-chart-stroke:      hsl(142 60% 50%);
+    --reports-profit-chart-grad:        hsl(142 60% 50%);
+
+    --reports-badge-out-bg:             hsl(0 84% 15%);
+    --reports-badge-out-text:           hsl(0 84% 65%);
+    --reports-badge-out-border:         hsl(0 84% 30%);
+    --reports-badge-low-bg:             hsl(38 90% 15%);
+    --reports-badge-low-text:           hsl(38 90% 60%);
+    --reports-badge-low-border:         hsl(38 90% 30%);
+  }
+
 }

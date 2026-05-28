@@ -72,6 +72,77 @@
     --billing-khula-rate-bg:            hsl(174 25% 95%);
     --billing-khula-chip-bg:            hsl(174 25% 95%);
     --billing-khula-chip-text:          hsl(174 70% 24%);
+
+    /* ── WhatsApp Dialog ───────────────────────────────────────── */
+    --billing-whatsapp-btn-bg:          hsl(142 72% 50%);             /* WhatsApp green */
+    --billing-whatsapp-btn-hover:       hsl(142 72% 43%);             /* darker on hover */
+    --billing-whatsapp-btn-text:        hsl(0 0% 100%);               /* white text */
+    --billing-whatsapp-icon:            hsl(142 72% 50%);             /* MessageCircle icon */
+    --billing-whatsapp-border:          hsl(142 72% 50% / 0.30);      /* info box border */
+    --billing-whatsapp-info-bg:         hsl(142 72% 50% / 0.05);      /* info box bg */
+  }
+
+  .dark {
+    --billing-product-price:            hsl(var(--primary));
+    --billing-product-in-cart-bg:       hsl(174 72% 15%);
+    --billing-product-in-cart-border:   hsl(var(--primary));
+    --billing-product-in-cart-label:    hsl(var(--primary));
+    --billing-product-in-cart-label-bg: hsl(var(--primary) / 0.20);
+    --billing-stock-ok:                 hsl(142 60% 50%);
+    --billing-stock-low:                hsl(38 90% 60%);
+    --billing-stock-out:                hsl(0 62% 65%);
+
+    --billing-cart-bg:                  hsl(var(--card));
+    --billing-cart-footer-bg:           hsl(var(--muted) / 0.50);
+    --billing-cart-success-border:      hsl(142 60% 30%);
+    --billing-cart-success-icon:        hsl(142 60% 50%);
+    --billing-cart-badge-bg:            hsl(var(--primary));
+    --billing-cart-badge-text:          hsl(var(--primary-foreground));
+    --billing-cart-item-remove-hover:   hsl(0 62% 65%);
+    --billing-cart-total-text:          hsl(var(--primary));
+
+    --billing-picker-required-border:   hsl(38 90% 40%);
+    --billing-picker-required-bg:       hsl(38 90% 15%);
+    --billing-picker-selected-row-bg:   hsl(174 72% 15%);
+    --billing-picker-avatar-bg:         hsl(var(--primary) / 0.20);
+    --billing-picker-avatar-text:       hsl(var(--primary));
+    --billing-picker-due-text:          hsl(38 90% 60%);
+    --billing-picker-add-text:          hsl(var(--primary));
+    --billing-picker-add-hover-bg:      hsl(174 72% 15%);
+    --billing-picker-new-icon:          hsl(var(--primary));
+
+    --billing-payment-cash-text:        hsl(142 60% 50%);
+    --billing-payment-cash-border:      hsl(142 60% 30%);
+    --billing-payment-cash-bg:          hsl(142 60% 15%);
+    --billing-payment-upi-text:         hsl(var(--primary));
+    --billing-payment-upi-border:       hsl(174 72% 30%);
+    --billing-payment-upi-bg:           hsl(174 72% 15%);
+    --billing-payment-khata-text:       hsl(38 90% 60%);
+    --billing-payment-khata-border:     hsl(38 90% 30%);
+    --billing-payment-khata-bg:         hsl(38 90% 15%);
+
+    --billing-tab-active-bg:            hsl(var(--card));
+    --billing-tab-active-text:          hsl(var(--foreground));
+    --billing-tab-inactive-text:        hsl(var(--muted-foreground));
+    --billing-tab-bar-bg:               hsl(var(--muted) / 0.40);
+    --billing-tab-badge-bg:             hsl(var(--primary));
+    --billing-tab-badge-text:           hsl(var(--primary-foreground));
+
+    --billing-sticky-btn-bg:            hsl(var(--primary));
+    --billing-sticky-btn-text:          hsl(var(--primary-foreground));
+
+    --billing-quick-bg:                 hsl(38 90% 15%);
+    --billing-quick-text:               hsl(38 90% 60%);
+    --billing-khula-rate-bg:            hsl(174 72% 15%);
+    --billing-khula-chip-bg:            hsl(174 72% 15%);
+    --billing-khula-chip-text:          hsl(174 72% 60%);
+
+    --billing-whatsapp-btn-bg:          hsl(142 72% 40%);
+    --billing-whatsapp-btn-hover:       hsl(142 72% 30%);
+    --billing-whatsapp-btn-text:        hsl(0 0% 100%);
+    --billing-whatsapp-icon:            hsl(142 72% 50%);
+    --billing-whatsapp-border:          hsl(142 72% 50% / 0.30);
+    --billing-whatsapp-info-bg:         hsl(142 72% 50% / 0.10);
   }
 
 }
