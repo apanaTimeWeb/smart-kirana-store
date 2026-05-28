@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, Warehouse, PackagePlus, Boxes, ShoppingBag, Barcode, Edit, Trash2 } from "lucide-react";
+import { Search, Warehouse, PackagePlus, Boxes, ShoppingBag, Barcode, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   useListProducts,
@@ -33,6 +33,8 @@ export function ProductList() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const { data: allProducts = [] } = useListProducts();
   const { data: products = [] } = useListProducts({ search: search || undefined });
@@ -77,6 +79,19 @@ export function ProductList() {
     const quick = allProducts.filter((product) => product.quickSelect).length;
     return { total: allProducts.length, khula, low, quick };
   }, [allProducts]);
+
+  const totalPages = Math.ceil(visibleProducts.length / itemsPerPage);
+  const paginatedProducts = visibleProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleFilterChange = (value: ProductFilter) => {
+    setFilter(value);
+    setCurrentPage(1);
+  };
 
   const create = (draft: ProductDraft) => {
     const input = toInput(draft);
@@ -163,7 +178,7 @@ export function ProductList() {
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={handleSearchChange}
           placeholder="Search: name, barcode, shortcut, keyword..."
           className="h-11 pl-9"
         />
@@ -181,7 +196,7 @@ export function ProductList() {
         ] as const).map(([value, label]) => (
           <button
             key={value}
-            onClick={() => setFilter(value)}
+            onClick={() => handleFilterChange(value as ProductFilter)}
             className={cn(
               "rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors",
               filter === value ? "border-primary bg-primary text-primary-foreground" : "bg-card text-muted-foreground hover:bg-muted/60"
@@ -207,7 +222,7 @@ export function ProductList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {visibleProducts.map((product) => (
+            {paginatedProducts.map((product) => (
               <TableRow key={product.id}>
                 <TableCell>
                   <p className="font-semibold">{product.productName}</p>
@@ -238,22 +253,47 @@ export function ProductList() {
                 </TableCell>
               </TableRow>
             ))}
-            {visibleProducts.length === 0 && (
+            {paginatedProducts.length === 0 && (
               <TableRow>
                 <TableCell colSpan={8} className="py-8 text-center text-muted-foreground">Koi product nahi mila</TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+        <div className="flex items-center justify-between px-5 py-3 border-t">
+          <p className="text-sm text-muted-foreground">
+            Showing {paginatedProducts.length} of {visibleProducts.length} items (Page {totalPages === 0 ? 0 : currentPage} of {totalPages})
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 w-8 p-0"
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 w-8 p-0"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-2 md:hidden">
-        {visibleProducts.length === 0 && (
+        {paginatedProducts.length === 0 && (
           <div className="rounded-lg border bg-card p-8 text-center text-sm text-muted-foreground">
             Koi product nahi mila
           </div>
         )}
-        {visibleProducts.map((product) => (
+        {paginatedProducts.map((product) => (
           <div key={product.id} className="rounded-lg border bg-card p-3">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
@@ -273,6 +313,31 @@ export function ProductList() {
             </div>
           </div>
         ))}
+        <div className="flex items-center justify-between px-2 py-3 mt-2">
+          <p className="text-xs text-muted-foreground">
+            Page {totalPages === 0 ? 0 : currentPage} of {totalPages}
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 w-7 p-0"
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 w-7 p-0"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
 
       <ProductCreator open={isAddOpen} onOpenChange={setIsAddOpen} onSubmit={create} isPending={createProduct.isPending} />
