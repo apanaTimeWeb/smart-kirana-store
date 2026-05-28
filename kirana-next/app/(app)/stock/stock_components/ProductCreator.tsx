@@ -1,29 +1,427 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Trash2, Info, Scale, IndianRupee, Package, Calendar } from "lucide-react";
-import { ProductDraft, SellingTypeKey, VariantDraft } from "./types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  AlertTriangle,
+  ArrowRight,
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  CircleCheck,
+  IndianRupee,
+  Info,
+  Package,
+  Plus,
+  Scale,
+  Sparkles,
+  Star,
+  Tag,
+  Trash2,
+  Zap,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ProductDraft, VariantDraft } from "./types";
 import {
   BASE_UNITS,
-  MODE_LABEL,
   UNITS,
-  buildTemplate,
+  MODE_LABEL,
   defaultBaseQuantity,
   defaultBaseUnit,
+  defaultPresetsFor,
   emptyDraft,
   formatBaseUnits,
   numberValue,
+  uid,
   variantDraft,
+  buildTemplate,
+  toInput,
 } from "./utils";
-import { BaseUnit, SellingMode } from "@/lib/api";
+import { BaseUnit, SellingMode, UnitType } from "@/lib/api";
 
+// ─── Unit Config (enterprise-level lookup table) ────────────────────────────
+// Each unit entry tells the system exactly how to wire up the product.
+// This is the single source of truth — no guessing, no user math.
+
+type UnitConfig = {
+  label: string;
+  baseUnit: BaseUnit;
+  baseQuantity: number;
+  sellingMode: SellingMode;
+  variantNameSuggestion: string;
+  group: "weight" | "liquid" | "piece" | "wholesale";
+  description: string; // shown in the live preview
+};
+
+const UNIT_CONFIG: Record<string, UnitConfig> = {
+  GRAM: {
+    label: "Gram (g)",
+    baseUnit: "gram",
+    baseQuantity: 1,
+    sellingMode: "khula",
+    variantNameSuggestion: "Khula",
+    group: "weight",
+    description: "Sold loose by gram",
+  },
+  KG: {
+    label: "Kilogram (kg)",
+    baseUnit: "gram",
+    baseQuantity: 1000,
+    sellingMode: "khula",
+    variantNameSuggestion: "Khula",
+    group: "weight",
+    description: "Sold loose by kg (stored as grams)",
+  },
+  ML: {
+    label: "Millilitre (ml)",
+    baseUnit: "ml",
+    baseQuantity: 1,
+    sellingMode: "khula",
+    variantNameSuggestion: "Khula",
+    group: "liquid",
+    description: "Sold loose by ml",
+  },
+  LITRE: {
+    label: "Litre (L)",
+    baseUnit: "ml",
+    baseQuantity: 1000,
+    sellingMode: "khula",
+    variantNameSuggestion: "Khula",
+    group: "liquid",
+    description: "Sold loose by litre (stored as ml)",
+  },
+  PIECE: {
+    label: "Piece (pc)",
+    baseUnit: "piece",
+    baseQuantity: 1,
+    sellingMode: "fixed",
+    variantNameSuggestion: "Default",
+    group: "piece",
+    description: "1 piece = 1 unit sold",
+  },
+  PACKET: {
+    label: "Packet",
+    baseUnit: "piece",
+    baseQuantity: 1,
+    sellingMode: "fixed",
+    variantNameSuggestion: "Packet",
+    group: "piece",
+    description: "Fixed packet — 1 packet sold as whole",
+  },
+  POUCH: {
+    label: "Pouch",
+    baseUnit: "piece",
+    baseQuantity: 1,
+    sellingMode: "fixed",
+    variantNameSuggestion: "Pouch",
+    group: "piece",
+    description: "Fixed pouch — 1 pouch sold as whole",
+  },
+  BOTTLE: {
+    label: "Bottle",
+    baseUnit: "piece",
+    baseQuantity: 1,
+    sellingMode: "fixed",
+    variantNameSuggestion: "Bottle",
+    group: "piece",
+    description: "Fixed bottle — 1 bottle sold as whole",
+  },
+  DOZEN: {
+    label: "Dozen (12 pcs)",
+    baseUnit: "piece",
+    baseQuantity: 12,
+    sellingMode: "variant",
+    variantNameSuggestion: "Dozen",
+    group: "piece",
+    description: "1 dozen = 12 pieces",
+  },
+  BOX: {
+    label: "Box",
+    baseUnit: "piece",
+    baseQuantity: 10,
+    sellingMode: "variant",
+    variantNameSuggestion: "Box",
+    group: "piece",
+    description: "1 box = 10 pieces",
+  },
+  TIN: {
+    label: "Tin",
+    baseUnit: "ml",
+    baseQuantity: 15000,
+    sellingMode: "wholesale",
+    variantNameSuggestion: "Tin",
+    group: "wholesale",
+    description: "1 tin = 15 litres (stored as ml)",
+  },
+  DABBA: {
+    label: "Dabba",
+    baseUnit: "piece",
+    baseQuantity: 1,
+    sellingMode: "wholesale",
+    variantNameSuggestion: "Dabba",
+    group: "wholesale",
+    description: "1 dabba sold as whole unit",
+  },
+  CARTON: {
+    label: "Carton",
+    baseUnit: "piece",
+    baseQuantity: 200,
+    sellingMode: "wholesale",
+    variantNameSuggestion: "Carton",
+    group: "wholesale",
+    description: "1 carton = 200 pieces",
+  },
+  BORA: {
+    label: "Bora (50 kg)",
+    baseUnit: "gram",
+    baseQuantity: 50000,
+    sellingMode: "wholesale",
+    variantNameSuggestion: "Bora",
+    group: "wholesale",
+    description: "1 bora = 50 kg (stored as grams)",
+  },
+  BAG: {
+    label: "Bag (25 kg)",
+    baseUnit: "gram",
+    baseQuantity: 25000,
+    sellingMode: "wholesale",
+    variantNameSuggestion: "Bag",
+    group: "wholesale",
+    description: "1 bag = 25 kg (stored as grams)",
+  },
+  BUNDLE: {
+    label: "Bundle",
+    baseUnit: "piece",
+    baseQuantity: 1,
+    sellingMode: "wholesale",
+    variantNameSuggestion: "Bundle",
+    group: "wholesale",
+    description: "1 bundle sold as whole",
+  },
+};
+
+// Ordered for the unit selector dropdown
+const UNIT_GROUPS: { group: string; label: string; units: string[] }[] = [
+  { group: "weight", label: "⚖️ Weight", units: ["GRAM", "KG"] },
+  { group: "liquid", label: "🫙 Liquid", units: ["ML", "LITRE"] },
+  { group: "piece", label: "📦 Piece / Pack", units: ["PIECE", "PACKET", "POUCH", "BOTTLE", "DOZEN", "BOX"] },
+  { group: "wholesale", label: "🏭 Wholesale / Bulk", units: ["TIN", "DABBA", "CARTON", "BORA", "BAG", "BUNDLE"] },
+];
+
+// ─── Sub-component: Live Preview Card ───────────────────────────────────────
+function LivePreview({
+  unitType,
+  buyPrice,
+  sellPrice,
+  variantName,
+}: {
+  unitType: string;
+  buyPrice: number;
+  sellPrice: number;
+  variantName: string;
+}) {
+  const cfg = UNIT_CONFIG[unitType];
+  if (!cfg) return null;
+
+  const margin = buyPrice > 0 ? (((sellPrice - buyPrice) / buyPrice) * 100).toFixed(1) : null;
+  const isLoss = sellPrice > 0 && buyPrice > 0 && sellPrice < buyPrice;
+  const unit = unitType.toLowerCase();
+
+  return (
+    <div className={cn(
+      "rounded-xl border p-4 space-y-3 transition-all",
+      isLoss
+        ? "border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30"
+        : "border-teal-200 bg-teal-50/60 dark:border-teal-800 dark:bg-teal-950/20"
+    )}>
+      <div className="flex items-center gap-2">
+        <CircleCheck className={cn("h-4 w-4 shrink-0", isLoss ? "text-amber-600" : "text-primary")} />
+        <p className={cn("text-xs font-bold uppercase tracking-wider", isLoss ? "text-amber-700" : "text-primary")}>
+          Live Preview — Jo save hoga
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 text-sm">
+        <div className="space-y-0.5">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Variant Name</p>
+          <p className="font-semibold">{variantName || "—"}</p>
+        </div>
+        <div className="space-y-0.5">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Selling Mode</p>
+          <p className="font-semibold">{MODE_LABEL[cfg.sellingMode]}</p>
+        </div>
+        <div className="space-y-0.5">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Conversion</p>
+          <p className="font-semibold text-primary">
+            1 {unit} = {formatBaseUnits(cfg.baseQuantity, cfg.baseUnit)}
+          </p>
+        </div>
+        <div className="space-y-0.5">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Base Unit</p>
+          <p className="font-semibold">{cfg.baseUnit}</p>
+        </div>
+      </div>
+
+      {sellPrice > 0 && (
+        <div className={cn(
+          "flex items-center justify-between rounded-lg px-3 py-2 border",
+          isLoss
+            ? "bg-amber-100 border-amber-300 dark:bg-amber-950/40 dark:border-amber-700"
+            : "bg-white border-teal-200 dark:bg-card dark:border-teal-800"
+        )}>
+          <span className="text-xs text-muted-foreground">
+            Buy ₹{buyPrice} → Sell ₹{sellPrice}
+          </span>
+          {margin !== null && (
+            <span className={cn(
+              "text-xs font-bold",
+              isLoss ? "text-amber-700" : "text-positive"
+            )}>
+              {isLoss ? "⚠️ Loss " : "↑ "}{margin}% margin
+            </span>
+          )}
+        </div>
+      )}
+
+      {isLoss && (
+        <div className="flex items-start gap-2 rounded-lg bg-amber-100 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700 px-3 py-2">
+          <AlertTriangle className="h-3.5 w-3.5 text-amber-600 shrink-0 mt-0.5" />
+          <p className="text-xs text-amber-700 dark:text-amber-400">
+            Sell price is less than buy price — you will make a loss on every sale.
+          </p>
+        </div>
+      )}
+
+      <p className="text-[11px] text-muted-foreground italic">{cfg.description}</p>
+    </div>
+  );
+}
+
+// ─── Sub-component: Additional Variant Row ───────────────────────────────────
+function ExtraVariantRow({
+  variant,
+  index,
+  onUpdate,
+  onRemove,
+}: {
+  variant: VariantDraft;
+  index: number;
+  onUpdate: (patch: Partial<VariantDraft>) => void;
+  onRemove: () => void;
+}) {
+  const cfg = UNIT_CONFIG[variant.unitType] ?? null;
+
+  const handleUnitChange = (unitType: string) => {
+    const c = UNIT_CONFIG[unitType];
+    if (!c) return;
+    onUpdate({
+      unitType: unitType as UnitType,
+      baseUnit: c.baseUnit,
+      baseQuantity: c.baseQuantity,
+      sellingMode: c.sellingMode,
+      variantName: c.variantNameSuggestion,
+      presetBaseQuantities: defaultPresetsFor(c.baseUnit),
+    });
+  };
+
+  return (
+    <div className="rounded-xl border bg-muted/20 p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <Badge variant="outline" className="text-xs">Extra Pack {index + 1}</Badge>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="h-7 px-2 text-destructive hover:bg-destructive/10"
+          onClick={onRemove}
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+            Variant Name
+          </label>
+          <Input
+            value={variant.variantName}
+            onChange={(e) => onUpdate({ variantName: e.target.value })}
+            placeholder="e.g. 500g Packet"
+            className="h-9 text-sm"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+            Unit
+          </label>
+          <Select value={variant.unitType} onValueChange={handleUnitChange}>
+            <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {UNIT_GROUPS.map((g) => (
+                <React.Fragment key={g.group}>
+                  <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    {g.label}
+                  </div>
+                  {g.units.map((u) => (
+                    <SelectItem key={u} value={u} className="text-sm pl-4">
+                      {UNIT_CONFIG[u]?.label ?? u}
+                    </SelectItem>
+                  ))}
+                </React.Fragment>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+            Buy Price ₹
+          </label>
+          <Input
+            type="number"
+            min={0}
+            value={variant.purchasePrice || ""}
+            onChange={(e) => onUpdate({ purchasePrice: numberValue(e.target.value) })}
+            placeholder="0"
+            className="h-9 text-sm"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+            Sell Price ₹
+          </label>
+          <Input
+            type="number"
+            min={0}
+            value={variant.sellingPrice || ""}
+            onChange={(e) => onUpdate({ sellingPrice: numberValue(e.target.value) })}
+            placeholder="0"
+            className="h-9 text-sm"
+          />
+        </div>
+      </div>
+
+      {cfg && (
+        <p className="text-[11px] text-muted-foreground bg-background rounded px-2 py-1 border">
+          📐 1 {variant.unitType.toLowerCase()} = {formatBaseUnits(cfg.baseQuantity, cfg.baseUnit)} · Mode: {MODE_LABEL[cfg.sellingMode]}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ─── Main Component ──────────────────────────────────────────────────────────
 export function ProductCreator({
   open,
   onOpenChange,
@@ -35,388 +433,581 @@ export function ProductCreator({
   onSubmit: (draft: ProductDraft) => void;
   isPending: boolean;
 }) {
-  const [draft, setDraft] = useState<ProductDraft>(emptyDraft());
-  const [activeTab, setActiveTab] = useState<string>("master");
+  // ── Core quick fields ────────────────────────────────────────────────────
+  const [name, setName] = useState("");
+  const [unitType, setUnitType] = useState<string>("KG");
+  const [buyPrice, setBuyPrice] = useState<number | "">("");
+  const [sellPrice, setSellPrice] = useState<number | "">("");
 
-  const setType = (type: SellingTypeKey, checked: boolean) => {
-    const sellingTypes = { ...draft.sellingTypes, [type]: checked };
-    setDraft({ ...draft, sellingTypes, variants: buildTemplate(sellingTypes) });
+  // ── Advanced fields ──────────────────────────────────────────────────────
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [category, setCategory] = useState("General");
+  const [brand, setBrand] = useState("");
+  const [keywords, setKeywords] = useState("");
+  const [shortcut, setShortcut] = useState("");
+  const [mrp, setMrp] = useState<number | "">("");
+  const [initialStock, setInitialStock] = useState<number | "">("");
+  const [lowStockAlert, setLowStockAlert] = useState<number | "">("");
+  const [expiryDate, setExpiryDate] = useState("");
+  const [quickSelect, setQuickSelect] = useState(false);
+
+  // ── Extra variants (advanced) ────────────────────────────────────────────
+  const [extraVariants, setExtraVariants] = useState<VariantDraft[]>([]);
+
+  // ── Derived from unitType ────────────────────────────────────────────────
+  const cfg = UNIT_CONFIG[unitType];
+
+  // Suggested variant name auto-updates when unit changes
+  const [variantNameOverride, setVariantNameOverride] = useState<string | null>(null);
+  const variantName = variantNameOverride ?? cfg?.variantNameSuggestion ?? unitType;
+
+  const handleUnitChange = (newUnit: string) => {
+    setUnitType(newUnit);
+    setVariantNameOverride(null); // reset override so suggestion updates
+    // Auto-reset low stock alert to sensible default for new unit
+    setLowStockAlert("");
   };
 
-  const setVariant = (rowId: string, patch: Partial<VariantDraft>) => {
-    setDraft({
-      ...draft,
-      variants: draft.variants.map((variant) => {
-        if (variant.rowId !== rowId) return variant;
-        const unitType = patch.unitType ?? variant.unitType;
-        const baseUnit = patch.unitType ? defaultBaseUnit(unitType) : patch.baseUnit ?? variant.baseUnit;
-        const baseQuantity = patch.unitType ? defaultBaseQuantity(unitType) : patch.baseQuantity ?? variant.baseQuantity;
-        return { ...variant, ...patch, unitType, baseUnit, baseQuantity };
-      }),
-    });
+  // Computed: smart default for low stock alert based on unit
+  const defaultLowStockAlert = useMemo(() => {
+    if (!cfg) return 5;
+    // For khula items: 5 units in display (e.g. 5 kg = 5000g)
+    // For fixed/wholesale: 5 units
+    return 5;
+  }, [cfg]);
+
+  // Computed: low stock threshold in base units
+  const lowStockInBase = useMemo(() => {
+    const threshold = lowStockAlert !== "" ? Number(lowStockAlert) : defaultLowStockAlert;
+    return threshold * (cfg?.baseQuantity ?? 1);
+  }, [lowStockAlert, defaultLowStockAlert, cfg]);
+
+  // Computed: initial stock in base units
+  const stockInBase = useMemo(() => {
+    const qty = initialStock !== "" ? Number(initialStock) : 0;
+    return qty * (cfg?.baseQuantity ?? 1);
+  }, [initialStock, cfg]);
+
+  // ── Validation ───────────────────────────────────────────────────────────
+  const errors = useMemo(() => {
+    const errs: string[] = [];
+    if (!name.trim()) errs.push("Product name required");
+    if (sellPrice === "" || Number(sellPrice) <= 0) errs.push("Sell price must be > 0");
+    return errs;
+  }, [name, sellPrice]);
+
+  const isValid = errors.length === 0;
+
+  // ── Extra variant handlers ────────────────────────────────────────────────
+  const addExtraVariant = () => {
+    const newV = variantDraft({ variantName: "New Pack", sellingMode: "fixed", unitType: "PACKET" });
+    setExtraVariants((prev) => [...prev, newV]);
+    setShowAdvanced(true);
   };
 
-  const submit = () => {
+  const updateExtraVariant = (rowId: string, patch: Partial<VariantDraft>) => {
+    setExtraVariants((prev) =>
+      prev.map((v) => (v.rowId === rowId ? { ...v, ...patch } : v))
+    );
+  };
+
+  const removeExtraVariant = (rowId: string) => {
+    setExtraVariants((prev) => prev.filter((v) => v.rowId !== rowId));
+  };
+
+  // ── Reset ────────────────────────────────────────────────────────────────
+  const reset = useCallback(() => {
+    setName("");
+    setUnitType("KG");
+    setBuyPrice("");
+    setSellPrice("");
+    setShowAdvanced(false);
+    setCategory("General");
+    setBrand("");
+    setKeywords("");
+    setShortcut("");
+    setMrp("");
+    setInitialStock("");
+    setLowStockAlert("");
+    setExpiryDate("");
+    setQuickSelect(false);
+    setExtraVariants([]);
+    setVariantNameOverride(null);
+  }, []);
+
+  // ── Submit ───────────────────────────────────────────────────────────────
+  const handleSubmit = () => {
+    if (!isValid || !cfg) return;
+
+    const primaryVariant: VariantDraft = {
+      rowId: uid(),
+      variantName: variantName.trim() || cfg.variantNameSuggestion,
+      unitType: unitType as UnitType,
+      baseUnit: cfg.baseUnit,
+      baseQuantity: cfg.baseQuantity,
+      sellingMode: cfg.sellingMode,
+      mrp: mrp !== "" ? Number(mrp) : 0,
+      purchasePrice: buyPrice !== "" ? Number(buyPrice) : 0,
+      sellingPrice: Number(sellPrice),
+      quickSelect,
+      expiryDate: expiryDate || "",
+      stockInBaseUnit: stockInBase,
+      lowStockThresholdInBaseUnit: lowStockInBase,
+      presetBaseQuantities: defaultPresetsFor(cfg.baseUnit),
+    };
+
+    const draft: ProductDraft = {
+      name: name.trim(),
+      category: category.trim() || "General",
+      brand: brand.trim(),
+      keywords: keywords.trim(),
+      shortcut: shortcut.trim(),
+      sellingTypes: {
+        khula: cfg.sellingMode === "khula",
+        fixed: cfg.sellingMode === "fixed" || cfg.sellingMode === "variant",
+        multiple: cfg.sellingMode === "wholesale",
+      },
+      variants: [primaryVariant, ...extraVariants],
+    };
+
     onSubmit(draft);
-    setDraft(emptyDraft());
-    setActiveTab("master");
+    reset();
   };
 
-  const addVariant = () => {
-    const newVariant = variantDraft({ variantName: "New Pack", sellingMode: "variant", unitType: "PACKET" });
-    setDraft({
-      ...draft,
-      variants: [...draft.variants, newVariant],
-    });
-    setActiveTab(newVariant.rowId);
+  const handleOpenChange = (val: boolean) => {
+    if (!val) reset();
+    onOpenChange(val);
   };
 
-  const removeVariant = (rowId: string) => {
-    const newVariants = draft.variants.filter((v) => v.rowId !== rowId);
-    setDraft({ ...draft, variants: newVariants });
-    if (activeTab === rowId) {
-      setActiveTab(newVariants.length > 0 ? newVariants[0].rowId : "master");
-    }
-  };
-
+  // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[95vh] h-full md:h-auto flex flex-col bg-muted/10 p-0 overflow-hidden">
-        <DialogHeader className="bg-card px-5 py-4 border-b shrink-0">
-          <DialogTitle className="text-xl">Add New Product</DialogTitle>
-          <p className="text-sm text-muted-foreground">Product ka naam aur uske sizes/packing add karein (Jaise Khula, Packets, Bora).</p>
-        </DialogHeader>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
-          <div className="bg-card border-b px-2 shrink-0 overflow-x-auto hide-scrollbar">
-            <div className="flex items-center gap-2 p-2">
-              <TabsList className="h-10 bg-transparent gap-1">
-                <TabsTrigger 
-                  value="master" 
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-4"
-                >
-                  Product Details
-                </TabsTrigger>
-                {draft.variants.map((variant, index) => (
-                  <TabsTrigger 
-                    key={variant.rowId} 
-                    value={variant.rowId}
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-4 whitespace-nowrap"
-                  >
-                    Pack {index + 1}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="rounded-full shrink-0 h-8 px-3 ml-2 border-dashed border-2 text-muted-foreground hover:text-foreground"
-                onClick={addVariant}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add Pack
-              </Button>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[95vh] flex flex-col p-0 gap-0 overflow-hidden">
+        {/* Header */}
+        <DialogHeader className="bg-card px-6 py-4 border-b shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+              <Zap className="h-4.5 w-4.5" />
+            </div>
+            <div>
+              <DialogTitle className="text-lg font-bold">Quick Add Product</DialogTitle>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                5 fields · Unit auto-wires everything · Live preview before save
+              </p>
             </div>
           </div>
+        </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto p-4 md:p-6">
-            <TabsContent value="master" className="m-0 space-y-6 animate-in fade-in-50 duration-300">
-              <div className="rounded-xl border bg-card p-5 space-y-5 shadow-sm">
-                <h3 className="font-semibold flex items-center gap-2 border-b pb-2">
-                  <Info className="h-4 w-4 text-muted-foreground" />
-                  Product Name & Brand
-                </h3>
-                
-                <div className="grid gap-2">
-                  <label className="text-sm font-medium">Product Name *</label>
+        {/* Scrollable body */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-5 space-y-5">
+
+            {/* ── Field 1: Product Name ─────────────────────────────────── */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold flex items-center gap-1.5">
+                <Tag className="h-3.5 w-3.5 text-muted-foreground" />
+                Product Name
+                <span className="text-destructive">*</span>
+              </label>
+              <Input
+                autoFocus
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Tata Salt, Fortune Mustard Oil, Parle-G..."
+                className="h-12 text-base font-medium"
+                onKeyDown={(e) => e.key === "Enter" && isValid && handleSubmit()}
+              />
+              {name.trim().length > 0 && name.trim().length < 2 && (
+                <p className="text-xs text-destructive">Name too short</p>
+              )}
+            </div>
+
+            {/* ── Field 2: Unit (the most important field) ─────────────── */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold flex items-center gap-1.5">
+                <Scale className="h-3.5 w-3.5 text-muted-foreground" />
+                How is it measured / sold?
+                <span className="text-destructive">*</span>
+              </label>
+              <p className="text-xs text-muted-foreground">
+                ⚡ Select unit → selling mode, base unit, and conversions are auto-set. No manual math.
+              </p>
+
+              <Select value={unitType} onValueChange={handleUnitChange}>
+                <SelectTrigger className="h-12 text-sm font-medium">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="max-h-72">
+                  {UNIT_GROUPS.map((g) => (
+                    <React.Fragment key={g.group}>
+                      <div className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b">
+                        {g.label}
+                      </div>
+                      {g.units.map((u) => {
+                        const c = UNIT_CONFIG[u];
+                        return (
+                          <SelectItem key={u} value={u} className="py-2.5">
+                            <div className="flex flex-col">
+                              <span className="font-medium text-sm">{c?.label ?? u}</span>
+                              <span className="text-[11px] text-muted-foreground">{c?.description}</span>
+                            </div>
+                          </SelectItem>
+                        );
+                      })}
+                    </React.Fragment>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* What-got-auto-set pill row */}
+              {cfg && (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 px-2.5 py-1 text-[11px] font-semibold text-primary">
+                    <CircleCheck className="h-3 w-3" />
+                    Base: {cfg.baseUnit}
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 px-2.5 py-1 text-[11px] font-semibold text-primary">
+                    <CircleCheck className="h-3 w-3" />
+                    1 {unitType.toLowerCase()} = {formatBaseUnits(cfg.baseQuantity, cfg.baseUnit)}
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 px-2.5 py-1 text-[11px] font-semibold text-primary">
+                    <CircleCheck className="h-3 w-3" />
+                    Mode: {MODE_LABEL[cfg.sellingMode]}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* ── Fields 3 & 4: Buy Price + Sell Price ─────────────────── */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold flex items-center gap-1.5">
+                  <IndianRupee className="h-3.5 w-3.5 text-muted-foreground" />
+                  Buy Price (₹)
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium">₹</span>
                   <Input
-                    value={draft.name}
-                    onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-                    placeholder="e.g. Fortune Mustard Oil"
-                    className="h-11"
+                    type="number"
+                    min={0}
+                    value={buyPrice === "" ? "" : buyPrice}
+                    onChange={(e) => setBuyPrice(e.target.value === "" ? "" : numberValue(e.target.value))}
+                    placeholder="0"
+                    className="h-12 pl-7 text-base font-semibold text-blue-700"
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <label className="text-sm font-medium">Category</label>
-                    <Input
-                      value={draft.category}
-                      onChange={(e) => setDraft({ ...draft, category: e.target.value })}
-                      placeholder="e.g. Oil"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <label className="text-sm font-medium">Brand</label>
-                    <Input
-                      value={draft.brand}
-                      onChange={(e) => setDraft({ ...draft, brand: e.target.value })}
-                      placeholder="e.g. Fortune"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <label className="text-sm font-medium">Search Keywords (Helps in finding)</label>
-                    <Input
-                      value={draft.keywords}
-                      onChange={(e) => setDraft({ ...draft, keywords: e.target.value })}
-                      placeholder="e.g. sarso tel, mustard"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <label className="text-sm font-medium">Shortcut Key (e.g. oil)</label>
-                    <Input
-                      value={draft.shortcut}
-                      onChange={(e) => setDraft({ ...draft, shortcut: e.target.value })}
-                      placeholder="e.g. oil"
-                    />
-                  </div>
-                </div>
+                <p className="text-[11px] text-muted-foreground">Cost you pay to supplier</p>
               </div>
 
-              <div className="rounded-xl border bg-card p-5 space-y-4 shadow-sm">
-                <h3 className="font-semibold flex items-center gap-2 border-b pb-2">
-                  <Package className="h-4 w-4 text-muted-foreground" />
-                  Select Packing Types
-                </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Kis tarah se yeh product bikta hai, woh select karein.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  {([
-                    ["khula", "Khula (Loose)"],
-                    ["fixed", "Fixed Pack (Packets)"],
-                    ["multiple", "Wholesale (Bora/Carton)"],
-                  ] as const).map(([key, label]) => (
-                    <label key={key} className="flex items-center gap-3 rounded-lg border px-4 py-3 cursor-pointer hover:bg-muted/50 transition-colors">
-                      <Checkbox
-                        checked={draft.sellingTypes[key]}
-                        onCheckedChange={(checked) => setType(key, Boolean(checked))}
-                      />
-                      <span className="text-sm font-medium">{label}</span>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold flex items-center gap-1.5">
+                  <IndianRupee className="h-3.5 w-3.5 text-muted-foreground" />
+                  Sell Price (₹)
+                  <span className="text-destructive">*</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium">₹</span>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={sellPrice === "" ? "" : sellPrice}
+                    onChange={(e) => setSellPrice(e.target.value === "" ? "" : numberValue(e.target.value))}
+                    placeholder="0"
+                    className="h-12 pl-7 text-base font-semibold text-positive"
+                  />
+                </div>
+                <p className="text-[11px] text-muted-foreground">Price customer pays</p>
+              </div>
+            </div>
+
+            {/* ── Live Preview ──────────────────────────────────────────── */}
+            {(name.trim() || sellPrice !== "") && (
+              <LivePreview
+                unitType={unitType}
+                buyPrice={buyPrice !== "" ? Number(buyPrice) : 0}
+                sellPrice={sellPrice !== "" ? Number(sellPrice) : 0}
+                variantName={variantName}
+              />
+            )}
+
+            {/* ── Advanced Options Toggle ───────────────────────────────── */}
+            <button
+              type="button"
+              onClick={() => setShowAdvanced((v) => !v)}
+              className="w-full flex items-center justify-between rounded-xl border border-dashed px-4 py-3 text-sm font-semibold text-muted-foreground hover:text-foreground hover:border-border hover:bg-muted/30 transition-all duration-200"
+            >
+              <span className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Advanced Options
+                <span className="text-[11px] font-normal">
+                  (Brand, Category, Keywords, Stock, MRP, Expiry, Extra Variants)
+                </span>
+              </span>
+              {showAdvanced
+                ? <ChevronUp className="h-4 w-4 shrink-0" />
+                : <ChevronDown className="h-4 w-4 shrink-0" />
+              }
+            </button>
+
+            {/* ── Advanced Section ──────────────────────────────────────── */}
+            {showAdvanced && (
+              <div className="space-y-5 animate-in fade-in-0 slide-in-from-top-2 duration-200">
+
+                {/* Variant name override */}
+                <div className="rounded-xl border bg-card p-4 space-y-4">
+                  <h4 className="text-sm font-semibold flex items-center gap-2">
+                    <Package className="h-4 w-4 text-muted-foreground" />
+                    Variant Name
+                  </h4>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                      Name (auto-suggested: "{cfg?.variantNameSuggestion ?? unitType}")
                     </label>
-                  ))}
-                </div>
-              </div>
-            </TabsContent>
-
-            {draft.variants.map((variant, index) => (
-              <TabsContent key={variant.rowId} value={variant.rowId} className="m-0 animate-in fade-in-50 duration-300">
-                <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
-                  <div className="bg-muted/30 px-4 py-3 border-b flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Badge variant="outline" className="bg-background">Pack {index + 1}</Badge>
-                      <span className="text-sm font-semibold">{variant.variantName || "Unnamed Pack"}</span>
-                    </div>
-                    {draft.variants.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="text-destructive hover:bg-destructive/10 h-8 px-2"
-                        onClick={() => removeVariant(variant.rowId)}
-                      >
-                        <Trash2 className="h-4 w-4 mr-1.5" />
-                        Delete Pack
-                      </Button>
-                    )}
+                    <Input
+                      value={variantName}
+                      onChange={(e) => setVariantNameOverride(e.target.value)}
+                      placeholder={cfg?.variantNameSuggestion ?? unitType}
+                      className="h-9 text-sm"
+                    />
+                    <p className="text-[11px] text-muted-foreground">
+                      This is the size/pack name shown in the product table and billing screen.
+                    </p>
                   </div>
-                  
-                  <div className="p-4 md:p-5 space-y-6">
-                    {/* Basic Info */}
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div className="grid gap-1.5">
-                        <label className="text-xs font-medium text-muted-foreground">Size Name (e.g. 500ml Pouch)</label>
-                        <Input
-                          value={variant.variantName}
-                          onChange={(e) => setVariant(variant.rowId, { variantName: e.target.value })}
-                          placeholder="e.g. 500ml pouch"
-                          className="h-10"
-                        />
-                      </div>
-                      <div className="grid gap-1.5">
-                        <label className="text-xs font-medium text-muted-foreground">Selling Mode</label>
-                        <Select
-                          value={variant.sellingMode}
-                          onValueChange={(value) => setVariant(variant.rowId, { sellingMode: value as SellingMode })}
-                        >
-                          <SelectTrigger className="h-10"><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            {Object.entries(MODE_LABEL).map(([value, label]) => (
-                              <SelectItem key={value} value={value}>{label}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
+                </div>
 
-                    {/* Measurement */}
-                    <div className="space-y-3 rounded-lg border p-3.5 bg-muted/10">
-                      <h4 className="text-xs font-semibold flex items-center gap-1.5">
-                        <Scale className="h-3.5 w-3.5" /> Weight & Unit
-                      </h4>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        <div className="grid gap-1.5">
-                          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Pack Type</label>
-                          <Select
-                            value={String(variant.unitType)}
-                            onValueChange={(value) => setVariant(variant.rowId, { unitType: value as any })}
-                          >
-                            <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                              {UNITS.map((unit) => (
-                                <SelectItem key={unit} value={unit} className="text-sm">{unit}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="grid gap-1.5">
-                          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Unit</label>
-                          <Select
-                            value={variant.baseUnit}
-                            onValueChange={(value) => setVariant(variant.rowId, { baseUnit: value as BaseUnit })}
-                          >
-                            <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                              {BASE_UNITS.map((unit) => (
-                                <SelectItem key={unit} value={unit} className="text-sm">{unit}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="grid gap-1.5 col-span-2 md:col-span-1">
-                          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Weight (Grams/ml/pc)</label>
-                          <div className="flex items-center gap-2">
-                            <Input
-                              type="number"
-                              className="h-9 text-sm"
-                              value={variant.baseQuantity}
-                              onChange={(e) => setVariant(variant.rowId, { baseQuantity: numberValue(e.target.value, 1) })}
-                              placeholder="e.g. 500"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-xs text-muted-foreground bg-background border px-3 py-2 rounded-md">
-                        Calculation: 1 <span className="font-semibold text-foreground">{variant.unitType.toLowerCase()}</span> = <span className="font-semibold text-foreground">{formatBaseUnits(numberValue(variant.baseQuantity, 1), variant.baseUnit)}</span>
+                {/* Product identity */}
+                <div className="rounded-xl border bg-card p-4 space-y-4">
+                  <h4 className="text-sm font-semibold flex items-center gap-2">
+                    <Info className="h-4 w-4 text-muted-foreground" />
+                    Product Identity
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Category</label>
+                      <Input
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        placeholder="e.g. Oil, Dal, Snacks"
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Brand</label>
+                      <Input
+                        value={brand}
+                        onChange={(e) => setBrand(e.target.value)}
+                        placeholder="e.g. Fortune, Tata, Amul"
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                        Search Keywords (comma-separated)
+                      </label>
+                      <Input
+                        value={keywords}
+                        onChange={(e) => setKeywords(e.target.value)}
+                        placeholder="e.g. sarso tel, mustard oil"
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                        Shortcut Key (for fast billing search)
+                      </label>
+                      <Input
+                        value={shortcut}
+                        onChange={(e) => setShortcut(e.target.value)}
+                        placeholder="e.g. oil, att, chi"
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stock & Pricing extras */}
+                <div className="rounded-xl border bg-card p-4 space-y-4">
+                  <h4 className="text-sm font-semibold flex items-center gap-2">
+                    <Package className="h-4 w-4 text-muted-foreground" />
+                    Stock & Pricing Extras
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                        MRP ₹ (printed on pack)
+                      </label>
+                      <Input
+                        type="number"
+                        min={0}
+                        value={mrp === "" ? "" : mrp}
+                        onChange={(e) => setMrp(e.target.value === "" ? "" : numberValue(e.target.value))}
+                        placeholder="e.g. 55"
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                        Opening Stock (units)
+                      </label>
+                      <Input
+                        type="number"
+                        min={0}
+                        value={initialStock === "" ? "" : initialStock}
+                        onChange={(e) => setInitialStock(e.target.value === "" ? "" : numberValue(e.target.value))}
+                        placeholder="0"
+                        className="h-9 text-sm"
+                      />
+                      {initialStock !== "" && cfg && (
+                        <p className="text-[11px] text-muted-foreground">
+                          = {formatBaseUnits(Number(initialStock) * cfg.baseQuantity, cfg.baseUnit)} stored
+                        </p>
+                      )}
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                        Low Stock Alert (units)
+                      </label>
+                      <Input
+                        type="number"
+                        min={0}
+                        value={lowStockAlert === "" ? "" : lowStockAlert}
+                        onChange={(e) => setLowStockAlert(e.target.value === "" ? "" : numberValue(e.target.value))}
+                        placeholder={String(defaultLowStockAlert)}
+                        className="h-9 text-sm"
+                      />
+                      <p className="text-[11px] text-muted-foreground">
+                        Default: {defaultLowStockAlert} units. Alert shows when stock drops below this.
                       </p>
                     </div>
+                  </div>
 
-                    {/* Pricing */}
-                    <div className="space-y-3 rounded-lg border p-3.5 bg-muted/10">
-                      <h4 className="text-xs font-semibold flex items-center gap-1.5">
-                        <IndianRupee className="h-3.5 w-3.5" /> Pricing (₹)
-                      </h4>
-                      <div className="grid grid-cols-3 gap-3">
-                        <div className="grid gap-1.5">
-                          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Buy Rate</label>
-                          <Input
-                            type="number"
-                            className="h-9 text-sm"
-                            value={variant.purchasePrice}
-                            onChange={(e) => setVariant(variant.rowId, { purchasePrice: numberValue(e.target.value) })}
-                            placeholder="40"
-                          />
-                        </div>
-                        <div className="grid gap-1.5">
-                          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Sell Rate</label>
-                          <Input
-                            type="number"
-                            className="h-9 text-sm"
-                            value={variant.sellingPrice}
-                            onChange={(e) => setVariant(variant.rowId, { sellingPrice: numberValue(e.target.value) })}
-                            placeholder="45"
-                          />
-                        </div>
-                        <div className="grid gap-1.5">
-                          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">MRP</label>
-                          <Input
-                            type="number"
-                            className="h-9 text-sm"
-                            value={variant.mrp ?? 0}
-                            onChange={(e) => setVariant(variant.rowId, { mrp: numberValue(e.target.value) })}
-                            placeholder="50"
-                          />
-                        </div>
-                      </div>
+                  {/* Expiry + Quick Select */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        Expiry Date
+                      </label>
+                      <Input
+                        type="date"
+                        value={expiryDate}
+                        onChange={(e) => setExpiryDate(e.target.value)}
+                        className="h-9 text-sm"
+                      />
                     </div>
-
-                    {/* Stock & Expiry */}
-                    <div className="space-y-3 rounded-lg border p-3.5 bg-muted/10">
-                      <h4 className="text-xs font-semibold flex items-center gap-1.5">
-                        <Package className="h-3.5 w-3.5" /> Stock & Expiry
-                      </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div className="grid gap-1.5">
-                          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
-                            Current Stock ({variant.baseUnit})
-                          </label>
-                          <Input
-                            type="number"
-                            className="h-9 text-sm"
-                            value={variant.stockInBaseUnit}
-                            onChange={(e) => setVariant(variant.rowId, { stockInBaseUnit: numberValue(e.target.value) })}
-                            placeholder="Current Stock"
-                          />
-                        </div>
-                        <div className="grid gap-1.5">
-                          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
-                            Low Alert At ({variant.baseUnit})
-                          </label>
-                          <Input
-                            type="number"
-                            className="h-9 text-sm"
-                            value={variant.lowStockThresholdInBaseUnit}
-                            onChange={(e) => setVariant(variant.rowId, { lowStockThresholdInBaseUnit: numberValue(e.target.value) })}
-                            placeholder="Alert qty"
-                          />
-                        </div>
-                        <div className="grid gap-1.5">
-                          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground flex items-center gap-1">
-                            <Calendar className="h-3 w-3"/> Expiry Date
-                          </label>
-                          <Input
-                            type="date"
-                            className="h-9 text-sm"
-                            value={variant.expiryDate || ""}
-                            onChange={(e) => setVariant(variant.rowId, { expiryDate: e.target.value })}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-2">
-                      <label className="flex items-center gap-3 cursor-pointer hover:bg-muted p-3 rounded-md border border-transparent hover:border-border transition-all">
+                    <div className="flex items-end pb-1">
+                      <label className="flex items-start gap-3 cursor-pointer hover:bg-muted/40 p-3 rounded-lg border border-transparent hover:border-border transition-all w-full">
                         <Checkbox
-                          checked={variant.quickSelect}
-                          onCheckedChange={(checked) => setVariant(variant.rowId, { quickSelect: Boolean(checked) })}
+                          checked={quickSelect}
+                          onCheckedChange={(v) => setQuickSelect(Boolean(v))}
+                          className="mt-0.5"
                         />
                         <div className="space-y-0.5">
-                          <p className="text-sm font-medium">Fast Billing Me Dikhaye</p>
-                          <p className="text-xs text-muted-foreground">Quick select panel me show kare</p>
+                          <p className="text-sm font-medium flex items-center gap-1.5">
+                            <Star className="h-3.5 w-3.5 text-amber-500" />
+                            Fast Billing Me Dikhaye
+                          </p>
+                          <p className="text-[11px] text-muted-foreground">
+                            Billing screen ke quick-select panel me show hoga
+                          </p>
                         </div>
                       </label>
                     </div>
-
                   </div>
                 </div>
-              </TabsContent>
-            ))}
-          </div>
-        </Tabs>
 
-        <div className="bg-background border-t p-4 shrink-0 flex items-center justify-between">
-          <div className="text-sm text-muted-foreground hidden md:block">
-            {draft.variants.length} pack{draft.variants.length !== 1 ? 's' : ''} added
+                {/* Extra variants */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-semibold flex items-center gap-2">
+                      <Plus className="h-4 w-4 text-muted-foreground" />
+                      Extra Variants / Packs
+                      <span className="text-[11px] font-normal text-muted-foreground">
+                        (Same product, different sizes)
+                      </span>
+                    </h4>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-8 text-xs border-dashed border-2"
+                      onClick={addExtraVariant}
+                    >
+                      <Plus className="h-3.5 w-3.5 mr-1" />
+                      Add Pack
+                    </Button>
+                  </div>
+
+                  {extraVariants.length === 0 && (
+                    <p className="text-xs text-muted-foreground bg-muted/30 rounded-lg px-4 py-3 border border-dashed">
+                      e.g. Add "500g Packet" and "1kg Packet" as extra packs for the same product.
+                      They will share stock if they use the same base unit.
+                    </p>
+                  )}
+
+                  {extraVariants.map((v, i) => (
+                    <ExtraVariantRow
+                      key={v.rowId}
+                      variant={v}
+                      index={i}
+                      onUpdate={(patch) => updateExtraVariant(v.rowId, patch)}
+                      onRemove={() => removeExtraVariant(v.rowId)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-          <Button
-            onClick={submit}
-            disabled={isPending || !draft.name.trim() || draft.variants.length === 0}
-            className="h-12 px-8 text-base font-bold shadow-sm w-full md:w-auto"
-          >
-            {isPending ? "Saving..." : "Save Product"}
-          </Button>
+        </div>
+
+        {/* ── Footer ─────────────────────────────────────────────────────── */}
+        <div className="border-t bg-card px-5 py-4 shrink-0">
+          {/* Validation errors */}
+          {!isValid && (name.trim() !== "" || sellPrice !== "") && (
+            <div className="mb-3 flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-3 py-2">
+              <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+              <div className="space-y-0.5">
+                {errors.map((e, i) => (
+                  <p key={i} className="text-xs text-destructive">{e}</p>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-xs text-muted-foreground hidden md:block">
+              {extraVariants.length > 0
+                ? `1 primary + ${extraVariants.length} extra variant${extraVariants.length > 1 ? "s" : ""}`
+                : "1 variant will be created"}
+            </div>
+            <div className="flex gap-2 w-full md:w-auto">
+              <Button
+                variant="outline"
+                className="flex-1 md:flex-none"
+                onClick={() => handleOpenChange(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                disabled={isPending || !isValid}
+                className="flex-1 md:flex-none h-11 px-8 font-bold shadow-sm"
+              >
+                {isPending ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin" />
+                    Saving...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <CircleCheck className="h-4 w-4" />
+                    Save Product
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </span>
+                )}
+              </Button>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

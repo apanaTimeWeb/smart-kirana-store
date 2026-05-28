@@ -5,6 +5,8 @@ export type ProductFilter = "all" | "in" | "low" | "out" | "khula" | "wholesale"
 
 export type VariantDraft = ProductVariantInput & {
   rowId: string;
+  expiryDate?: string;
+  shortcut?: string;
 };
 
 export type ProductDraft = {

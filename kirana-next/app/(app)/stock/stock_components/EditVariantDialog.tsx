@@ -32,7 +32,6 @@ export function EditVariantDialog({
       rowId: product.id.toString(),
       id: product.id,
       variantName: product.variantName,
-      shortcut: product.shortcut ?? "",
       unitType: product.unitType,
       baseUnit: product.baseUnit,
       baseQuantity: product.baseQuantity,
@@ -41,6 +40,7 @@ export function EditVariantDialog({
       purchasePrice: product.purchasePrice,
       sellingPrice: product.sellingPrice,
       quickSelect: product.quickSelect,
+      expiryDate: product.expiryDate ?? "",
       stockInBaseUnit: product.stockInBaseUnit,
       lowStockThresholdInBaseUnit: product.lowStockThresholdInBaseUnit,
       presetBaseQuantities: product.presetBaseQuantities ?? [],
@@ -75,11 +75,13 @@ export function EditVariantDialog({
             <label className="text-sm font-medium">Size Name (e.g. 500ml Pouch)</label>
             <Input value={draft.variantName} onChange={(e) => patchDraft({ variantName: e.target.value })} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Shortcut</label>
-              <Input value={draft.shortcut ?? ""} onChange={(e) => patchDraft({ shortcut: e.target.value })} />
-            </div>
+          <div className="grid gap-2">
+            <label className="text-sm font-medium">Expiry Date</label>
+            <Input
+              type="date"
+              value={draft.expiryDate ?? ""}
+              onChange={(e) => patchDraft({ expiryDate: e.target.value })}
+            />
           </div>
           <Select value={draft.sellingMode} onValueChange={(value) => patchDraft({ sellingMode: value as SellingMode })}>
             <SelectTrigger><SelectValue /></SelectTrigger>
