@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -64,11 +64,17 @@ export function EditVariantDialog({
     <Dialog open={Boolean(product)} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Edit Variant - {product.productName}</DialogTitle>
+          <DialogTitle>Edit Pack / Size</DialogTitle>
+          <DialogDescription>
+            Update pricing, stock, and details for {product.productName}.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-3 md:grid-cols-2">
-          <Input value={draft.variantName} onChange={(e) => patchDraft({ variantName: e.target.value })} />
+          <div className="grid gap-2">
+            <label className="text-sm font-medium">Size Name (e.g. 500ml Pouch)</label>
+            <Input value={draft.variantName} onChange={(e) => patchDraft({ variantName: e.target.value })} />
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-2">
               <label className="text-sm font-medium">Shortcut</label>
@@ -125,12 +131,12 @@ export function EditVariantDialog({
             onChange={(e) => patchDraft({ lowStockThresholdInBaseUnit: numberValue(e.target.value) })}
           />
         </div>
-        <label className="flex items-center gap-2 rounded-md border px-3 py-2 text-sm">
+        <label className="flex items-center gap-2 cursor-pointer hover:bg-muted p-2 rounded-md transition-colors">
           <Checkbox
             checked={draft.quickSelect}
             onCheckedChange={(checked) => patchDraft({ quickSelect: Boolean(checked) })}
           />
-          Quick billing suggestion
+          <span className="text-sm font-medium">Show in Fast Billing</span>
         </label>
 
         <Button onClick={() => onSubmit(product.id, draft)} disabled={isPending} className="h-11 font-bold">

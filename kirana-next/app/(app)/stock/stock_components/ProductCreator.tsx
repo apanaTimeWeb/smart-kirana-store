@@ -63,7 +63,7 @@ export function ProductCreator({
   };
 
   const addVariant = () => {
-    const newVariant = variantDraft({ variantName: "New Variant", sellingMode: "variant", unitType: "PACKET" });
+    const newVariant = variantDraft({ variantName: "New Pack", sellingMode: "variant", unitType: "PACKET" });
     setDraft({
       ...draft,
       variants: [...draft.variants, newVariant],
@@ -84,7 +84,7 @@ export function ProductCreator({
       <DialogContent className="max-w-3xl max-h-[95vh] h-full md:h-auto flex flex-col bg-muted/10 p-0 overflow-hidden">
         <DialogHeader className="bg-card px-5 py-4 border-b shrink-0">
           <DialogTitle className="text-xl">Add New Product</DialogTitle>
-          <p className="text-sm text-muted-foreground">Define product details and all its variants (Khula, Packets, Wholesale).</p>
+          <p className="text-sm text-muted-foreground">Product ka naam aur uske sizes/packing add karein (Jaise Khula, Packets, Bora).</p>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
@@ -95,7 +95,7 @@ export function ProductCreator({
                   value="master" 
                   className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-4"
                 >
-                  Master Info
+                  Product Details
                 </TabsTrigger>
                 {draft.variants.map((variant, index) => (
                   <TabsTrigger 
@@ -103,7 +103,7 @@ export function ProductCreator({
                     value={variant.rowId}
                     className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-4 whitespace-nowrap"
                   >
-                    Variant {index + 1}
+                    Pack {index + 1}
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -115,7 +115,7 @@ export function ProductCreator({
                 onClick={addVariant}
               >
                 <Plus className="h-4 w-4 mr-1" />
-                Add
+                Add Pack
               </Button>
             </div>
           </div>
@@ -125,7 +125,7 @@ export function ProductCreator({
               <div className="rounded-xl border bg-card p-5 space-y-5 shadow-sm">
                 <h3 className="font-semibold flex items-center gap-2 border-b pb-2">
                   <Info className="h-4 w-4 text-muted-foreground" />
-                  Product Master Details
+                  Product Name & Brand
                 </h3>
                 
                 <div className="grid gap-2">
@@ -157,7 +157,7 @@ export function ProductCreator({
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <label className="text-sm font-medium">Search Keywords</label>
+                    <label className="text-sm font-medium">Search Keywords (Helps in finding)</label>
                     <Input
                       value={draft.keywords}
                       onChange={(e) => setDraft({ ...draft, keywords: e.target.value })}
@@ -165,7 +165,7 @@ export function ProductCreator({
                     />
                   </div>
                   <div className="grid gap-2">
-                    <label className="text-sm font-medium">Shortcut Key</label>
+                    <label className="text-sm font-medium">Shortcut Key (e.g. oil)</label>
                     <Input
                       value={draft.shortcut}
                       onChange={(e) => setDraft({ ...draft, shortcut: e.target.value })}
@@ -178,16 +178,16 @@ export function ProductCreator({
               <div className="rounded-xl border bg-card p-5 space-y-4 shadow-sm">
                 <h3 className="font-semibold flex items-center gap-2 border-b pb-2">
                   <Package className="h-4 w-4 text-muted-foreground" />
-                  Auto-Generate Variants
+                  Select Packing Types
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Select selling types to automatically create common variant templates.
+                  Kis tarah se yeh product bikta hai, woh select karein.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {([
                     ["khula", "Khula (Loose)"],
-                    ["fixed", "Fixed Pack"],
-                    ["multiple", "Wholesale"],
+                    ["fixed", "Fixed Pack (Packets)"],
+                    ["multiple", "Wholesale (Bora/Carton)"],
                   ] as const).map(([key, label]) => (
                     <label key={key} className="flex items-center gap-3 rounded-lg border px-4 py-3 cursor-pointer hover:bg-muted/50 transition-colors">
                       <Checkbox
@@ -206,8 +206,8 @@ export function ProductCreator({
                 <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
                   <div className="bg-muted/30 px-4 py-3 border-b flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Badge variant="outline" className="bg-background">Variant {index + 1}</Badge>
-                      <span className="text-sm font-semibold">{variant.variantName || "Unnamed Variant"}</span>
+                      <Badge variant="outline" className="bg-background">Pack {index + 1}</Badge>
+                      <span className="text-sm font-semibold">{variant.variantName || "Unnamed Pack"}</span>
                     </div>
                     {draft.variants.length > 1 && (
                       <Button
@@ -218,7 +218,7 @@ export function ProductCreator({
                         onClick={() => removeVariant(variant.rowId)}
                       >
                         <Trash2 className="h-4 w-4 mr-1.5" />
-                        Delete Variant
+                        Delete Pack
                       </Button>
                     )}
                   </div>
@@ -227,7 +227,7 @@ export function ProductCreator({
                     {/* Basic Info */}
                     <div className="grid gap-4 md:grid-cols-2">
                       <div className="grid gap-1.5">
-                        <label className="text-xs font-medium text-muted-foreground">Variant Name</label>
+                        <label className="text-xs font-medium text-muted-foreground">Size Name (e.g. 500ml Pouch)</label>
                         <Input
                           value={variant.variantName}
                           onChange={(e) => setVariant(variant.rowId, { variantName: e.target.value })}
@@ -254,7 +254,7 @@ export function ProductCreator({
                     {/* Measurement */}
                     <div className="space-y-3 rounded-lg border p-3.5 bg-muted/10">
                       <h4 className="text-xs font-semibold flex items-center gap-1.5">
-                        <Scale className="h-3.5 w-3.5" /> Measurement
+                        <Scale className="h-3.5 w-3.5" /> Weight & Unit
                       </h4>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         <div className="grid gap-1.5">
@@ -272,7 +272,7 @@ export function ProductCreator({
                           </Select>
                         </div>
                         <div className="grid gap-1.5">
-                          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Base Unit</label>
+                          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Unit</label>
                           <Select
                             value={variant.baseUnit}
                             onValueChange={(value) => setVariant(variant.rowId, { baseUnit: value as BaseUnit })}
@@ -286,7 +286,7 @@ export function ProductCreator({
                           </Select>
                         </div>
                         <div className="grid gap-1.5 col-span-2 md:col-span-1">
-                          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Qty in Base Unit</label>
+                          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Weight (Grams/ml/pc)</label>
                           <div className="flex items-center gap-2">
                             <Input
                               type="number"
@@ -345,7 +345,7 @@ export function ProductCreator({
                     {/* Stock & Expiry */}
                     <div className="space-y-3 rounded-lg border p-3.5 bg-muted/10">
                       <h4 className="text-xs font-semibold flex items-center gap-1.5">
-                        <Package className="h-3.5 w-3.5" /> Initial Stock & Expiry
+                        <Package className="h-3.5 w-3.5" /> Stock & Expiry
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div className="grid gap-1.5">
@@ -357,7 +357,7 @@ export function ProductCreator({
                             className="h-9 text-sm"
                             value={variant.stockInBaseUnit}
                             onChange={(e) => setVariant(variant.rowId, { stockInBaseUnit: numberValue(e.target.value) })}
-                            placeholder="Stock in base unit"
+                            placeholder="Current Stock"
                           />
                         </div>
                         <div className="grid gap-1.5">
@@ -393,8 +393,8 @@ export function ProductCreator({
                           onCheckedChange={(checked) => setVariant(variant.rowId, { quickSelect: Boolean(checked) })}
                         />
                         <div className="space-y-0.5">
-                          <p className="text-sm font-medium">Show in Quick Billing Panel</p>
-                          <p className="text-xs text-muted-foreground">Fast access during billing</p>
+                          <p className="text-sm font-medium">Fast Billing Me Dikhaye</p>
+                          <p className="text-xs text-muted-foreground">Quick select panel me show kare</p>
                         </div>
                       </label>
                     </div>
@@ -408,7 +408,7 @@ export function ProductCreator({
 
         <div className="bg-background border-t p-4 shrink-0 flex items-center justify-between">
           <div className="text-sm text-muted-foreground hidden md:block">
-            {draft.variants.length} variant{draft.variants.length !== 1 ? 's' : ''} configured
+            {draft.variants.length} pack{draft.variants.length !== 1 ? 's' : ''} added
           </div>
           <Button
             onClick={submit}
