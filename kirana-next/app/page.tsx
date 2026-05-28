@@ -141,21 +141,21 @@ const testimonials = [
     shop: "Ramesh General Store, Patna",
     text: "Pehle register mein likhta tha, ab phone se hi sab ho jaata hai. Udhar track karna bahut easy ho gaya.",
     rating: 5,
-    avatar: "R",
+    avatarImg: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=faces",
   },
   {
     name: "Sunita Devi",
     shop: "Sunita Kirana, Muzaffarpur",
     text: "WhatsApp reminder feature best hai! Customers khud payment kar dete hain ab.",
     rating: 5,
-    avatar: "S",
+    avatarImg: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&h=150&fit=crop&crop=faces",
   },
   {
     name: "Mohan Lal",
     shop: "Mohan Provision Store, Gaya",
     text: "Stock alert se kabhi saman khatam nahi hota. Bahut fayda hua business mein.",
     rating: 5,
-    avatar: "M",
+    avatarImg: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=faces",
   },
 ];
 
@@ -317,7 +317,13 @@ export default function LandingPage() {
             No credit card · 2 minute setup · Mobile friendly
           </p>
 
-          <div className="mt-10 relative mx-auto max-w-3xl rounded-xl overflow-hidden border shadow-xl">
+          <div className="mt-10 relative mx-auto max-w-3xl rounded-xl overflow-hidden border shadow-2xl bg-card">
+            {/* Browser Mockup Header */}
+            <div className="h-8 border-b bg-muted/40 flex items-center px-4 gap-1.5">
+              <div className="h-2.5 w-2.5 rounded-full bg-red-400" />
+              <div className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+              <div className="h-2.5 w-2.5 rounded-full bg-green-400" />
+            </div>
             <Image
               src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&q=80&auto=format&fit=crop"
               alt="Smart Kirana Dashboard"
@@ -507,8 +513,14 @@ export default function LandingPage() {
                   "{t.text}"
                 </p>
                 <div className="flex items-center gap-2.5">
-                  <div className="h-8 w-8 rounded-full bg-[var(--landing-avatar-bg)] text-[var(--landing-avatar-text)] flex items-center justify-center font-bold text-xs shrink-0">
-                    {t.avatar}
+                  <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-muted shrink-0 relative">
+                    <Image 
+                      src={t.avatarImg} 
+                      alt={t.name} 
+                      fill 
+                      className="object-cover"
+                      unoptimized
+                    />
                   </div>
                   <div>
                     <p className="font-semibold text-xs">{t.name}</p>
@@ -577,8 +589,10 @@ export default function LandingPage() {
             </div>
             <span className="font-bold text-sm">Smart Kirana Store</span>
           </div>
-          <p className="text-[11px] text-muted-foreground text-center">
-            Made with ❤️ for India's Kirana Shops
+          <p className="text-[11px] text-muted-foreground text-center flex flex-col sm:flex-row items-center gap-1">
+            <span>Made with ❤️ for India's Kirana Shops</span>
+            <span className="hidden sm:inline">•</span>
+            <span className="font-medium text-foreground/70">100% Safe & Secure Data</span>
           </p>
           <div className="flex gap-4 text-xs text-muted-foreground">
             <Link

@@ -380,13 +380,13 @@ function ProductCreator({
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>{BASE_UNITS.map((unit) => <SelectItem key={unit} value={unit}>{unit}</SelectItem>)}</SelectContent>
                     </Select>
-                    <Input type="number" value={variant.baseQuantity} onChange={(e) => setVariant(variant.rowId, { baseQuantity: numberValue(e.target.value, 1) })} placeholder="Base qty" />
-                    <Input type="number" value={variant.purchasePrice} onChange={(e) => setVariant(variant.rowId, { purchasePrice: numberValue(e.target.value) })} placeholder="Purchase rate" />
-                    <Input type="number" value={variant.sellingPrice} onChange={(e) => setVariant(variant.rowId, { sellingPrice: numberValue(e.target.value) })} placeholder="Selling rate" />
+                    <Input type="number" min="0" value={variant.baseQuantity} onChange={(e) => setVariant(variant.rowId, { baseQuantity: numberValue(e.target.value, 1) })} placeholder="Base qty" />
+                    <Input type="number" min="0" value={variant.purchasePrice} onChange={(e) => setVariant(variant.rowId, { purchasePrice: numberValue(e.target.value) })} placeholder="Purchase rate" />
+                    <Input type="number" min="0" value={variant.sellingPrice} onChange={(e) => setVariant(variant.rowId, { sellingPrice: numberValue(e.target.value) })} placeholder="Selling rate" />
                     <Input value={variant.barcode ?? ""} onChange={(e) => setVariant(variant.rowId, { barcode: e.target.value })} placeholder="Barcode" />
-                    <Input type="number" value={variant.stockInBaseUnit} onChange={(e) => setVariant(variant.rowId, { stockInBaseUnit: numberValue(e.target.value) })} placeholder="Stock in base unit" />
-                    <Input type="number" value={variant.lowStockThresholdInBaseUnit} onChange={(e) => setVariant(variant.rowId, { lowStockThresholdInBaseUnit: numberValue(e.target.value) })} placeholder="Low stock base" />
-                    <Input type="number" value={variant.mrp ?? 0} onChange={(e) => setVariant(variant.rowId, { mrp: numberValue(e.target.value) })} placeholder="MRP" />
+                    <Input type="number" min="0" value={variant.stockInBaseUnit} onChange={(e) => setVariant(variant.rowId, { stockInBaseUnit: numberValue(e.target.value) })} placeholder="Stock in base unit" />
+                    <Input type="number" min="0" value={variant.lowStockThresholdInBaseUnit} onChange={(e) => setVariant(variant.rowId, { lowStockThresholdInBaseUnit: numberValue(e.target.value) })} placeholder="Low stock base" />
+                    <Input type="number" min="0" value={variant.mrp ?? 0} onChange={(e) => setVariant(variant.rowId, { mrp: numberValue(e.target.value) })} placeholder="MRP" />
                     <label className="flex items-center gap-2 rounded-md border px-3 py-2 text-sm">
                       <Checkbox checked={variant.quickSelect} onCheckedChange={(checked) => setVariant(variant.rowId, { quickSelect: Boolean(checked) })} />
                       Quick
@@ -547,12 +547,12 @@ function EditVariantDialog({
         </DialogHeader>
 
         <div className="grid gap-3 md:grid-cols-2">
-          <Input value={draft.variantName} onChange={(e) => patchDraft({ variantName: e.target.value })} />
+          <Input value={draft.variantName} onChange={(e) => patchDraft({ variantName: e.target.value })} placeholder="Variant Name (e.g., 500ml Pouch)" />
           <Select value={draft.sellingMode} onValueChange={(value) => patchDraft({ sellingMode: value as SellingMode })}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>{Object.entries(MODE_LABEL).map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
           </Select>
-          <Select value={String(draft.unitType)} onValueChange={(value) => patchDraft({ unitType: value })}>
+          <Select value={draft.unitType} onValueChange={(value) => patchDraft({ unitType: value })}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>{UNITS.map((unit) => <SelectItem key={unit} value={unit}>{unit}</SelectItem>)}</SelectContent>
           </Select>
@@ -560,12 +560,12 @@ function EditVariantDialog({
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>{BASE_UNITS.map((unit) => <SelectItem key={unit} value={unit}>{unit}</SelectItem>)}</SelectContent>
           </Select>
-          <Input type="number" value={draft.baseQuantity} onChange={(e) => patchDraft({ baseQuantity: numberValue(e.target.value, 1) })} />
-          <Input type="number" value={draft.purchasePrice} onChange={(e) => patchDraft({ purchasePrice: numberValue(e.target.value) })} />
-          <Input type="number" value={draft.sellingPrice} onChange={(e) => patchDraft({ sellingPrice: numberValue(e.target.value) })} />
+          <Input type="number" min="0" value={draft.baseQuantity} onChange={(e) => patchDraft({ baseQuantity: numberValue(e.target.value, 1) })} placeholder="Base Quantity" />
+          <Input type="number" min="0" value={draft.purchasePrice} onChange={(e) => patchDraft({ purchasePrice: numberValue(e.target.value) })} placeholder="Purchase Rate" />
+          <Input type="number" min="0" value={draft.sellingPrice} onChange={(e) => patchDraft({ sellingPrice: numberValue(e.target.value) })} placeholder="Selling Rate" />
           <Input value={draft.barcode ?? ""} onChange={(e) => patchDraft({ barcode: e.target.value })} placeholder="Barcode" />
-          <Input type="number" value={draft.stockInBaseUnit} onChange={(e) => patchDraft({ stockInBaseUnit: numberValue(e.target.value) })} />
-          <Input type="number" value={draft.lowStockThresholdInBaseUnit} onChange={(e) => patchDraft({ lowStockThresholdInBaseUnit: numberValue(e.target.value) })} />
+          <Input type="number" min="0" value={draft.stockInBaseUnit} onChange={(e) => patchDraft({ stockInBaseUnit: numberValue(e.target.value) })} placeholder="Stock (in base unit)" />
+          <Input type="number" min="0" value={draft.lowStockThresholdInBaseUnit} onChange={(e) => patchDraft({ lowStockThresholdInBaseUnit: numberValue(e.target.value) })} placeholder="Low Stock Threshold" />
         </div>
         <label className="flex items-center gap-2 rounded-md border px-3 py-2 text-sm">
           <Checkbox checked={draft.quickSelect} onCheckedChange={(checked) => patchDraft({ quickSelect: Boolean(checked) })} />
