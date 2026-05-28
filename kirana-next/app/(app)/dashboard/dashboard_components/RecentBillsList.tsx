@@ -1,8 +1,12 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Search, ChevronLeft, ChevronRight } from "lucide-react";
 
 type RecentBill = {
   id: number;
@@ -17,19 +21,50 @@ interface RecentBillsListProps {
 }
 
 export function RecentBillsList({ bills }: RecentBillsListProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const filteredBills = bills.filter(bill => {
+    const query = searchQuery.toLowerCase();
+    const name = (bill.customerName || "Walk-in Customer").toLowerCase();
+    const id = bill.id.toString();
+    return name.includes(query) || id.includes(query);
+  });
+
+  const totalPages = Math.ceil(filteredBills.length / itemsPerPage);
+  const currentBills = filteredBills.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to first page on search
+  };
+
   return (
-    <Card>
-      <CardHeader className="pb-3">
+    <Card className="flex flex-col h-full">
+      <CardHeader className="pb-3 flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2 text-base">
           <ShoppingBag className="h-4 w-4 text-primary" />
           हाल की बिक्री
           <span className="text-sm font-normal text-muted-foreground ml-1">(Recent Bills)</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-0">
-        {bills.length > 0 ? (
+      <div className="px-5 pb-2">
+        <div className="relative">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search by customer or bill ID..."
+            className="pl-8 h-9"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        </div>
+      </div>
+      <CardContent className="p-0 flex-1">
+        {currentBills.length > 0 ? (
           <div className="divide-y">
-            {bills.slice(0, 6).map((bill) => (
+            {currentBills.map((bill) => (
               <div
                 key={bill.id}
                 className="flex items-center justify-between px-5 py-3 hover:bg-muted/30 transition-colors"
@@ -62,10 +97,35 @@ export function RecentBillsList({ bills }: RecentBillsListProps) {
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
             <ShoppingBag className="h-10 w-10 mb-3 opacity-20" />
-            <p className="text-sm">Aaj abhi koi bill nahi</p>
+            <p className="text-sm">No bills found</p>
           </div>
         )}
       </CardContent>
+      <div className="flex items-center justify-between px-5 py-3 border-t mt-auto">
+        <p className="text-xs text-muted-foreground">
+          Page {totalPages === 0 ? 0 : currentPage} of {totalPages}
+        </p>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 w-7 p-0"
+            disabled={currentPage <= 1}
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 w-7 p-0"
+            disabled={currentPage >= totalPages}
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
     </Card>
   );
 }
