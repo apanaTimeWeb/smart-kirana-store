@@ -77,10 +77,10 @@ export function BillHistoryList() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-bold text-base">Bill #{bill.id}</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                      bill.paymentMode === "khata" ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400" :
-                      bill.paymentMode === "upi" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" :
-                      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${
+                      bill.paymentMode === "khata" ? "text-warning border-amber-300 bg-amber-50" :
+                      bill.paymentMode === "upi" ? "text-primary border-teal-300 bg-teal-50" :
+                      "text-positive border-green-300 bg-green-50"
                     }`}>
                       {bill.paymentMode.toUpperCase()}
                     </span>

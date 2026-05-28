@@ -1,0 +1,7 @@
+.history-returned-item {
+  color: #6B7280; /* muted-foreground */
+}
+
+.history-refund-amount {
+  color: #E53535; /* destructive */
+}

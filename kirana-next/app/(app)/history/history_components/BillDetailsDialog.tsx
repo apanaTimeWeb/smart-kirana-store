@@ -32,12 +32,14 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
   const [returnQtys, setReturnQtys] = useState<Record<number, string>>({});
   const [isSuccess, setIsSuccess] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [updatedBill, setUpdatedBill] = useState<Bill | null>(null);
   
   useEffect(() => {
     if (open) {
       setReturnQtys({});
       setIsSuccess(false);
       setPhoneNumber("");
+      setUpdatedBill(null);
     }
   }, [open, bill]);
 
@@ -80,8 +82,9 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
     returnMutation.mutate(
       { data: { billId: bill.id, items: itemsToReturn } },
       {
-        onSuccess: () => {
+        onSuccess: (newBill) => {
           toast({ title: "✅ Return processed successfully!" });
+          setUpdatedBill(newBill);
           setIsSuccess(true);
         },
         onError: () => {
@@ -92,7 +95,8 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
   };
 
   const handlePrintReceipt = () => {
-    if (!bill) return;
+    const currentBill = updatedBill || bill;
+    if (!currentBill) return;
 
     const win = window.open("", "_blank", "width=400,height=600");
     if (!win) return;
@@ -100,7 +104,7 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
     let subtotal = 0;
     let totalReturns = 0;
 
-    const rows = bill.items
+    const rows = currentBill.items
       .map((item) => {
         const returnedQty = item.returnedQuantity ?? 0;
         const validQty = item.quantity - returnedQty;
@@ -109,9 +113,9 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
           totalReturns += item.totalPrice;
           return `
             <tr>
-              <td style="padding:3px 0; color: #888;"><s>${item.productName} ${item.variantName || ""}</s><br/><small>Returned (${returnedQty})</small></td>
-              <td style="padding:3px 0; text-align:right; color: #888;">-</td>
-              <td style="padding:3px 0; text-align:right; color: #888;">-</td>
+              <td class="history-returned-item" style="padding:3px 0;"><s>${item.productName} ${item.variantName || ""}</s><br/><small>Returned (${returnedQty})</small></td>
+              <td class="history-returned-item" style="padding:3px 0; text-align:right;">-</td>
+              <td class="history-returned-item" style="padding:3px 0; text-align:right;">-</td>
             </tr>
           `;
         }
@@ -125,7 +129,7 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
         return `
           <tr>
             <td style="padding:3px 0;">${item.productName} ${item.variantName || ""}<br/><small>${validQty} ${item.unit || "pcs"}</small>
-            ${returnedQty > 0 ? `<br/><small style="color:red">(-${returnedQty} returned)</small>` : ""}
+            ${returnedQty > 0 ? `<br/><small class="history-refund-amount">(-${returnedQty} returned)</small>` : ""}
             </td>
             <td style="padding:3px 0; text-align:right;">${currency} ${item.unitPrice.toFixed(2)}</td>
             <td style="padding:3px 0; text-align:right;">${currency} ${effectiveTotal.toFixed(0)}</td>
@@ -148,6 +152,8 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
         th, td { padding: 4px 0; vertical-align: top; }
         hr { border: none; border-top: 1px dashed #000; margin: 8px 0; }
         small { color: #333; }
+        .history-returned-item { color: #6B7280; }
+        .history-refund-amount { color: #E53535; }
       </style>
       </head><body>
         <div class="center bold">
@@ -157,19 +163,19 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
           ${shopPhone ? `<p>Phone: ${shopPhone}</p>` : ""}
         </div>
         <hr/>
-        <p><strong>Bill No:</strong> #${bill.id}</p>
-        <p><strong>Date:</strong> ${format(new Date(bill.createdAt), "dd MMM yyyy, hh:mm a")}</p>
-        ${bill.customerName ? `<p><strong>Customer:</strong> ${bill.customerName}</p>` : ""}
+        <p><strong>Bill No:</strong> #${currentBill.id}</p>
+        <p><strong>Date:</strong> ${format(new Date(currentBill.createdAt), "dd MMM yyyy, hh:mm a")}</p>
+        ${currentBill.customerName ? `<p><strong>Customer:</strong> ${currentBill.customerName}</p>` : ""}
         <hr/>
         <table>
           <thead><tr><th>Item</th><th style="text-align:right">Rate</th><th style="text-align:right">Amt</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
         <hr/>
-        ${totalReturns > 0 ? `<div style="display:flex;justify-content:space-between;color:red;"><span>Total Refunds:</span><span>-${currency} ${totalReturns.toFixed(0)}</span></div><hr/>` : ""}
-        <div class="bold" style="display:flex;justify-content:space-between;font-size:15px;"><span>Revised Total:</span><span>${currency} ${(bill.finalAmount - totalReturns).toFixed(0)}</span></div>
+        ${totalReturns > 0 ? `<div class="history-refund-amount" style="display:flex;justify-content:space-between;"><span>Total Refunds:</span><span>-${currency} ${totalReturns.toFixed(0)}</span></div><hr/>` : ""}
+        <div class="bold" style="display:flex;justify-content:space-between;font-size:15px;"><span>Revised Total:</span><span>${currency} ${(currentBill.finalAmount - totalReturns).toFixed(0)}</span></div>
         <hr/>
-        <div style="display:flex;justify-content:space-between;"><span>Payment:</span><span>${bill.paymentMode.toUpperCase()}</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>Payment:</span><span>${currentBill.paymentMode.toUpperCase()}</span></div>
         <div class="center" style="margin-top:15px;font-size:12px;">Thank You! Visit Again</div>
         <script>
           setTimeout(() => { window.print(); }, 100);
@@ -180,7 +186,8 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
   };
 
   const handleWhatsAppShare = () => {
-    if (!bill) return;
+    const currentBill = updatedBill || bill;
+    if (!currentBill) return;
 
     let subtotal = 0;
     let totalReturns = 0;
@@ -209,13 +216,13 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
     msg += padCenter(shopName, W) + "\n";
     msg += padCenter("Updated Retail Invoice", W) + "\n";
     msg += "-".repeat(W) + "\n";
-    msg += `Bill No: #${bill.id}\n`;
-    msg += `Date: ${format(new Date(bill.createdAt), "dd MMM yyyy, hh:mm a")}\n`;
-    if (bill.customerName) msg += `Customer: ${bill.customerName}\n`;
+    msg += `Bill No: #${currentBill.id}\n`;
+    msg += `Date: ${format(new Date(currentBill.createdAt), "dd MMM yyyy, hh:mm a")}\n`;
+    if (currentBill.customerName) msg += `Customer: ${currentBill.customerName}\n`;
     msg += "-".repeat(W) + "\n";
     msg += padRight("Item", 18) + " " + padLeft("Rate", 8) + " " + padLeft("Amt", 6) + "\n";
 
-    bill.items.forEach((item) => {
+    currentBill.items.forEach((item) => {
       const returnedQty = item.returnedQuantity ?? 0;
       const validQty = item.quantity - returnedQty;
       
@@ -245,7 +252,7 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
       msg += padRight("Total Refunds:", 20) + padLeft(`-Rs ${totalReturns.toFixed(0)}`, 14) + "\n";
     }
     msg += "-".repeat(W) + "\n";
-    msg += padRight("Revised Total:", 20) + padLeft(`Rs ${(bill.finalAmount - totalReturns).toFixed(0)}`, 14) + "\n";
+    msg += padRight("Revised Total:", 20) + padLeft(`Rs ${(currentBill.finalAmount - totalReturns).toFixed(0)}`, 14) + "\n";
     msg += "-".repeat(W) + "\n";
     msg += padCenter("Thank You! Visit Again", W) + "\n";
     msg += "```";
@@ -305,10 +312,10 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
             <DialogHeader className="p-4 md:p-5 border-b bg-muted/30 shrink-0">
               <DialogTitle className="flex justify-between items-center">
                 <span>Bill #{bill.id} Details</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                  bill.paymentMode === "khata" ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400" :
-                  bill.paymentMode === "upi" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" :
-                  "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${
+                  bill.paymentMode === "khata" ? "text-warning border-amber-300 bg-amber-50" :
+                  bill.paymentMode === "upi" ? "text-primary border-teal-300 bg-teal-50" :
+                  "text-positive border-green-300 bg-green-50"
                 }`}>
                   {bill.paymentMode.toUpperCase()}
                 </span>

@@ -1,5 +1,5 @@
 import { BillHistoryList } from "./history_components/BillHistoryList";
-
+import "./history.css";
 export const metadata = {
   title: "Bill History - Smart Kirana Store",
 };
