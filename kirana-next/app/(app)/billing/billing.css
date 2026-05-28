@@ -72,6 +72,14 @@
     --billing-khula-rate-bg:            hsl(174 25% 95%);
     --billing-khula-chip-bg:            hsl(174 25% 95%);
     --billing-khula-chip-text:          hsl(174 70% 24%);
+
+    /* ── WhatsApp Dialog ───────────────────────────────────────── */
+    --billing-whatsapp-btn-bg:          hsl(142 72% 50%);             /* WhatsApp green */
+    --billing-whatsapp-btn-hover:       hsl(142 72% 43%);             /* darker on hover */
+    --billing-whatsapp-btn-text:        hsl(0 0% 100%);               /* white text */
+    --billing-whatsapp-icon:            hsl(142 72% 50%);             /* MessageCircle icon */
+    --billing-whatsapp-border:          hsl(142 72% 50% / 0.30);      /* info box border */
+    --billing-whatsapp-info-bg:         hsl(142 72% 50% / 0.05);      /* info box bg */
   }
 
 }
