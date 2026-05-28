@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Product } from "@/lib/api";
+import { Product, useListSuppliers } from "@/lib/api";
 import { formatBaseUnits, numberValue } from "./utils";
 
 export function PurchaseDialog({
@@ -18,21 +18,33 @@ export function PurchaseDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   products: Product[];
-  onSubmit: (variantId: number, quantity: number, purchasePrice?: number) => void;
+  onSubmit: (variantId: number, quantity: number, purchasePrice?: number, supplierId?: number, expiryDate?: string) => void;
   isPending: boolean;
 }) {
   const [variantId, setVariantId] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [purchasePrice, setPurchasePrice] = useState("");
+  const [supplierId, setSupplierId] = useState<string>("none");
+  const [expiryDate, setExpiryDate] = useState("");
+
+  const { data: suppliers = [] } = useListSuppliers();
 
   const selected = products.find((product) => product.id.toString() === variantId);
   const addedBase = selected ? selected.baseQuantity * quantity : 0;
 
   const submit = () => {
     if (!selected) return;
-    onSubmit(selected.id, quantity, purchasePrice ? Number(purchasePrice) : undefined);
+    onSubmit(
+      selected.id,
+      quantity,
+      purchasePrice ? Number(purchasePrice) : undefined,
+      supplierId !== "none" ? Number(supplierId) : undefined,
+      expiryDate || undefined
+    );
     setQuantity(1);
     setPurchasePrice("");
+    setSupplierId("none");
+    setExpiryDate("");
   };
 
   return (
@@ -74,6 +86,32 @@ export function PurchaseDialog({
                 min="0"
                 value={purchasePrice}
                 onChange={(e) => setPurchasePrice(e.target.value)}
+                placeholder="optional"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">Supplier (Khata)</label>
+              <Select value={supplierId} onValueChange={setSupplierId}>
+                <SelectTrigger><SelectValue placeholder="Select Supplier" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No Supplier (Cash)</SelectItem>
+                  {suppliers.map((sup) => (
+                    <SelectItem key={sup.id} value={sup.id.toString()}>
+                      {sup.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">Expiry Date (Batch)</label>
+              <Input
+                type="date"
+                value={expiryDate}
+                onChange={(e) => setExpiryDate(e.target.value)}
                 placeholder="optional"
               />
             </div>

@@ -32,6 +32,12 @@
     --dashboard-lowstock-border:        hsl(0 84% 88%);               /* border-red-200 */
     --dashboard-lowstock-icon:          hsl(var(--destructive));
 
+    /* ── Stat Card — Expiring Soon ────────────────────────────── */
+    --dashboard-expiry-value:           hsl(32 95% 44%);              /* text-orange-600 */
+    --dashboard-expiry-bg:              hsl(32 100% 96%);             /* bg-orange-50 */
+    --dashboard-expiry-border:          hsl(32 95% 85%);              /* border-orange-200 */
+    --dashboard-expiry-icon:            hsl(32 95% 44%);
+
     /* ── Recent Bills — Payment Mode Badges ───────────────────── */
     --dashboard-badge-khata-text:       hsl(var(--warning, 38 90% 42%));
     --dashboard-badge-khata-border:     hsl(38 90% 70%);              /* border-amber-300 */
@@ -64,6 +70,11 @@
     --dashboard-lowstock-bg:            hsl(0 84% 15%);
     --dashboard-lowstock-border:        hsl(0 84% 25%);
     --dashboard-lowstock-icon:          hsl(0 84% 65%);
+
+    --dashboard-expiry-value:           hsl(32 95% 65%);
+    --dashboard-expiry-bg:              hsl(32 95% 15%);
+    --dashboard-expiry-border:          hsl(32 95% 25%);
+    --dashboard-expiry-icon:            hsl(32 95% 65%);
 
     --dashboard-badge-khata-text:       hsl(38 90% 60%);
     --dashboard-badge-khata-border:     hsl(38 90% 30%);

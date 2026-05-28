@@ -9,6 +9,9 @@ import type {
   ProductInput,
   ProductVariantInput,
   PurchaseEntryInput,
+  ReturnBillInput,
+  Supplier,
+  SupplierDetail,
 } from "./types";
 
 type ProductMaster = {
@@ -33,6 +36,7 @@ type StoreData = {
   productMasters: ProductMaster[];
   products: Product[];
   customers: Array<CustomerDetail | (Customer & { transactions?: unknown[] })>;
+  suppliers: Array<SupplierDetail | (Supplier & { transactions?: unknown[] })>;
   bills: Bill[];
   settings: AppSettings;
   salesReportData: { date: string; sales: number; orders: number }[];
@@ -286,6 +290,7 @@ function normalizeData(input: any): StoreData {
   cloned.units = Array.isArray(cloned.units) ? cloned.units : DEFAULT_UNITS;
   cloned.conversions = Array.isArray(cloned.conversions) ? cloned.conversions : DEFAULT_CONVERSIONS;
   cloned.customers = Array.isArray(cloned.customers) ? cloned.customers : [];
+  cloned.suppliers = Array.isArray(cloned.suppliers) ? cloned.suppliers : [];
   cloned.bills = Array.isArray(cloned.bills) ? cloned.bills : [];
   cloned.purchases = Array.isArray(cloned.purchases) ? cloned.purchases : [];
   cloned.salesReportData = Array.isArray(cloned.salesReportData) ? cloned.salesReportData : [];
@@ -318,6 +323,7 @@ let data = loadStore();
 let nextMasterId = Math.max(0, ...data.productMasters.map((p) => p.id)) + 1;
 let nextProductId = Math.max(0, ...data.products.map((p) => p.id)) + 1;
 let nextCustomerId = Math.max(0, ...data.customers.map((c) => c.id)) + 1;
+let nextSupplierId = Math.max(0, ...(data.suppliers || []).map((c) => c.id)) + 1;
 let nextBillId = Math.max(0, ...data.bills.map((b) => b.id)) + 1;
 let nextTxId = 100;
 
@@ -478,10 +484,23 @@ export function storeAddPurchaseEntry(input: PurchaseEntryInput): Product {
     ...product,
     stockInBaseUnit: product.stockInBaseUnit + addedBaseUnits,
     purchasePrice: input.purchasePrice !== undefined ? Number(input.purchasePrice) : product.purchasePrice,
+    expiryDate: input.expiryDate !== undefined ? input.expiryDate : product.expiryDate,
   });
 
   data.products[idx] = updated;
   applySharedStock(updated, updated.stockInBaseUnit);
+
+  const purchasePriceAmount = input.purchasePrice !== undefined ? Number(input.purchasePrice) : product.purchasePrice;
+  const totalPurchaseCost = purchasePriceAmount * Number(input.quantity || 0);
+
+  if (input.supplierId && totalPurchaseCost > 0) {
+    storeAddSupplierTransaction(input.supplierId, {
+      type: "credit",
+      amount: totalPurchaseCost,
+      description: `Purchase Entry: ${input.quantity} x ${product.name}`,
+    });
+  }
+
   data.purchases.push({
     id: data.purchases.length + 1,
     variantId: input.variantId,
@@ -528,6 +547,49 @@ export function storeAddKhataTransaction(
 ) {
   const c = data.customers.find((customer) => customer.id === customerId) as any;
   if (!c) throw new Error("Customer not found");
+  const newTx = { id: nextTxId++, ...tx, createdAt: new Date().toISOString() };
+  c.transactions = c.transactions ?? [];
+  c.transactions.push(newTx);
+  c.totalDue = tx.type === "credit" ? c.totalDue + tx.amount : Math.max(0, c.totalDue - tx.amount);
+  persist();
+  return newTx;
+}
+
+export function storeGetSuppliers(params?: { search?: string }): Supplier[] {
+  let list = (data.suppliers || []) as Supplier[];
+  if (params?.search) {
+    const s = params.search.toLowerCase();
+    list = list.filter((c) => c.name.toLowerCase().includes(s) || c.phone.includes(s));
+  }
+  return list;
+}
+
+export function storeGetSupplier(id: number): SupplierDetail | null {
+  const c = (data.suppliers || []).find((supplier) => supplier.id === id);
+  if (!c) return null;
+  return c as SupplierDetail;
+}
+
+export function storeCreateSupplier(d: { name: string; phone: string; address?: string }): Supplier {
+  const c: Supplier = { ...d, id: nextSupplierId++, totalDue: 0, createdAt: new Date().toISOString() };
+  data.suppliers = data.suppliers || [];
+  data.suppliers.push({ ...c, transactions: [] });
+  persist();
+  return c;
+}
+
+export function storeDeleteSupplier(id: number): void {
+  const idx = (data.suppliers || []).findIndex((c) => c.id === id);
+  if (idx !== -1) data.suppliers.splice(idx, 1);
+  persist();
+}
+
+export function storeAddSupplierTransaction(
+  supplierId: number,
+  tx: { type: "credit" | "payment"; amount: number; description: string }
+) {
+  const c = (data.suppliers || []).find((supplier) => supplier.id === supplierId) as any;
+  if (!c) throw new Error("Supplier not found");
   const newTx = { id: nextTxId++, ...tx, createdAt: new Date().toISOString() };
   c.transactions = c.transactions ?? [];
   c.transactions.push(newTx);
@@ -619,6 +681,25 @@ export function storeGetDashboard() {
   const lowStock = products.filter((p) => p.currentStock <= p.lowStockThreshold && p.currentStock > 0).sort(compareProducts);
   const outOfStock = products.filter((p) => p.currentStock === 0 || p.stockInBaseUnit <= 0).sort(compareProducts);
 
+  const now = new Date();
+  const expiringProducts = products
+    .filter((p) => p.expiryDate)
+    .map((p) => {
+      const expiry = new Date(p.expiryDate!);
+      const diffTime = expiry.getTime() - now.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return { p, diffDays };
+    })
+    .filter(({ diffDays }) => diffDays <= 15)
+    .sort((a, b) => a.diffDays - b.diffDays)
+    .map(({ p, diffDays }) => ({
+      id: p.id,
+      name: p.productName,
+      variantName: p.variantName,
+      expiryDate: p.expiryDate!,
+      daysLeft: diffDays,
+    }));
+
   return {
     todaySale,
     todayProfit,
@@ -642,6 +723,7 @@ export function storeGetDashboard() {
       lowStockThreshold: p.lowStockThreshold,
       unit: p.unit,
     })),
+    expiringProducts,
   };
 }
 
@@ -692,4 +774,87 @@ export function storeUpdateSettings(d: Partial<AppSettings>): AppSettings {
   Object.assign(data.settings, d);
   persist();
   return data.settings as AppSettings;
+}
+
+export function storeReturnBillItems(input: ReturnBillInput): Bill {
+  const billIndex = data.bills.findIndex(b => b.id === input.billId);
+  if (billIndex === -1) throw new Error("Bill not found");
+
+  const bill = data.bills[billIndex] as Bill;
+  let totalRefundAmount = 0;
+  let totalRefundProfit = 0;
+
+  // Process each returned item
+  for (const returned of input.items) {
+    if (returned.quantityToReturn <= 0) continue;
+
+    const billItem = bill.items.find(i => i.productId === returned.productId);
+    if (!billItem) continue;
+
+    const previousReturnQty = billItem.returnedQuantity ?? 0;
+    const maxReturnable = billItem.quantity - previousReturnQty;
+    const actualReturnQty = Math.min(returned.quantityToReturn, maxReturnable);
+
+    if (actualReturnQty <= 0) continue;
+
+    billItem.returnedQuantity = previousReturnQty + actualReturnQty;
+
+    const productIdx = data.products.findIndex(p => p.id === billItem.productId);
+    if (productIdx !== -1) {
+      const p = data.products[productIdx];
+      // Stock delta for the returned quantity
+      const stockDelta = billItem.stockDeltaBaseUnit
+        ? (billItem.stockDeltaBaseUnit / billItem.quantity) * actualReturnQty
+        : p.baseQuantity * actualReturnQty;
+
+      // Add stock back
+      const updatedProduct = withComputedFields({
+        ...p,
+        stockInBaseUnit: p.stockInBaseUnit + stockDelta,
+      });
+      data.products[productIdx] = updatedProduct;
+      applySharedStock(updatedProduct, updatedProduct.stockInBaseUnit);
+
+      // Calculate profit to revert
+      const costPerBaseUnit = p.purchasePrice / Math.max(1, p.baseQuantity);
+      const costForReturn = costPerBaseUnit * stockDelta;
+      const refundRevenue = billItem.unitPrice * actualReturnQty;
+      
+      totalRefundAmount += refundRevenue;
+      totalRefundProfit += (refundRevenue - costForReturn);
+    }
+  }
+
+  // Adjust khata if needed
+  if (bill.paymentMode === "khata" && bill.customerId && totalRefundAmount > 0) {
+    const c = data.customers.find(customer => customer.id === bill.customerId) as any;
+    if (c) {
+      c.totalDue = Math.max(0, (c.totalDue ?? 0) - totalRefundAmount);
+      c.transactions = c.transactions ?? [];
+      c.transactions.push({
+        id: nextTxId++,
+        type: "payment",
+        amount: totalRefundAmount,
+        description: `Refund for returned items in Bill #${bill.id}`,
+        createdAt: new Date().toISOString(),
+      });
+    }
+  }
+
+  // Adjust Daily Metrics for the date of the original bill
+  if (totalRefundAmount > 0) {
+    const date = bill.createdAt.split("T")[0];
+    const salesRow = data.salesReportData.find((row) => row.date === date);
+    if (salesRow) {
+      salesRow.sales = Math.max(0, salesRow.sales - totalRefundAmount);
+    }
+    const profitRow = data.profitReportData.find((row) => row.date === date);
+    if (profitRow) {
+      profitRow.revenue = Math.max(0, profitRow.revenue - totalRefundAmount);
+      profitRow.profit -= totalRefundProfit; // Profit can be negative
+    }
+  }
+
+  persist();
+  return bill;
 }

@@ -127,8 +127,8 @@ export function ProductList() {
     });
   };
 
-  const purchase = (variantId: number, quantity: number, purchasePrice?: number) => {
-    addPurchase.mutate({ data: { variantId, quantity, purchasePrice } }, {
+  const purchase = (variantId: number, quantity: number, purchasePrice?: number, supplierId?: number, expiryDate?: string) => {
+    addPurchase.mutate({ data: { variantId, quantity, purchasePrice, supplierId, expiryDate } }, {
       onSuccess: () => {
         invalidate();
         setIsPurchaseOpen(false);
