@@ -198,12 +198,12 @@ export default function LandingPage() {
           </div>
 
           <div className="hidden md:flex items-center gap-2">
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button variant="outline" size="sm" className="h-8 text-xs">
                 Login
               </Button>
             </Link>
-            <Link href="/signup">
+            <Link href="/auth/signup">
               <Button size="sm" className="h-8 text-xs">
                 Free Shuru Karein
               </Button>
@@ -246,12 +246,12 @@ export default function LandingPage() {
               Reviews
             </a>
             <div className="flex gap-2 pt-3">
-              <Link href="/login" className="flex-1">
+              <Link href="/auth/login" className="flex-1">
                 <Button variant="outline" className="w-full h-10">
                   Login
                 </Button>
               </Link>
-              <Link href="/signup" className="flex-1">
+              <Link href="/auth/signup" className="flex-1">
                 <Button className="w-full h-10">Register</Button>
               </Link>
             </div>
@@ -294,7 +294,7 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-            <Link href="/signup">
+            <Link href="/auth/signup">
               <Button
                 size="lg"
                 className="w-full sm:w-auto px-7 font-bold shadow-md gap-2"
@@ -302,7 +302,7 @@ export default function LandingPage() {
                 Free में शुरू करें <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button
                 size="lg"
                 variant="outline"
@@ -544,7 +544,7 @@ export default function LandingPage() {
             करेंगे?
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/signup">
+            <Link href="/auth/signup">
               <Button
                 size="lg"
                 className="w-full sm:w-auto px-8 font-bold gap-2 shadow-md"
@@ -552,7 +552,7 @@ export default function LandingPage() {
                 Free में Register करे <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button
                 size="lg"
                 variant="outline"
@@ -582,13 +582,13 @@ export default function LandingPage() {
           </p>
           <div className="flex gap-4 text-xs text-muted-foreground">
             <Link
-              href="/login"
+              href="/auth/login"
               className="hover:text-primary transition-colors"
             >
               Login
             </Link>
             <Link
-              href="/signup"
+              href="/auth/signup"
               className="hover:text-primary transition-colors"
             >
               Register

@@ -71,7 +71,7 @@ export function LoginForm() {
 
         <div className="mt-4 text-center text-xs text-muted-foreground">
           Naya account?{" "}
-          <Link href="/signup" className="text-[var(--login-link-text)] font-semibold hover:underline">
+          <Link href="/auth/signup" className="text-[var(--login-link-text)] font-semibold hover:underline">
             Register Karein
           </Link>
         </div>

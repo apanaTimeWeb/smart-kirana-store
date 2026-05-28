@@ -93,7 +93,7 @@ export function SignupForm() {
 
         <div className="mt-4 text-center text-xs text-muted-foreground">
           Pehle se account hai?{" "}
-          <Link href="/login" className="text-[var(--signup-link-text)] font-semibold hover:underline">
+          <Link href="/auth/login" className="text-[var(--signup-link-text)] font-semibold hover:underline">
             Login Karein
           </Link>
         </div>
