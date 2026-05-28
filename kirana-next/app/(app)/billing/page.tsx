@@ -71,6 +71,32 @@ type BillData = {
   gstRate: number;
 };
 
+export function buildWhatsAppMessage(
+  billData: BillData,
+  shopName: string,
+  shopAddress?: string,
+  shopPhone?: string
+) {
+  const lines = billData.items
+    .map((item) => `• ${item.displayName} (${item.quantity > 1 ? `${item.quantity} x ${item.displayQuantity}` : item.displayQuantity}) — Rs ${item.totalPrice.toFixed(0)}`)
+    .join("\n");
+
+  let msg = `🛒 *${shopName}*\n`;
+  if (shopAddress) msg += `📍 ${shopAddress}\n`;
+  if (shopPhone) msg += `📞 ${shopPhone}\n`;
+  msg += `\n*Bill Date:* ${format(new Date(), "dd MMM yyyy, hh:mm a")}\n`;
+  if (billData.customerName) msg += `*Customer:* ${billData.customerName}\n`;
+  msg += `\n*Items:*\n${lines}\n`;
+  msg += `\n*Subtotal:* Rs ${billData.subtotal.toFixed(0)}`;
+  if (billData.discount > 0) msg += `\n*Discount:* -Rs ${billData.discount.toFixed(0)}`;
+  if (billData.enableGST) msg += `\n*GST (${billData.gstRate}%):* Rs ${billData.gstAmount.toFixed(0)}`;
+  msg += `\n\n💰 *Total: Rs ${billData.finalAmount.toFixed(0)}*`;
+  msg += `\n💳 *Payment:* ${billData.paymentMode.toUpperCase()}`;
+  msg += `\n\nThank you for shopping with us! 🙏`;
+
+  return msg;
+}
+
 function WhatsAppDialog({
   billData,
   shopName,
@@ -95,32 +121,14 @@ function WhatsAppDialog({
     }
   }, [billData]);
 
-  const buildMessage = () => {
-    if (!billData) return "";
-    const lines = billData.items
-      .map((item) => `\u2022 ${item.displayName} (${item.quantity > 1 ? `${item.quantity} x ${item.displayQuantity}` : item.displayQuantity}) \u2014 Rs ${item.totalPrice.toFixed(0)}`)
-      .join("\n");
-    let msg = `\uD83D\uDED2 *${shopName}*\n`;
-    if (shopAddress) msg += `\uD83D\uDCCD ${shopAddress}\n`;
-    if (shopPhone) msg += `\uD83D\uDCDE ${shopPhone}\n`;
-    msg += `\n*Bill Date:* ${format(new Date(), "dd MMM yyyy, hh:mm a")}\n`;
-    if (billData.customerName) msg += `*Customer:* ${billData.customerName}\n`;
-    msg += `\n*Items:*\n${lines}\n`;
-    msg += `\n*Subtotal:* Rs ${billData.subtotal.toFixed(0)}`;
-    if (billData.discount > 0) msg += `\n*Discount:* -Rs ${billData.discount.toFixed(0)}`;
-    if (billData.enableGST) msg += `\n*GST (${billData.gstRate}%):* Rs ${billData.gstAmount.toFixed(0)}`;
-    msg += `\n\n\uD83D\uDCB0 *Total: Rs ${billData.finalAmount.toFixed(0)}*`;
-    msg += `\n\uD83D\uDCB3 *Payment:* ${billData.paymentMode.toUpperCase()}`;
-    msg += `\n\nThank you for shopping with us! \uD83D\uDE4F`;
-    return msg;
-  };
-
   const handleSend = () => {
     if (phone.length < 10) {
       toast({ title: "Valid 10-digit number daalo", variant: "destructive" });
       return;
     }
-    const url = `https://wa.me/91${phone}?text=${encodeURIComponent(buildMessage())}`;
+    if (!billData) return;
+    const msg = buildWhatsAppMessage(billData, shopName, shopAddress, shopPhone);
+    const url = `https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank");
     setPhone("");
     onClose();
@@ -392,6 +400,7 @@ export default function Billing() {
   const [discount, setDiscount] = useState(0);
   const [paymentMode, setPaymentMode] = useState<BillInputPaymentMode>("cash");
   const [selectedCustomerId, setSelectedCustomerId] = useState("");
+  const [quickPhone, setQuickPhone] = useState("");
   const [billSuccess, setBillSuccess] = useState(false);
   const [mobileTab, setMobileTab] = useState<"products" | "cart">("products");
   const [enableGST, setEnableGST] = useState(false);
@@ -653,6 +662,7 @@ export default function Billing() {
     }
 
     const selectedCustomer = customers.find((customer) => customer.id.toString() === selectedCustomerId);
+    const finalPhone = selectedCustomer?.phone || quickPhone;
 
     createBill.mutate(
       {
@@ -685,7 +695,7 @@ export default function Billing() {
           const billData = {
             items: [...cart],
             customerName: selectedCustomer?.name,
-            customerPhone: selectedCustomer?.phone,
+            customerPhone: finalPhone,
             subtotal,
             discount,
             taxableValue,
@@ -705,13 +715,23 @@ export default function Billing() {
           queryClient.invalidateQueries({ queryKey: getListCustomersQueryKey() });
           queryClient.invalidateQueries({ queryKey: ["reports"] });
 
-          // Show WhatsApp dialog — all phone input state lives inside WhatsAppDialog component
-          setWhatsappBillData(billData);
+          const rawPhone = (billData.customerPhone ?? "").replace(/\D/g, "").replace(/^91/, "").slice(0, 10);
+          
+          if (rawPhone.length === 10) {
+            // Send directly apne aap
+            const msg = buildWhatsAppMessage(billData, shopName, settings?.shopAddress, settings?.shopPhone);
+            const url = `https://wa.me/91${rawPhone}?text=${encodeURIComponent(msg)}`;
+            window.open(url, "_blank");
+          } else {
+            // Show WhatsApp dialog if no valid phone
+            setWhatsappBillData(billData);
+          }
 
           setTimeout(() => {
             setCart([]);
             setDiscount(0);
             setSelectedCustomerId("");
+            setQuickPhone("");
             setPaymentMode("cash");
             setEnableGST(false);
             setBillSuccess(false);
@@ -729,6 +749,7 @@ export default function Billing() {
     setCart([]);
     setDiscount(0);
     setSelectedCustomerId("");
+    setQuickPhone("");
     setEnableGST(false);
   };
 
@@ -936,6 +957,19 @@ export default function Billing() {
 
         {(paymentMode === "khata" || cart.length > 0) && (
           <CustomerPicker customers={customers} value={selectedCustomerId} onChange={setSelectedCustomerId} required={paymentMode === "khata"} />
+        )}
+
+        {cart.length > 0 && !selectedCustomerId && (
+          <div className="flex items-center rounded-md border px-3 bg-background focus-within:ring-1 focus-within:ring-ring">
+             <span className="text-sm text-muted-foreground mr-2">+91</span>
+             <Input 
+               type="tel"
+               placeholder="WhatsApp (Optional)"
+               className="border-0 px-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-10 shadow-none bg-transparent"
+               value={quickPhone}
+               onChange={(e) => setQuickPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+             />
+          </div>
         )}
 
         <Button className="h-12 w-full text-base font-bold" disabled={cart.length === 0 || createBill.isPending || billSuccess} onClick={handleCheckout}>
