@@ -1,0 +1,46 @@
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+
+interface StatCardProps {
+  title: string;
+  subtitle: string;
+  value: string;
+  note?: string;
+  icon: React.ElementType;
+  colorClass: string;
+  bgClass: string;
+  borderClass: string;
+  iconColorClass: string;
+}
+
+export function StatCard({
+  title,
+  subtitle,
+  value,
+  note,
+  icon: Icon,
+  colorClass,
+  bgClass,
+  borderClass,
+  iconColorClass,
+}: StatCardProps) {
+  return (
+    <Card className={`border ${borderClass} ${bgClass}`}>
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {title}
+            </p>
+            <p className="text-[10px] text-muted-foreground">{subtitle}</p>
+          </div>
+          <div className={`rounded-lg p-2 ${bgClass} border ${borderClass}`}>
+            <Icon className={`h-4 w-4 ${iconColorClass}`} />
+          </div>
+        </div>
+        <div className={`mt-3 text-3xl font-extrabold ${colorClass}`}>{value}</div>
+        {note && <p className="mt-1 text-xs text-muted-foreground">{note}</p>}
+      </CardContent>
+    </Card>
+  );
+}

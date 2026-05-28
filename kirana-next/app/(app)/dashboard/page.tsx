@@ -2,51 +2,13 @@
 
 import "./dashboard.css";
 import { useGetDashboardSummary } from "@/lib/api";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { IndianRupee, TrendingUp, BookOpen, AlertTriangle, PackageOpen, ShoppingBag } from "lucide-react";
+import { IndianRupee, TrendingUp, BookOpen, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
-import { Badge } from "@/components/ui/badge";
-
-function StatCard({
-  title,
-  subtitle,
-  value,
-  note,
-  icon: Icon,
-  colorClass,
-  bgClass,
-  borderClass,
-  iconColorClass,
-}: {
-  title: string;
-  subtitle: string;
-  value: string;
-  note?: string;
-  icon: React.ElementType;
-  colorClass: string;
-  bgClass: string;
-  borderClass: string;
-  iconColorClass: string;
-}) {
-  return (
-    <Card className={`border ${borderClass} ${bgClass}`}>
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</p>
-            <p className="text-[10px] text-muted-foreground">{subtitle}</p>
-          </div>
-          <div className={`rounded-lg p-2 ${bgClass} border ${borderClass}`}>
-            <Icon className={`h-4 w-4 ${iconColorClass}`} />
-          </div>
-        </div>
-        <div className={`mt-3 text-3xl font-extrabold ${colorClass}`}>{value}</div>
-        {note && <p className="mt-1 text-xs text-muted-foreground">{note}</p>}
-      </CardContent>
-    </Card>
-  );
-}
+import { StatCard } from "./dashboard_components/StatCard";
+import { RecentBillsList } from "./dashboard_components/RecentBillsList";
+import { LowStockList } from "./dashboard_components/LowStockList";
 
 export default function Dashboard() {
   const { data: summary, isLoading, error } = useGetDashboardSummary();
@@ -95,11 +57,12 @@ export default function Dashboard() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
           आज का हिसाब
-          <span className="ml-2 text-base font-normal text-muted-foreground">(Today's Overview)</span>
+          <span className="ml-2 text-base font-normal text-muted-foreground">(Today&apos;s Overview)</span>
         </h1>
         <p className="text-sm text-muted-foreground mt-0.5">{today}</p>
       </div>
 
+      {/* Stat cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="आज की बिक्री"
@@ -146,101 +109,10 @@ export default function Dashboard() {
         />
       </div>
 
+      {/* Lists */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <ShoppingBag className="h-4 w-4 text-primary" />
-              हाल की बिक्री
-              <span className="text-sm font-normal text-muted-foreground ml-1">(Recent Bills)</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            {summary.recentBills?.length > 0 ? (
-              <div className="divide-y">
-                {summary.recentBills.slice(0, 6).map((bill) => (
-                  <div
-                    key={bill.id}
-                    className="flex items-center justify-between px-5 py-3 hover:bg-muted/30 transition-colors"
-                    data-testid={`row-bill-${bill.id}`}
-                  >
-                    <div>
-                      <p className="font-semibold text-sm">{bill.customerName || "Walk-in Customer"}</p>
-                      <p className="text-xs text-muted-foreground">
-                        Bill #{bill.id} · {format(new Date(bill.createdAt), "hh:mm a")}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold text-sm">₹{bill.finalAmount.toFixed(0)}</p>
-                      <Badge
-                        variant="outline"
-                        className={
-                          bill.paymentMode === "khata"
-                            ? "text-[var(--dashboard-badge-khata-text)] border-[var(--dashboard-badge-khata-border)] bg-[var(--dashboard-badge-khata-bg)] text-[10px]"
-                            : bill.paymentMode === "upi"
-                            ? "text-[var(--dashboard-badge-upi-text)] border-[var(--dashboard-badge-upi-border)] bg-[var(--dashboard-badge-upi-bg)] text-[10px]"
-                            : "text-[var(--dashboard-badge-cash-text)] border-[var(--dashboard-badge-cash-border)] bg-[var(--dashboard-badge-cash-bg)] text-[10px]"
-                        }
-                      >
-                        {bill.paymentMode === "khata" ? "Khata" : bill.paymentMode === "upi" ? "UPI" : "Cash"}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <ShoppingBag className="h-10 w-10 mb-3 opacity-20" />
-                <p className="text-sm">Aaj abhi koi bill nahi</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base text-destructive">
-              <PackageOpen className="h-4 w-4" />
-              कम स्टॉक वाले सामान
-              <span className="text-sm font-normal text-muted-foreground ml-1">(Low Stock)</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            {summary.lowStockProducts?.length > 0 ? (
-              <div className="divide-y">
-                {summary.lowStockProducts.slice(0, 6).map((product) => (
-                  <div
-                    key={product.id}
-                    className="flex items-center justify-between px-5 py-3 hover:bg-muted/30 transition-colors"
-                    data-testid={`row-lowstock-${product.id}`}
-                  >
-                    <div>
-                      <p className="font-semibold text-sm">{product.name}</p>
-                      <p className="text-xs text-muted-foreground">{product.category}</p>
-                    </div>
-                    <div className="text-right">
-                      <p
-                        className={`font-bold text-sm ${
-                          product.currentStock === 0 ? "text-[var(--dashboard-lowstock-value)]" : "text-[var(--dashboard-khata-value)]"
-                        }`}
-                      >
-                        {product.currentStock === 0
-                          ? "Out of Stock"
-                          : `${product.currentStock} ${product.unit} left`}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">Min: {product.lowStockThreshold}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <PackageOpen className="h-10 w-10 mb-3 opacity-20" />
-                <p className="text-sm">Sab stock sahi hai</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <RecentBillsList bills={summary.recentBills ?? []} />
+        <LowStockList products={summary.lowStockProducts ?? []} />
       </div>
     </div>
   );
