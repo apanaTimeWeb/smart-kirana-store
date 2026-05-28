@@ -13,7 +13,6 @@ export type ProductDraft = {
   brand: string;
   keywords: string;
   shortcut: string;
-  barcode: string;
   sellingTypes: Record<SellingTypeKey, boolean>;
   variants: VariantDraft[];
 };

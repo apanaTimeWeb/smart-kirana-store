@@ -24,7 +24,7 @@ Stock module `app/(app)/stock` directory me hai.
   - Khula Items (Loose items)
   - Quick Billing Items (Jo billing me jaldi add hone chahiye)
   - Low/Out of Stock Items
-- **Smart Filters & Search**: Aap product ko naam, shortcut, ya barcode se search kar sakte hain. Saath hi quick filters (All, Out, Low, In Stock, Khula, Bora/Wholesale, Quick) lagaye ja sakte hain.
+- **Smart Filters & Search**: Aap product ko naam ya shortcut se search kar sakte hain. Saath hi quick filters (All, Out, Low, In Stock, Khula, Bora/Wholesale, Quick) lagaye ja sakte hain.
 - **Table Data**: Har row me Product Name, Variant, Selling Mode (Khula, Variant, Fixed), Conversion (e.g., 1 packet = 5 kg), Current Stock, aur Rates (Purchase & Selling) hote hain.
 
 ### 2. Naya Product Add Karna (`ProductCreator.tsx`)
@@ -50,7 +50,7 @@ Jab stock khatam hone lagta hai aur naya maal aata hai:
 ## 🚀 AI & Developer Context: Future Enhancements
 Agar future me aap ya AI isme naye features banana chahein:
 
-1. **Barcode Generator & Print**: Product add karte samay automatically barcode generate karna aur use sticker format me print karne ka feature banaya ja sakta hai.
+1. **Bulk Upload**: Excel ya CSV se ek saath hazaron products add karne ka feature.
 2. **Bulk Upload (Excel/CSV)**: Nayi dukaan setup karne ke liye ek saath 500+ products Excel se import karne ka feature.
 3. **Stock History / Movement Log**: Ek aisi report jo dikhaye ki kis tareekh ko kitna stock kharida gaya (Purchase Entry) aur kitna becha gaya (Billing). Abhi siraf current stock pata chalta hai.
 4. **Supplier Management**: Purchase entry ke waqt ye record karna ki maal kis wholesaler (supplier) se aaya hai.

@@ -65,7 +65,6 @@ export type ProductVariantInput = {
   purchasePrice: number;
   sellingPrice: number;
   quickSelect: boolean;
-  barcode?: string;
   stockInBaseUnit: number;
   lowStockThresholdInBaseUnit: number;
   presetBaseQuantities?: number[];
@@ -77,7 +76,6 @@ export type ProductInput = {
   brand?: string;
   searchKeywords?: string[];
   shortcut?: string;
-  barcode?: string;
   variants: ProductVariantInput[];
 };
 

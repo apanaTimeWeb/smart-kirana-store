@@ -83,7 +83,7 @@ export function variantDraft(overrides: Partial<VariantDraft> = {}): VariantDraf
     purchasePrice: overrides.purchasePrice ?? 0,
     sellingPrice: overrides.sellingPrice ?? 0,
     quickSelect: overrides.quickSelect ?? false,
-    barcode: overrides.barcode ?? "",
+    expiryDate: overrides.expiryDate ?? "",
     stockInBaseUnit: overrides.stockInBaseUnit ?? 0,
     lowStockThresholdInBaseUnit: overrides.lowStockThresholdInBaseUnit ?? defaultBaseQuantity(unitType) * 5,
     presetBaseQuantities: overrides.presetBaseQuantities ?? defaultPresetsFor(baseUnit),
@@ -97,7 +97,6 @@ export function emptyDraft(): ProductDraft {
     brand: "",
     keywords: "",
     shortcut: "",
-    barcode: "",
     sellingTypes: { khula: true, fixed: false, multiple: false },
     variants: [variantDraft({ variantName: "Khula", sellingMode: "khula", unitType: "KG", quickSelect: true })],
   };
@@ -127,7 +126,6 @@ export function toInput(draft: ProductDraft): ProductInput {
     name: draft.name.trim(),
     category: draft.category.trim() || "General",
     brand: draft.brand.trim() || undefined,
-    barcode: draft.barcode.trim() || undefined,
     shortcut: draft.shortcut.trim() || undefined,
     searchKeywords: draft.keywords
       .split(",")
@@ -141,9 +139,9 @@ export function toInput(draft: ProductDraft): ProductInput {
       sellingMode: variant.sellingMode,
       mrp: numberValue(variant.mrp, 0),
       purchasePrice: numberValue(variant.purchasePrice, 0),
-      sellingPrice: numberValue(variant.sellingPrice, 0),
+      sellingPrice: Number(variant.sellingPrice),
       quickSelect: Boolean(variant.quickSelect),
-      barcode: variant.barcode?.trim() || undefined,
+      expiryDate: variant.expiryDate || null,
       stockInBaseUnit: numberValue(variant.stockInBaseUnit, 0),
       lowStockThresholdInBaseUnit: numberValue(variant.lowStockThresholdInBaseUnit, 0),
       presetBaseQuantities: variant.presetBaseQuantities ?? [],
