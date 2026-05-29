@@ -409,7 +409,7 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
                       </div>
                     </div>
                   );
-                })}
+                }))}
               </div>
 
               <div className="pt-2">
