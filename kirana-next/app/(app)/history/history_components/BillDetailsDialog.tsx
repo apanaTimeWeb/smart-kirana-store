@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
-import { AlertCircle, RotateCcw, Check, Loader2, Printer, MessageCircle } from "lucide-react";
+import { AlertCircle, RotateCcw, Check, Loader2, Printer, MessageCircle, Search } from "lucide-react";
 import { useReturnBillItems } from "@/lib/api/bills";
 import { useGetSettings } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
@@ -33,6 +33,7 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
   const [isSuccess, setIsSuccess] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [updatedBill, setUpdatedBill] = useState<Bill | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   
   useEffect(() => {
     if (open) {
@@ -40,6 +41,7 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
       setIsSuccess(false);
       setPhoneNumber("");
       setUpdatedBill(null);
+      setSearchQuery("");
     }
   }, [open, bill]);
 
@@ -335,8 +337,32 @@ export function BillDetailsDialog({ bill, open, onOpenChange, currency }: BillDe
               </div>
 
               <div className="space-y-3">
-                <h3 className="font-semibold text-sm border-b pb-2">Purchased Items</h3>
-                {bill.items.map((item, idx) => {
+                <div className="flex items-center justify-between border-b pb-2 gap-2">
+                  <h3 className="font-semibold text-sm whitespace-nowrap">Purchased Items</h3>
+                  <div className="relative max-w-[200px] w-full">
+                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                    <Input 
+                      placeholder="Search items..." 
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="h-8 pl-8 text-xs"
+                    />
+                  </div>
+                </div>
+                {bill.items.filter(item => 
+                  !searchQuery || 
+                  item.productName?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                  item.variantName?.toLowerCase().includes(searchQuery.toLowerCase())
+                ).length === 0 ? (
+                  <div className="text-center py-4 text-xs text-muted-foreground">Koi item nahi mila</div>
+                ) : (
+                bill.items
+                  .filter(item => 
+                    !searchQuery || 
+                    item.productName?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                    item.variantName?.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                  .map((item, idx) => {
                   const previousReturnQty = item.returnedQuantity ?? 0;
                   const maxReturnable = item.quantity - previousReturnQty;
                   const currentReturnVal = returnQtys[item.productId] ?? "";
