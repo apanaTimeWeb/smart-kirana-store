@@ -249,14 +249,22 @@ export function CartPanel({
         <Button
           className="h-12 w-full text-base font-bold"
           disabled={cart.length === 0 || isCheckoutPending || billSuccess}
-          onClick={onCheckout}
+          onClick={() => {
+            if (!showOptions) {
+              setShowOptions(true);
+            } else {
+              onCheckout();
+            }
+          }}
         >
           {billSuccess ? (
             <span className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5" /> Bill Hua
             </span>
-          ) : (
+          ) : !showOptions ? (
             `Bill Karo - Rs ${finalAmount.toFixed(0)}`
+          ) : (
+            `Confirm Bill - Rs ${finalAmount.toFixed(0)}`
           )}
         </Button>
 
