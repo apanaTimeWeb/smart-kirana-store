@@ -13,7 +13,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useGetCustomer, useGetSettings } from "@/lib/api";
 import { format } from "date-fns";
 import { LedgerTable } from "./LedgerTable";
-import { ReminderDialog } from "./ReminderDialog";
 import { TransactionForm } from "./TransactionForm";
 import { type LedgerRow } from "./types";
 
@@ -26,7 +25,6 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
   const { data: settings } = useGetSettings();
 
   const [mode, setMode] = useState<"payment" | "credit" | null>(null);
-  const [isReminderOpen, setIsReminderOpen] = useState(false);
 
   const shopName = settings?.shopName?.trim() || "Smart Kirana Store";
 
@@ -41,8 +39,49 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
 
   const reminderMessage = useMemo(() => {
     if (!detail) return "";
-    return `Namaste ${detail.name} Ji,\n\nAapka balance ₹${detail.totalDue.toFixed(2)} pending hai.\n\nKripya jaldi payment kar dein.\n\nThank you\n${shopName}`;
-  }, [detail, shopName]);
+    
+    const W = 28;
+    const padRight = (str: string, width: number) => {
+      if (str.length >= width) return str.substring(0, width);
+      return str + " ".repeat(width - str.length);
+    };
+    const padLeft = (str: string, width: number) => {
+      if (str.length >= width) return str.substring(0, width);
+      return " ".repeat(width - str.length) + str;
+    };
+
+    let msg = "```\n";
+    msg += shopName + "\n";
+    msg += "Khata Statement\n";
+    if (settings?.shopAddress) msg += settings.shopAddress + "\n";
+    if (settings?.shopPhone) msg += `Phone: ${settings.shopPhone}\n`;
+    msg += "-".repeat(W) + "\n";
+    msg += `Customer: ${detail.name}\n`;
+    msg += `Date: ${format(new Date(), "dd MMM yyyy")}\n`;
+    msg += "-".repeat(W) + "\n";
+    
+    msg += padRight("Date", 6) + "|" + padRight("Details", 10) + "|" + padLeft("Amt", 10) + "\n";
+    msg += "-".repeat(W) + "\n";
+
+    ledgerRows.forEach((tx) => {
+      const dateStr = format(new Date(tx.createdAt), "dd/MM");
+      let desc = tx.description;
+      if (desc.length > 10) desc = desc.substring(0, 10);
+      const amtStr = (tx.type === "credit" ? "+" : "-") + tx.amount.toFixed(0);
+      
+      msg += padRight(dateStr, 6) + "|" + padRight(desc, 10) + "|" + padLeft(amtStr, 10) + "\n";
+      msg += "-".repeat(W) + "\n";
+    });
+
+    msg += padRight("Total Due:", 14) + padLeft(`Rs ${detail.totalDue.toFixed(0)}`, 14) + "\n";
+    msg += "-".repeat(W) + "\n\n";
+    
+    msg += "Kripya jaldi payment kar dein.\n";
+    msg += "Thank You!\n";
+    msg += "```";
+
+    return msg;
+  }, [detail, shopName, ledgerRows, settings]);
 
   const printThermalBill = () => {
     if (!detail) return;
@@ -157,7 +196,7 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
           <Button
             size="sm"
             variant="outline"
-            onClick={() => setIsReminderOpen(true)}
+            onClick={openWhatsApp}
             className="border-[var(--khata-btn-reminder-border)] text-[var(--khata-btn-reminder-text)] hover:bg-[var(--khata-btn-reminder-hover-bg)]"
           >
             <MessageCircle className="mr-1.5 h-4 w-4" /> Reminder
@@ -168,24 +207,6 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
           </Button>
         </div>
       </div>
-
-      {/* Reminder dialog */}
-      <ReminderDialog
-        open={isReminderOpen}
-        onOpenChange={setIsReminderOpen}
-        reminderMessage={reminderMessage}
-        onTextOnly={() => {
-          openWhatsApp();
-          setIsReminderOpen(false);
-        }}
-        onBillAndText={() => {
-          printThermalBill();
-          setTimeout(() => {
-            openWhatsApp();
-            setIsReminderOpen(false);
-          }, 800);
-        }}
-      />
 
       {/* Transaction form */}
       {mode && (

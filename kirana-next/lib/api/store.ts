@@ -46,7 +46,7 @@ type StoreData = {
   purchases: unknown[];
 };
 
-const STORAGE_KEY = "kirana_store_v3";
+const STORAGE_KEY = "kirana_store_v4";
 
 const DEFAULT_UNITS = [
   "GRAM",

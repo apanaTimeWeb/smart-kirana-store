@@ -875,6 +875,30 @@
                     "createdAt": "2026-05-15T08:00:00.000Z"
                 }
             ]
+        },
+        {
+            "id": 4,
+            "name": "Satyam",
+            "phone": "7870009099",
+            "address": "Patna",
+            "totalDue": 450,
+            "createdAt": "2026-05-29T00:00:00.000Z",
+            "transactions": [
+                {
+                    "id": 4,
+                    "type": "credit",
+                    "amount": 700,
+                    "description": "Khata bill",
+                    "createdAt": "2026-05-28T10:00:00.000Z"
+                },
+                {
+                    "id": 5,
+                    "type": "payment",
+                    "amount": 250,
+                    "description": "Cash payment",
+                    "createdAt": "2026-05-29T11:00:00.000Z"
+                }
+            ]
         }
     ],
     "bills": [
