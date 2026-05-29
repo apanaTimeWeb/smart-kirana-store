@@ -7,7 +7,9 @@ import {
   CreditCard,
   MessageCircle,
   Printer,
+  Search,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useGetCustomer, useGetSettings } from "@/lib/api";
@@ -25,6 +27,7 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
   const { data: settings } = useGetSettings();
 
   const [mode, setMode] = useState<"payment" | "credit" | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const shopName = settings?.shopName?.trim() || "Smart Kirana Store";
 
@@ -36,6 +39,22 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
       return { ...tx, balance };
     });
   }, [detail?.transactions]);
+
+  const filteredRows = useMemo(() => {
+    if (!searchQuery.trim()) return ledgerRows;
+    const lowerQuery = searchQuery.toLowerCase();
+    return ledgerRows.filter((tx) => {
+      if (tx.description.toLowerCase().includes(lowerQuery)) return true;
+      if (tx.items) {
+        return tx.items.some(
+          (item) =>
+            item.productName?.toLowerCase().includes(lowerQuery) ||
+            item.variantName?.toLowerCase().includes(lowerQuery)
+        );
+      }
+      return false;
+    });
+  }, [ledgerRows, searchQuery]);
 
   const reminderMessage = useMemo(() => {
     if (!detail) return "";
@@ -233,7 +252,21 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
       )}
 
       {/* Ledger table */}
-      <div className="flex-1 border rounded-xl bg-[var(--khata-ledger-bg)] flex flex-col overflow-hidden">
+      <div className="flex-1 border rounded-xl bg-[var(--khata-ledger-bg)] flex flex-col overflow-hidden min-h-[300px]">
+        {/* Search Bar */}
+        <div className="p-3 border-b flex justify-between items-center bg-muted/30 gap-4">
+          <h3 className="text-sm font-semibold ml-1 shrink-0 hidden sm:block">Transactions</h3>
+          <div className="relative w-full sm:max-w-xs ml-auto">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder="Search items or details..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-9 pl-9 text-xs sm:text-sm bg-background"
+            />
+          </div>
+        </div>
+
         {/* Desktop header */}
         <div className="hidden sm:grid grid-cols-[120px_1fr_130px_130px] bg-muted sticky top-0 text-xs font-semibold text-muted-foreground border-b">
           <div className="px-6 py-3.5">Date</div>
@@ -248,7 +281,7 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
           <div className="px-3 py-3 text-right">Amt / Bal</div>
         </div>
         <div className="flex-1 overflow-auto">
-          <LedgerTable rows={ledgerRows} />
+          <LedgerTable rows={filteredRows} />
         </div>
       </div>
     </div>
