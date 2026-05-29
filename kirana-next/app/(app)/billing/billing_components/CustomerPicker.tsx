@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { UserPlus, X } from "lucide-react";
+import { UserPlus, X, Check, ChevronsUpDown } from "lucide-react";
 import { type Customer, useCreateCustomer } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { getListCustomersQueryKey } from "@/lib/api";
@@ -20,6 +21,7 @@ interface CustomerPickerProps {
 
 export function CustomerPicker({ customers, value, onChange, required }: CustomerPickerProps) {
   const [addOpen, setAddOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const createCustomer = useCreateCustomer();
@@ -48,24 +50,56 @@ export function CustomerPicker({ customers, value, onChange, required }: Custome
   return (
     <div className="grid gap-2">
       <div className="flex gap-2">
-        <Select value={value} onValueChange={onChange}>
-          <SelectTrigger
-            className={cn(
-              "flex-1",
-              required && !value && "border-[var(--billing-picker-required-border)] bg-[var(--billing-picker-required-bg)]"
-            )}
-          >
-            <SelectValue placeholder={required ? "Customer select karein" : "Customer optional"} />
-          </SelectTrigger>
-          <SelectContent>
-            {customers.map((customer) => (
-              <SelectItem key={customer.id} value={customer.id.toString()}>
-                {customer.name}{" "}
-                {customer.totalDue > 0 ? `(Due Rs ${customer.totalDue.toFixed(0)})` : ""}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className={cn(
+                "flex-1 justify-between text-left font-normal px-3",
+                !value && "text-muted-foreground",
+                required && !value && "border-[var(--billing-picker-required-border)] bg-[var(--billing-picker-required-bg)] text-foreground"
+              )}
+            >
+              <span className="truncate">
+                {value
+                  ? customers.find((c) => c.id.toString() === value)?.name || "Unknown Customer"
+                  : required ? "Customer select karein" : "Customer optional"}
+              </span>
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="p-0 max-w-full" align="start">
+            <Command>
+              <CommandInput placeholder="Search customer (name/phone)..." />
+              <CommandList>
+                <CommandEmpty>No customer found.</CommandEmpty>
+                <CommandGroup>
+                  {customers.map((customer) => (
+                    <CommandItem
+                      key={customer.id}
+                      value={`${customer.name} ${customer.phone || ""}`}
+                      onSelect={() => {
+                        onChange(customer.id.toString());
+                        setOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          value === customer.id.toString() ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      {customer.name}{" "}
+                      {customer.totalDue > 0 ? <span className="ml-1 text-destructive">(Due Rs {customer.totalDue.toFixed(0)})</span> : ""}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
 
         <Button
           type="button"

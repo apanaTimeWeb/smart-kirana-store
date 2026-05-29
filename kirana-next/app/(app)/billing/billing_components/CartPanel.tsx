@@ -85,19 +85,29 @@ export function CartPanel({
       )}
     >
       {/* Header */}
-      <CardHeader className="border-b px-4 py-3">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <ShoppingCart className="h-4 w-4 text-primary" />
-          Current Bill
-          {billSuccess && (
-            <CheckCircle2 className="ml-auto h-5 w-5 text-[var(--billing-cart-success-icon)]" />
-          )}
-          {cartCount > 0 && !billSuccess && (
-            <Badge className="ml-auto bg-[var(--billing-cart-badge-bg)] text-[var(--billing-cart-badge-text)]">
-              {cartCount}
-            </Badge>
-          )}
-        </CardTitle>
+      <CardHeader className="border-b px-3 py-3 md:px-4 relative z-10">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 w-full">
+          <CardTitle className="flex items-center gap-1.5 text-base sm:pt-2 shrink-0 whitespace-nowrap">
+            <ShoppingCart className="h-4 w-4 text-primary" />
+            Bill
+            {billSuccess && (
+              <CheckCircle2 className="h-4 w-4 text-[var(--billing-cart-success-icon)]" />
+            )}
+            {cartCount > 0 && !billSuccess && (
+              <Badge className="bg-[var(--billing-cart-badge-bg)] text-[var(--billing-cart-badge-text)] ml-1">
+                {cartCount}
+              </Badge>
+            )}
+          </CardTitle>
+          <div className="w-full sm:flex-1 sm:max-w-[220px]">
+            <CustomerPicker
+              customers={customers}
+              value={selectedCustomerId}
+              onChange={setSelectedCustomerId}
+              required={paymentMode === "khata"}
+            />
+          </div>
+        </div>
       </CardHeader>
 
       {/* Items */}
@@ -212,15 +222,7 @@ export function CartPanel({
             </Select>
           </div>
 
-          {/* Customer picker */}
-          {(paymentMode === "khata" || cart.length > 0) && (
-            <CustomerPicker
-              customers={customers}
-              value={selectedCustomerId}
-              onChange={setSelectedCustomerId}
-              required={paymentMode === "khata"}
-            />
-          )}
+
 
           {/* Quick WhatsApp phone */}
           {cart.length > 0 && !selectedCustomerId && (
