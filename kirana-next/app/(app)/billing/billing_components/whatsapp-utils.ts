@@ -41,8 +41,7 @@ export function buildWhatsAppMessage(
   msg += "-".repeat(W) + "\n";
 
   // Header: Item on its own line, Qty/Rate/Amt on next line
-  msg += "Item\n";
-  msg += padRight("  Qty", 13) + padLeft("Rate", 7) + padLeft("Amt", 8) + "\n";
+  msg += padRight("Qty", 11) + "|" + padLeft("Rate", 7) + "|" + padLeft("Amt", 8) + "\n";
   msg += "-".repeat(W) + "\n";
 
   billData.items.forEach((item, index) => {
@@ -55,8 +54,7 @@ export function buildWhatsAppMessage(
       item.quantity > 1 ? `${item.quantity} x ${item.displayQuantity}` : item.displayQuantity;
 
     msg += `${name}\n`;
-    msg +=
-      padRight(`  ${quantityLabel}`, 13) + padLeft(rateStr, 7) + padLeft(totalStr, 8) + "\n";
+    msg += padRight(quantityLabel, 11) + "|" + padLeft(rateStr, 7) + "|" + padLeft(totalStr, 8) + "\n";
   });
 
   msg += "-".repeat(W) + "\n";
