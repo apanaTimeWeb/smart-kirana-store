@@ -11,6 +11,9 @@ import {
   CheckCircle2,
   PackageCheck,
   ShoppingCart,
+  ChevronUp,
+  ChevronDown,
+  Settings2
 } from "lucide-react";
 import { type BillInputPaymentMode, type Customer } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -72,6 +75,8 @@ export function CartPanel({
   onCheckout,
   onResetCart,
 }: CartPanelProps) {
+  const [showOptions, setShowOptions] = React.useState(false);
+
   return (
     <Card
       className={cn(
@@ -117,109 +122,130 @@ export function CartPanel({
       </CardContent>
 
       {/* Footer */}
-      <CardFooter className="flex-col gap-3 border-t bg-[var(--billing-cart-footer-bg)] px-4 py-4">
-        {/* Subtotal */}
-        <div className="flex w-full justify-between text-sm">
-          <span className="text-muted-foreground">Subtotal</span>
-          <span className="font-medium">Rs {subtotal.toFixed(2)}</span>
+      <CardFooter className="flex-col gap-3 border-t bg-[var(--billing-cart-footer-bg)] px-3 py-3 md:px-4 md:py-4">
+        
+        {/* Toggle for Advanced Options (All Screens) */}
+        <div className="w-full flex justify-between items-center pb-2 border-b">
+          <span className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5">
+            <Settings2 className="h-4 w-4" />
+            Billing Options
+          </span>
+          <Button variant="ghost" size="sm" onClick={() => setShowOptions(!showOptions)} className="h-7 px-2">
+            {showOptions ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+            <span className="ml-1 text-xs">{showOptions ? "Hide" : "Show"}</span>
+          </Button>
         </div>
 
-        {/* Discount */}
-        <div className="flex w-full items-center gap-2">
-          <span className="whitespace-nowrap text-sm text-muted-foreground">Discount</span>
-          <Input
-            type="number"
-            min="0"
-            value={discount || ""}
-            placeholder="0"
-            onChange={(e) => setDiscount(Math.max(0, Number(e.target.value) || 0))}
-            className="h-8 text-right"
-          />
-        </div>
+        {/* Advanced Options Container */}
+        <div className={cn(
+          "w-full flex-col gap-3",
+          showOptions ? "flex" : "hidden"
+        )}>
+          {/* Subtotal */}
+          <div className="flex w-full justify-between text-sm">
+            <span className="text-muted-foreground">Subtotal</span>
+            <span className="font-medium">Rs {subtotal.toFixed(2)}</span>
+          </div>
 
-        {/* GST toggle */}
-        <div className="flex w-full items-center justify-between border-t pt-2">
-          <label className="flex items-center gap-2 text-sm font-medium">
-            <Checkbox
-              checked={enableGST}
-              onCheckedChange={(checked) => setEnableGST(Boolean(checked))}
+          {/* Discount */}
+          <div className="flex w-full items-center gap-2">
+            <span className="whitespace-nowrap text-sm text-muted-foreground">Discount</span>
+            <Input
+              type="number"
+              min="0"
+              value={discount || ""}
+              placeholder="0"
+              onChange={(e) => setDiscount(Math.max(0, Number(e.target.value) || 0))}
+              className="h-8 text-right"
             />
-            GST
-          </label>
+          </div>
+
+          {/* GST toggle */}
+          <div className="flex w-full items-center justify-between border-t pt-2">
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <Checkbox
+                checked={enableGST}
+                onCheckedChange={(checked) => setEnableGST(Boolean(checked))}
+              />
+              GST
+            </label>
+            {enableGST && (
+              <Select value={gstRate.toString()} onValueChange={(v) => setGstRate(Number(v))}>
+                <SelectTrigger className="h-8 w-24">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5%</SelectItem>
+                  <SelectItem value="12">12%</SelectItem>
+                  <SelectItem value="18">18%</SelectItem>
+                  <SelectItem value="28">28%</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+
+          {/* GST amount row */}
           {enableGST && (
-            <Select value={gstRate.toString()} onValueChange={(v) => setGstRate(Number(v))}>
-              <SelectTrigger className="h-8 w-24">
+            <div className="flex w-full justify-between text-sm">
+              <span className="text-muted-foreground">GST Amount</span>
+              <span className="font-medium">Rs {gstAmount.toFixed(2)}</span>
+            </div>
+          )}
+
+          {/* Payment mode */}
+          <div className="border-t pt-3">
+            <Select
+              value={paymentMode}
+              onValueChange={(v) => {
+                setPaymentMode(v as BillInputPaymentMode);
+                if (v !== "khata") setSelectedCustomerId("");
+              }}
+            >
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="5">5%</SelectItem>
-                <SelectItem value="12">12%</SelectItem>
-                <SelectItem value="18">18%</SelectItem>
-                <SelectItem value="28">28%</SelectItem>
+                <SelectItem value="cash">Cash</SelectItem>
+                <SelectItem value="upi">UPI</SelectItem>
+                <SelectItem value="khata">Khata</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Customer picker */}
+          {(paymentMode === "khata" || cart.length > 0) && (
+            <CustomerPicker
+              customers={customers}
+              value={selectedCustomerId}
+              onChange={setSelectedCustomerId}
+              required={paymentMode === "khata"}
+            />
+          )}
+
+          {/* Quick WhatsApp phone */}
+          {cart.length > 0 && !selectedCustomerId && (
+            <div className="flex items-center rounded-md border px-3 bg-background focus-within:ring-1 focus-within:ring-ring">
+              <span className="text-sm text-muted-foreground mr-2">+91</span>
+              <Input
+                type="tel"
+                placeholder="WhatsApp (Optional)"
+                className="border-0 px-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-10 shadow-none bg-transparent"
+                value={quickPhone}
+                onChange={(e) => setQuickPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+              />
+            </div>
           )}
         </div>
 
-        {/* GST amount row */}
-        {enableGST && (
-          <div className="flex w-full justify-between text-sm">
-            <span className="text-muted-foreground">GST Amount</span>
-            <span className="font-medium">Rs {gstAmount.toFixed(2)}</span>
-          </div>
-        )}
-
-        {/* Total */}
-        <div className="flex w-full justify-between border-t pt-3">
+        {/* Total (Always Visible) */}
+        <div className="flex w-full justify-between items-center border-t pt-3 mt-1 md:mt-0">
           <span className="font-bold">Total</span>
           <span className="text-xl font-extrabold text-[var(--billing-cart-total-text)]">
             Rs {finalAmount.toFixed(2)}
           </span>
         </div>
 
-        {/* Payment mode */}
-        <Select
-          value={paymentMode}
-          onValueChange={(v) => {
-            setPaymentMode(v as BillInputPaymentMode);
-            if (v !== "khata") setSelectedCustomerId("");
-          }}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="cash">Cash</SelectItem>
-            <SelectItem value="upi">UPI</SelectItem>
-            <SelectItem value="khata">Khata</SelectItem>
-          </SelectContent>
-        </Select>
-
-        {/* Customer picker */}
-        {(paymentMode === "khata" || cart.length > 0) && (
-          <CustomerPicker
-            customers={customers}
-            value={selectedCustomerId}
-            onChange={setSelectedCustomerId}
-            required={paymentMode === "khata"}
-          />
-        )}
-
-        {/* Quick WhatsApp phone */}
-        {cart.length > 0 && !selectedCustomerId && (
-          <div className="flex items-center rounded-md border px-3 bg-background focus-within:ring-1 focus-within:ring-ring">
-            <span className="text-sm text-muted-foreground mr-2">+91</span>
-            <Input
-              type="tel"
-              placeholder="WhatsApp (Optional)"
-              className="border-0 px-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-10 shadow-none bg-transparent"
-              value={quickPhone}
-              onChange={(e) => setQuickPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
-            />
-          </div>
-        )}
-
-        {/* Checkout button */}
+        {/* Checkout button (Always Visible) */}
         <Button
           className="h-12 w-full text-base font-bold"
           disabled={cart.length === 0 || isCheckoutPending || billSuccess}
