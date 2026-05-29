@@ -13,6 +13,7 @@ Dashboard ka code `app/(app)/dashboard` directory ke andar maintain kiya gaya ha
   - `StatCard.tsx`: Metric cards ke liye reusable component (Sale, Profit, Khata, etc.).
   - `LowStockList.tsx`: Kam stock waale items ko list, search, aur paginate karne wala component.
   - `RecentBillsList.tsx`: Haal hi me banaye gaye bills ko list, search, aur paginate karne wala component.
+  - `ExpiringSoonList.tsx`: Jaldi expire hone wale items ko list, search, aur paginate karne wala component.
 
 ## 🛠 Core Features & Components
 
@@ -22,16 +23,17 @@ Dashboard ka code `app/(app)/dashboard` directory ke andar maintain kiya gaya ha
   - **Today's Sale & Profit**: Aakhri din ke `salesReportData` aur `profitReportData` se fetch karta hai.
   - **Pending Khata**: Jin customers ka `totalDue > 0` hai, unka amount sum up hota hai.
   - **Low Stock Items**: Jo products apne `lowStockThreshold` se kam ya barabar hain, unko filter karta hai aur 'Out of Stock' (count = 0) alag calculate karta hai.
-- Yeh page 4 `StatCard`, 1 `RecentBillsList` aur 1 `LowStockList` component ko render karta hai.
+- Yeh page 5 `StatCard`, 1 `RecentBillsList`, 1 `LowStockList` aur 1 `ExpiringSoonList` component ko render karta hai.
 
 ### 2. StatCard Component (`StatCard.tsx`)
 - Ek highly reusable, pure UI component hai.
 - **Props**: `title`, `subtitle`, `value`, `note`, `icon`, aur CSS variable based color classes (`colorClass`, `bgClass`, `borderClass`, `iconColorClass`).
-- 4 instances use hote hain dashboard me:
+- 5 instances use hote hain dashboard me:
   - **आज की बिक्री (Today's Sale)**: IndianRupee icon ke sath.
   - **आज का मुनाफा (Today's Profit)**: TrendingUp icon ke sath.
   - **उधार बाकी (Pending Khata)**: BookOpen icon ke sath.
   - **कम स्टॉक (Low Stock Alert)**: AlertTriangle icon ke sath.
+  - **एक्सपायरी अलर्ट (Expiring Soon)**: Clock icon ke sath.
 
 ### 3. Recent Bills List (`RecentBillsList.tsx`)
 - **UI**: Haal ki bikri (Recent Bills) ki list dikhata hai. Card view me `ShoppingBag` icon ke sath ata hai.
@@ -46,6 +48,15 @@ Dashboard ka code `app/(app)/dashboard` directory ke andar maintain kiya gaya ha
   - **Search**: Product ke naam ya category se item dhoondh sakte hain.
   - **Pagination**: 5 items per page show karta hai.
   - **Alerts**: Agar product ki stock `0` ho gayi hai toh usko red color me "Out of Stock" dikhata hai, warna "X unit left" dikhata hai. Item ka `lowStockThreshold` (Min value) bhi dikhta hai.
+  - **Mock Data**: UI testing ke liye API (store.ts) me hardcoded dummy data add kiya gaya hai agar actual low stock items na ho.
+
+### 5. Expiring Soon List (`ExpiringSoonList.tsx`)
+- **UI**: Jaldi expire hone wale (agle 15 din me) products ki list dikhata hai.
+- **Features**:
+  - **Search**: Product ya variant ke naam se item dhoondh sakte hain.
+  - **Pagination**: Ek baar me 5 items dikhata hai. Prev/Next buttons hain.
+  - **Alerts**: Expired items par "Expired" ka tag aur kitne din baaki hain ye batata hai.
+  - **Mock Data**: Agar koi item expiry ke kareeb nahi hai, toh UI visualization ke liye dummy hardcoded products inject kiye jate hain (via API layer).
 
 ## 🎨 Styling Approach
 - **Tailwind CSS**: Utility classes ka mainly use hua hai. Shadcn UI (`Card`, `Input`, `Button`, `Badge`) library internally use ho rahi hai.
