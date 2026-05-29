@@ -6,17 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import {
   AlertTriangle,
   ArrowRight,
   Calendar,
+  Check,
   ChevronDown,
   ChevronUp,
   CircleCheck,
@@ -51,6 +47,78 @@ import {
   UNIT_GROUPS
 } from "./utils";
 import { BaseUnit, SellingMode, UnitType } from "@/lib/api";
+
+// ─── Sub-component: Searchable Unit Selector ────────────────────────────────
+function UnitSelector({
+  value,
+  onChange,
+  triggerClassName = "h-12 text-sm font-medium px-3",
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  triggerClassName?: string;
+}) {
+  const [open, setOpen] = React.useState(false);
+  const selectedConfig = UNIT_CONFIG[value];
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className={cn("w-full justify-between bg-background", triggerClassName)}
+        >
+          {value ? (
+            <div className="flex flex-col items-start truncate">
+              <span className="font-medium">{selectedConfig?.label ?? value}</span>
+            </div>
+          ) : (
+            <span className="text-muted-foreground">Select unit...</span>
+          )}
+          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[300px] p-0" align="start">
+        <Command>
+          <CommandInput placeholder="Search unit..." />
+          <CommandList>
+            <CommandEmpty>No unit found.</CommandEmpty>
+            {UNIT_GROUPS.map((g) => (
+              <CommandGroup key={g.group} heading={g.label}>
+                {g.units.map((u) => {
+                  const c = UNIT_CONFIG[u];
+                  return (
+                    <CommandItem
+                      key={u}
+                      value={c?.label ?? u}
+                      onSelect={() => {
+                        onChange(u);
+                        setOpen(false);
+                      }}
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-medium text-sm">{c?.label ?? u}</span>
+                        <span className="text-[11px] text-muted-foreground">{c?.description}</span>
+                      </div>
+                      <Check
+                        className={cn(
+                          "ml-auto h-4 w-4",
+                          value === u ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
+            ))}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 // ─── Sub-component: Live Preview Card ───────────────────────────────────────
 function LivePreview({
@@ -199,23 +267,11 @@ function ExtraVariantRow({
           <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
             Unit
           </label>
-          <Select value={variant.unitType} onValueChange={handleUnitChange}>
-            <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {UNIT_GROUPS.map((g) => (
-                <React.Fragment key={g.group}>
-                  <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    {g.label}
-                  </div>
-                  {g.units.map((u) => (
-                    <SelectItem key={u} value={u} className="text-sm pl-4">
-                      {UNIT_CONFIG[u]?.label ?? u}
-                    </SelectItem>
-                  ))}
-                </React.Fragment>
-              ))}
-            </SelectContent>
-          </Select>
+          <UnitSelector
+            value={variant.unitType}
+            onChange={handleUnitChange}
+            triggerClassName="h-9 text-sm px-3"
+          />
         </div>
         <div className="space-y-1.5">
           <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
@@ -500,31 +556,11 @@ export function ProductCreator({
                 ⚡ Select unit → selling mode, base unit, and conversions are auto-set. No manual math.
               </p>
 
-              <Select value={unitType} onValueChange={handleUnitChange}>
-                <SelectTrigger className="h-12 text-sm font-medium">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="max-h-72">
-                  {UNIT_GROUPS.map((g) => (
-                    <React.Fragment key={g.group}>
-                      <div className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b">
-                        {g.label}
-                      </div>
-                      {g.units.map((u) => {
-                        const c = UNIT_CONFIG[u];
-                        return (
-                          <SelectItem key={u} value={u} className="py-2.5">
-                            <div className="flex flex-col">
-                              <span className="font-medium text-sm">{c?.label ?? u}</span>
-                              <span className="text-[11px] text-muted-foreground">{c?.description}</span>
-                            </div>
-                          </SelectItem>
-                        );
-                      })}
-                    </React.Fragment>
-                  ))}
-                </SelectContent>
-              </Select>
+              <UnitSelector
+                value={unitType}
+                onChange={handleUnitChange}
+                triggerClassName="h-12 text-sm font-medium px-3"
+              />
 
               {/* What-got-auto-set pill row */}
               {cfg && (
