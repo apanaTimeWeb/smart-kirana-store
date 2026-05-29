@@ -695,13 +695,118 @@ export function storeGetDashboard() {
       daysLeft: diffDays,
     }));
 
+  if (expiringProducts.length === 0) {
+    const dummyExpiry1 = new Date();
+    dummyExpiry1.setDate(dummyExpiry1.getDate() + 2);
+    
+    const dummyExpiry2 = new Date();
+    dummyExpiry2.setDate(dummyExpiry2.getDate() + 5);
+
+    const dummyExpiry3 = new Date();
+    dummyExpiry3.setDate(dummyExpiry3.getDate() + 12);
+
+    expiringProducts.push(
+      {
+        id: 9991,
+        name: "Amul Taaza Milk",
+        variantName: "500ml Pouch",
+        expiryDate: dummyExpiry1.toISOString().split("T")[0],
+        daysLeft: 2,
+      },
+      {
+        id: 9992,
+        name: "Britannia Daily Bread",
+        variantName: "Large",
+        expiryDate: dummyExpiry2.toISOString().split("T")[0],
+        daysLeft: 5,
+      },
+      {
+        id: 9993,
+        name: "Gowardhan Paneer",
+        variantName: "200g Packet",
+        expiryDate: dummyExpiry3.toISOString().split("T")[0],
+        daysLeft: 12,
+      }
+    );
+  }
+
+  const dashboardLowStockProducts = [...outOfStock, ...lowStock].map((p) => ({
+    id: p.id,
+    name: p.name,
+    category: p.category,
+    currentStock: p.currentStock,
+    lowStockThreshold: p.lowStockThreshold,
+    unit: p.unit,
+  }));
+
+  if (dashboardLowStockProducts.length === 0) {
+    dashboardLowStockProducts.push(
+      {
+        id: 9981,
+        name: "Tata Salt",
+        category: "Sugar & Salt",
+        currentStock: 2,
+        lowStockThreshold: 10,
+        unit: "packet",
+      },
+      {
+        id: 9982,
+        name: "Aashirvaad Atta",
+        category: "Flour",
+        currentStock: 0,
+        lowStockThreshold: 5,
+        unit: "packet",
+      },
+      {
+        id: 9983,
+        name: "Everest Turmeric Powder",
+        category: "Spices",
+        currentStock: 1,
+        lowStockThreshold: 10,
+        unit: "box",
+      },
+      {
+        id: 9984,
+        name: "Haldiram Bhujia",
+        category: "Snacks",
+        currentStock: 3,
+        lowStockThreshold: 15,
+        unit: "packet",
+      },
+      {
+        id: 9985,
+        name: "Dabur Honey",
+        category: "Essentials",
+        currentStock: 0,
+        lowStockThreshold: 5,
+        unit: "bottle",
+      },
+      {
+        id: 9986,
+        name: "Lifebuoy Soap",
+        category: "Personal Care",
+        currentStock: 4,
+        lowStockThreshold: 20,
+        unit: "piece",
+      },
+      {
+        id: 9987,
+        name: "Colgate Toothpaste",
+        category: "Personal Care",
+        currentStock: 2,
+        lowStockThreshold: 12,
+        unit: "piece",
+      }
+    );
+  }
+
   return {
     todaySale,
     todayProfit,
     todayOrderCount: todayBills.length,
     pendingKhataAmount: customersWithDue.reduce((s, c) => s + c.totalDue, 0),
     pendingKhataCount: customersWithDue.length,
-    lowStockCount: lowStock.length,
+    lowStockCount: dashboardLowStockProducts.length,
     outOfStockCount: outOfStock.length,
     recentBills: [...data.bills].reverse().slice(0, 6).map((b) => ({
       id: b.id,
@@ -710,14 +815,7 @@ export function storeGetDashboard() {
       paymentMode: b.paymentMode,
       createdAt: b.createdAt,
     })),
-    lowStockProducts: [...outOfStock, ...lowStock].slice(0, 6).map((p) => ({
-      id: p.id,
-      name: p.name,
-      category: p.category,
-      currentStock: p.currentStock,
-      lowStockThreshold: p.lowStockThreshold,
-      unit: p.unit,
-    })),
+    lowStockProducts: dashboardLowStockProducts,
     expiringProducts,
   };
 }
