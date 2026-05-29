@@ -123,16 +123,8 @@ export function useBilling() {
       const lineId = `${product.id}:fixed`;
       const existing = prev.find((item) => item.lineId === lineId);
       if (existing) {
-        return prev.map((item) =>
-          item.lineId === lineId
-            ? {
-                ...item,
-                quantity: item.quantity + qty,
-                stockDeltaBaseUnit: item.stockDeltaBaseUnit + stockDelta,
-                totalPrice: item.unitPrice * (item.quantity + qty),
-              }
-            : item
-        );
+        // Toggle behavior: remove if it already exists
+        return prev.filter((item) => item.lineId !== lineId);
       }
       return [
         ...prev,
