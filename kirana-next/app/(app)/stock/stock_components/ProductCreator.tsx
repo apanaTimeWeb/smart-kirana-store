@@ -6,17 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { UnitSelector } from "./UnitSelector";
 import {
   AlertTriangle,
   ArrowRight,
   Calendar,
+  Check,
   ChevronDown,
   ChevronUp,
   CircleCheck,
@@ -199,23 +194,11 @@ function ExtraVariantRow({
           <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
             Unit
           </label>
-          <Select value={variant.unitType} onValueChange={handleUnitChange}>
-            <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {UNIT_GROUPS.map((g) => (
-                <React.Fragment key={g.group}>
-                  <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    {g.label}
-                  </div>
-                  {g.units.map((u) => (
-                    <SelectItem key={u} value={u} className="text-sm pl-4">
-                      {UNIT_CONFIG[u]?.label ?? u}
-                    </SelectItem>
-                  ))}
-                </React.Fragment>
-              ))}
-            </SelectContent>
-          </Select>
+          <UnitSelector
+            value={variant.unitType}
+            onChange={handleUnitChange}
+            triggerClassName="h-9 text-sm px-3"
+          />
         </div>
         <div className="space-y-1.5">
           <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
@@ -310,7 +293,6 @@ export function ProductCreator({
   const [sellPrice, setSellPrice] = useState<number | "">("");
 
   // ── Advanced fields ──────────────────────────────────────────────────────
-  const [showAdvanced, setShowAdvanced] = useState(false);
   const [category, setCategory] = useState("General");
   const [brand, setBrand] = useState("");
   const [keywords, setKeywords] = useState("");
@@ -372,7 +354,6 @@ export function ProductCreator({
   const addExtraVariant = () => {
     const newV = variantDraft({ variantName: "New Pack", sellingMode: "fixed", unitType: "PACKET" });
     setExtraVariants((prev) => [...prev, newV]);
-    setShowAdvanced(true);
   };
 
   const updateExtraVariant = (rowId: string, patch: Partial<VariantDraft>) => {
@@ -391,7 +372,6 @@ export function ProductCreator({
     setUnitType("KG");
     setBuyPrice("");
     setSellPrice("");
-    setShowAdvanced(false);
     setCategory("General");
     setBrand("");
     setKeywords("");
@@ -503,31 +483,11 @@ export function ProductCreator({
                 ⚡ Select unit → selling mode, base unit, and conversions are auto-set. No manual math.
               </p>
 
-              <Select value={unitType} onValueChange={handleUnitChange}>
-                <SelectTrigger className="h-12 text-sm font-medium">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="max-h-72">
-                  {UNIT_GROUPS.map((g) => (
-                    <React.Fragment key={g.group}>
-                      <div className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b">
-                        {g.label}
-                      </div>
-                      {g.units.map((u) => {
-                        const c = UNIT_CONFIG[u];
-                        return (
-                          <SelectItem key={u} value={u} className="py-2.5">
-                            <div className="flex flex-col">
-                              <span className="font-medium text-sm">{c?.label ?? u}</span>
-                              <span className="text-[11px] text-muted-foreground">{c?.description}</span>
-                            </div>
-                          </SelectItem>
-                        );
-                      })}
-                    </React.Fragment>
-                  ))}
-                </SelectContent>
-              </Select>
+              <UnitSelector
+                value={unitType}
+                onChange={handleUnitChange}
+                triggerClassName="h-12 text-sm font-medium px-3"
+              />
 
               {/* What-got-auto-set pill row */}
               {cfg && (
@@ -600,28 +560,8 @@ export function ProductCreator({
               />
             )}
 
-            {/* ── Advanced Options Toggle ───────────────────────────────── */}
-            <button
-              type="button"
-              onClick={() => setShowAdvanced((v) => !v)}
-              className="w-full flex items-center justify-between rounded-xl border border-dashed px-4 py-3 text-sm font-semibold text-muted-foreground hover:text-foreground hover:border-border hover:bg-muted/30 transition-all duration-200"
-            >
-              <span className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4" />
-                Advanced Options
-                <span className="text-[11px] font-normal">
-                  (Brand, Category, Keywords, Stock, MRP, Expiry, Extra Variants)
-                </span>
-              </span>
-              {showAdvanced
-                ? <ChevronUp className="h-4 w-4 shrink-0" />
-                : <ChevronDown className="h-4 w-4 shrink-0" />
-              }
-            </button>
-
-            {/* ── Advanced Section ──────────────────────────────────────── */}
-            {showAdvanced && (
-              <div className="space-y-5 animate-in fade-in-0 slide-in-from-top-2 duration-200">
+            {/* ── Additional Details Section ──────────────────────────────────────── */}
+            <div className="space-y-5">
 
                 {/* Variant name override */}
                 <div className="rounded-xl border bg-card p-4 space-y-4">
@@ -826,9 +766,8 @@ export function ProductCreator({
                   ))}
                 </div>
               </div>
-            )}
+            </div>
           </div>
-        </div>
 
         {/* ── Footer ─────────────────────────────────────────────────────── */}
         <div className="border-t bg-card px-5 py-4 shrink-0">

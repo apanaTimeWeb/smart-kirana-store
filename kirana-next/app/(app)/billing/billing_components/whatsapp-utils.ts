@@ -10,7 +10,7 @@ export function buildWhatsAppMessage(
   shopAddress?: string,
   shopPhone?: string
 ) {
-  const W = 34;
+  const W = 28;
 
   const padCenter = (str: string, width: number) => {
     if (str.length >= width) return str.substring(0, width);
@@ -40,12 +40,12 @@ export function buildWhatsAppMessage(
   if (billData.customerName) msg += `Customer: ${billData.customerName}\n`;
   msg += "-".repeat(W) + "\n";
 
-  // Header: Item (18) + Space (1) + Rate (8) + Space (1) + Amt (6) = 34
-  msg += padRight("Item", 18) + " " + padLeft("Rate", 8) + " " + padLeft("Amt", 6) + "\n";
+  // Header: Item on its own line, Qty/Rate/Amt on next line
+  msg += padRight("Qty", 10) + "|" + padLeft("Rate", 8) + "|" + padLeft("Amt", 8) + "\n";
+  msg += "-".repeat(W) + "\n";
 
-  billData.items.forEach((item) => {
-    let name = item.displayName;
-    if (name.length > 18) name = name.substring(0, 18);
+  billData.items.forEach((item, index) => {
+    const name = `${index + 1}. ${item.displayName}`;
 
     const rateStr =
       item.unitPrice % 1 === 0 ? item.unitPrice.toFixed(0) : item.unitPrice.toFixed(2);
@@ -53,27 +53,26 @@ export function buildWhatsAppMessage(
     const quantityLabel =
       item.quantity > 1 ? `${item.quantity} x ${item.displayQuantity}` : item.displayQuantity;
 
-    msg +=
-      padRight(name, 18) + " " + padLeft(`Rs ${rateStr}`, 8) + " " + padLeft(`Rs ${totalStr}`, 6) + "\n";
-    msg += padRight(quantityLabel, W) + "\n";
+    msg += `${name}\n`;
+    msg += padRight(quantityLabel, 10) + "|" + padLeft(`Rs ${rateStr}`, 8) + "|" + padLeft(`Rs ${totalStr}`, 8) + "\n";
+    msg += "-".repeat(W) + "\n";
   });
 
-  msg += "-".repeat(W) + "\n";
-  msg += padRight("Subtotal:", 20) + padLeft(`Rs ${billData.subtotal.toFixed(0)}`, 14) + "\n";
+  msg += padRight("Subtotal:", 14) + padLeft(`Rs ${billData.subtotal.toFixed(0)}`, 14) + "\n";
   if (billData.discount > 0) {
-    msg += padRight("Discount:", 20) + padLeft(`-Rs ${billData.discount.toFixed(0)}`, 14) + "\n";
+    msg += padRight("Discount:", 16) + padLeft(`-Rs ${billData.discount.toFixed(0)}`, 12) + "\n";
   }
   if (billData.enableGST) {
     msg +=
-      padRight(`GST (${billData.gstRate}%):`, 20) +
-      padLeft(`Rs ${billData.gstAmount.toFixed(0)}`, 14) +
+      padRight(`GST (${billData.gstRate}%):`, 16) +
+      padLeft(`Rs ${billData.gstAmount.toFixed(0)}`, 12) +
       "\n";
   }
   msg += "-".repeat(W) + "\n";
-  msg += padRight("Total:", 20) + padLeft(`Rs ${billData.finalAmount.toFixed(0)}`, 14) + "\n";
+  msg += padRight("Total:", 16) + padLeft(`Rs ${billData.finalAmount.toFixed(0)}`, 12) + "\n";
   msg += "-".repeat(W) + "\n";
   msg +=
-    padRight("Payment:", 16) + padLeft(billData.paymentMode.toUpperCase(), 18) + "\n\n";
+    padRight("Payment:", 16) + padLeft(billData.paymentMode.toUpperCase(), 12) + "\n\n";
   msg += padCenter("Thank You! Visit Again", W) + "\n";
   msg += "```";
 
