@@ -5,6 +5,8 @@ export type ProductFilter = "all" | "in" | "low" | "out" | "khula" | "wholesale"
 
 export type VariantDraft = ProductVariantInput & {
   rowId: string;
+  expiryDate?: string;
+  shortcut?: string;
 };
 
 export type ProductDraft = {
@@ -13,7 +15,6 @@ export type ProductDraft = {
   brand: string;
   keywords: string;
   shortcut: string;
-  barcode: string;
   sellingTypes: Record<SellingTypeKey, boolean>;
   variants: VariantDraft[];
 };

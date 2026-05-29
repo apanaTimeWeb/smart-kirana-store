@@ -42,6 +42,17 @@
     --stock-stock-out-text:          hsl(var(--destructive));
     --stock-stock-out-border:        hsl(0 76% 82%);
 
+    /* ── Live Preview Dialog ──────────────────────────────────── */
+    --stock-preview-neutral-bg:      hsl(174 45% 94%);             /* bg-teal-50 */
+    --stock-preview-neutral-border:  hsl(174 45% 72%);             /* border-teal-200 */
+    --stock-preview-neutral-text:    hsl(174 70% 24%);             /* text-primary */
+    --stock-preview-ok-bg:           hsl(142 60% 96%);             /* bg-green-50 */
+    --stock-preview-ok-border:       hsl(142 60% 74%);             /* border-green-300 */
+    --stock-preview-ok-text:         hsl(142 60% 28%);             /* text-green-700 */
+    --stock-preview-loss-bg:         hsl(38 90% 95%);              /* bg-amber-50 */
+    --stock-preview-loss-border:     hsl(38 90% 76%);              /* border-amber-300 */
+    --stock-preview-loss-text:       hsl(38 90% 34%);              /* text-amber-700 */
+
     --stock-mode-khula-bg:           hsl(174 45% 94%);
     --stock-mode-khula-text:         hsl(174 70% 24%);
     --stock-mode-khula-border:       hsl(174 45% 72%);
@@ -86,6 +97,16 @@
     --stock-stock-out-bg:            hsl(0 76% 15%);
     --stock-stock-out-text:          hsl(0 62% 65%);
     --stock-stock-out-border:        hsl(0 76% 30%);
+
+    --stock-preview-neutral-bg:      hsl(174 45% 15%);
+    --stock-preview-neutral-border:  hsl(174 45% 30%);
+    --stock-preview-neutral-text:    hsl(174 45% 60%);
+    --stock-preview-ok-bg:           hsl(142 60% 15%);
+    --stock-preview-ok-border:       hsl(142 60% 30%);
+    --stock-preview-ok-text:         hsl(142 60% 50%);
+    --stock-preview-loss-bg:         hsl(38 90% 15%);
+    --stock-preview-loss-border:     hsl(38 90% 30%);
+    --stock-preview-loss-text:       hsl(38 90% 60%);
 
     --stock-mode-khula-bg:           hsl(174 45% 15%);
     --stock-mode-khula-text:         hsl(174 45% 60%);

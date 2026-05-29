@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, Warehouse, PackagePlus, Boxes, ShoppingBag, Barcode, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Warehouse, PackagePlus, Boxes, ShoppingBag, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   useListProducts,
@@ -161,7 +161,7 @@ export function ProductList() {
         {[
           { label: "Variants", value: stats.total, icon: Boxes },
           { label: "Khula Items", value: stats.khula, icon: ShoppingBag },
-          { label: "Quick Billing", value: stats.quick, icon: Barcode },
+          { label: "Quick Billing", value: stats.quick, icon: PackagePlus },
           { label: "Low/Out", value: stats.low, icon: Warehouse },
         ].map((item) => (
           <div key={item.label} className="rounded-lg border bg-card p-3">
@@ -179,7 +179,7 @@ export function ProductList() {
         <Input
           value={search}
           onChange={handleSearchChange}
-          placeholder="Search: name, barcode, shortcut, keyword..."
+          placeholder="Search: name, shortcut, keyword..."
           className="h-11 pl-9"
         />
       </div>
@@ -230,7 +230,6 @@ export function ProductList() {
                 </TableCell>
                 <TableCell>
                   <p className="font-medium">{product.variantName}</p>
-                  {product.barcode && <p className="text-xs text-muted-foreground">{product.barcode}</p>}
                 </TableCell>
                 <TableCell>
                   <Badge variant="outline" className={MODE_CLASS[product.sellingMode]}>{MODE_LABEL[product.sellingMode]}</Badge>
