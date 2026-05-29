@@ -183,7 +183,7 @@ function ExtraVariantRow({
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         <div className="space-y-1.5">
           <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
             Variant Name
@@ -239,6 +239,43 @@ function ExtraVariantRow({
             min={0}
             value={variant.sellingPrice || ""}
             onChange={(e) => onUpdate({ sellingPrice: numberValue(e.target.value) })}
+            placeholder="0"
+            className="h-9 text-sm"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+            Stock
+          </label>
+          <Input
+            type="number"
+            value={variant.stockInBaseUnit / (cfg?.baseQuantity || 1)}
+            onChange={(e) => onUpdate({ stockInBaseUnit: numberValue(e.target.value) * (cfg?.baseQuantity || 1) })}
+            placeholder="0"
+            className="h-9 text-sm"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+            Low Stock Alert
+          </label>
+          <Input
+            type="number"
+            value={variant.lowStockThresholdInBaseUnit / (cfg?.baseQuantity || 1)}
+            onChange={(e) => onUpdate({ lowStockThresholdInBaseUnit: numberValue(e.target.value) * (cfg?.baseQuantity || 1) })}
+            placeholder="5"
+            className="h-9 text-sm"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+            MRP ₹
+          </label>
+          <Input
+            type="number"
+            min={0}
+            value={variant.mrp || ""}
+            onChange={(e) => onUpdate({ mrp: numberValue(e.target.value) })}
             placeholder="0"
             className="h-9 text-sm"
           />
