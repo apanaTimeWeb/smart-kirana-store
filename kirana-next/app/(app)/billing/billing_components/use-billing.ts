@@ -31,7 +31,7 @@ export function useBilling() {
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [discount, setDiscount] = useState(0);
-  const [paymentMode, setPaymentMode] = useState<BillInputPaymentMode | "">("");
+  const [paymentMode, setPaymentMode] = useState<BillInputPaymentMode | "">("cash");
   const [selectedCustomerId, setSelectedCustomerId] = useState("");
   const [quickPhone, setQuickPhone] = useState("");
   const [billSuccess, setBillSuccess] = useState(false);
@@ -288,6 +288,7 @@ export function useBilling() {
   const resetCart = () => {
     setCart([]);
     setDiscount(0);
+    setPaymentMode("cash");
     setSelectedCustomerId("");
     setQuickPhone("");
     setEnableGST(false);
