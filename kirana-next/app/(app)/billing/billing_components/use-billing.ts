@@ -162,8 +162,17 @@ export function useBilling() {
       const lineId = `${product.id}:fixed`;
       const existing = prev.find((item) => item.lineId === lineId);
       if (existing) {
-        // Toggle behavior: remove if it already exists
-        return prev.filter((item) => item.lineId !== lineId);
+        // Increment quantity instead of removing
+        return prev.map((item) =>
+          item.lineId === lineId
+            ? {
+                ...item,
+                quantity: item.quantity + qty,
+                stockDeltaBaseUnit: item.stockDeltaBaseUnit + stockDelta,
+                totalPrice: item.unitPrice * (item.quantity + qty),
+              }
+            : item
+        );
       }
       return [
         ...prev,
@@ -264,6 +273,16 @@ export function useBilling() {
 
   const removeFromCart = (lineId: string) => {
     setCart((prev) => prev.filter((item) => item.lineId !== lineId));
+  };
+
+  const handleProductRemove = (product: Product) => {
+    setCart((prev) => {
+      const itemsToRemove = prev.filter((item) => item.productId === product.id);
+      if (itemsToRemove.length > 0) {
+        toast({ title: "Removed from cart", description: product.name, variant: "destructive" });
+      }
+      return prev.filter((item) => item.productId !== product.id);
+    });
   };
 
   const resetCart = () => {
@@ -429,6 +448,7 @@ export function useBilling() {
     setMobileTab,
     // handlers
     handleProductTap,
+    handleProductRemove,
     addKhula,
     updateQty,
     removeFromCart,

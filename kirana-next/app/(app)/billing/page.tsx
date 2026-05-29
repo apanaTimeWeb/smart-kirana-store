@@ -28,6 +28,7 @@ export default function Billing() {
           .reduce((sum, item) => sum + item.stockDeltaBaseUnit, 0)
       }
       onProductTap={billing.handleProductTap}
+      onRemoveTap={billing.handleProductRemove}
     />
   );
 

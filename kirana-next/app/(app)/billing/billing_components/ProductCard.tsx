@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { type Product } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { CheckCircle2 } from "lucide-react";
+import { XCircle } from "lucide-react";
 import { MODE_LABEL } from "./types";
 import { rateUnit } from "./utils";
 
@@ -13,9 +13,10 @@ interface ProductCardProps {
   product: Product;
   inCartBaseQty: number;
   onTap: (product: Product) => void;
+  onRemoveTap?: (product: Product) => void;
 }
 
-export function ProductCard({ product, inCartBaseQty, onTap }: ProductCardProps) {
+export function ProductCard({ product, inCartBaseQty, onTap, onRemoveTap }: ProductCardProps) {
   const outOfStock =
     product.stockInBaseUnit <= 0 || inCartBaseQty >= product.stockInBaseUnit;
   const lowStock = product.currentStock <= product.lowStockThreshold;
@@ -32,8 +33,14 @@ export function ProductCard({ product, inCartBaseQty, onTap }: ProductCardProps)
       )}
     >
       {inCart && (
-        <div className="absolute top-2 right-2 flex items-center justify-center">
-          <CheckCircle2 className="h-4 w-4 text-primary" />
+        <div 
+          className="absolute top-2 right-2 flex items-center justify-center bg-background rounded-full p-0.5 cursor-pointer hover:bg-destructive/10 z-10 shadow-sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onRemoveTap) onRemoveTap(product);
+          }}
+        >
+          <XCircle className="h-5 w-5 text-destructive" />
         </div>
       )}
       <CardContent className="space-y-2 p-3">
