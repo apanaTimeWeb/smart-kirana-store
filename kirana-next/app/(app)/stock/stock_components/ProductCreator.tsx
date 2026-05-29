@@ -242,12 +242,12 @@ function LivePreview({
     <div className={cn(
       "rounded-xl border p-4 space-y-3 transition-all",
       isLoss
-        ? "border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30"
-        : "border-teal-200 bg-teal-50/60 dark:border-teal-800 dark:bg-teal-950/20"
+        ? "bg-[var(--stock-preview-loss-bg)] border-[var(--stock-preview-loss-border)]"
+        : "bg-[var(--stock-preview-neutral-bg)] border-[var(--stock-preview-neutral-border)]"
     )}>
       <div className="flex items-center gap-2">
-        <CircleCheck className={cn("h-4 w-4 shrink-0", isLoss ? "text-amber-600" : "text-primary")} />
-        <p className={cn("text-xs font-bold uppercase tracking-wider", isLoss ? "text-amber-700" : "text-primary")}>
+        <CircleCheck className={cn("h-4 w-4 shrink-0", isLoss ? "text-[var(--stock-preview-loss-text)]" : "text-[var(--stock-preview-neutral-text)]")} />
+        <p className={cn("text-xs font-bold uppercase tracking-wider", isLoss ? "text-[var(--stock-preview-loss-text)]" : "text-[var(--stock-preview-neutral-text)]")}>
           Live Preview — Jo save hoga
         </p>
       </div>
@@ -277,8 +277,8 @@ function LivePreview({
         <div className={cn(
           "flex items-center justify-between rounded-lg px-3 py-2 border",
           isLoss
-            ? "bg-amber-100 border-amber-300 dark:bg-amber-950/40 dark:border-amber-700"
-            : "bg-white border-teal-200 dark:bg-card dark:border-teal-800"
+            ? "bg-[var(--stock-preview-loss-bg)] border-[var(--stock-preview-loss-border)]"
+            : "bg-[var(--stock-preview-ok-bg)] border-[var(--stock-preview-ok-border)]"
         )}>
           <span className="text-xs text-muted-foreground">
             Buy ₹{buyPrice} → Sell ₹{sellPrice}
@@ -286,7 +286,7 @@ function LivePreview({
           {margin !== null && (
             <span className={cn(
               "text-xs font-bold",
-              isLoss ? "text-amber-700" : "text-positive"
+              isLoss ? "text-[var(--stock-preview-loss-text)]" : "text-[var(--stock-preview-ok-text)]"
             )}>
               {isLoss ? "⚠️ Loss " : "↑ "}{margin}% margin
             </span>
@@ -295,9 +295,9 @@ function LivePreview({
       )}
 
       {isLoss && (
-        <div className="flex items-start gap-2 rounded-lg bg-amber-100 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700 px-3 py-2">
-          <AlertTriangle className="h-3.5 w-3.5 text-amber-600 shrink-0 mt-0.5" />
-          <p className="text-xs text-amber-700 dark:text-amber-400">
+        <div className="flex items-start gap-2 rounded-lg bg-[var(--stock-preview-loss-bg)] border border-[var(--stock-preview-loss-border)] px-3 py-2">
+          <AlertTriangle className="h-3.5 w-3.5 text-[var(--stock-preview-loss-text)] shrink-0 mt-0.5" />
+          <p className="text-xs text-[var(--stock-preview-loss-text)]">
             Sell price is less than buy price — you will make a loss on every sale.
           </p>
         </div>
@@ -662,15 +662,15 @@ export function ProductCreator({
               {/* What-got-auto-set pill row */}
               {cfg && (
                 <div className="flex flex-wrap gap-2 pt-1">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 px-2.5 py-1 text-[11px] font-semibold text-primary">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[var(--stock-preview-neutral-bg)] border border-[var(--stock-preview-neutral-border)] px-2.5 py-1 text-[11px] font-semibold text-[var(--stock-preview-neutral-text)]">
                     <CircleCheck className="h-3 w-3" />
                     Base: {cfg.baseUnit}
                   </span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 px-2.5 py-1 text-[11px] font-semibold text-primary">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[var(--stock-preview-neutral-bg)] border border-[var(--stock-preview-neutral-border)] px-2.5 py-1 text-[11px] font-semibold text-[var(--stock-preview-neutral-text)]">
                     <CircleCheck className="h-3 w-3" />
                     1 {unitType.toLowerCase()} = {formatBaseUnits(cfg.baseQuantity, cfg.baseUnit)}
                   </span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 px-2.5 py-1 text-[11px] font-semibold text-primary">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[var(--stock-preview-neutral-bg)] border border-[var(--stock-preview-neutral-border)] px-2.5 py-1 text-[11px] font-semibold text-[var(--stock-preview-neutral-text)]">
                     <CircleCheck className="h-3 w-3" />
                     Mode: {MODE_LABEL[cfg.sellingMode]}
                   </span>
@@ -693,7 +693,7 @@ export function ProductCreator({
                     value={buyPrice === "" ? "" : buyPrice}
                     onChange={(e) => setBuyPrice(e.target.value === "" ? "" : numberValue(e.target.value))}
                     placeholder="0"
-                    className="h-12 pl-7 text-base font-semibold text-blue-700"
+                    className="h-12 pl-7 text-base font-semibold text-[var(--stock-purchase-rate)]"
                   />
                 </div>
                 <p className="text-[11px] text-muted-foreground">Cost you pay to supplier</p>
@@ -713,7 +713,7 @@ export function ProductCreator({
                     value={sellPrice === "" ? "" : sellPrice}
                     onChange={(e) => setSellPrice(e.target.value === "" ? "" : numberValue(e.target.value))}
                     placeholder="0"
-                    className="h-12 pl-7 text-base font-semibold text-positive"
+                    className="h-12 pl-7 text-base font-semibold text-[var(--stock-selling-price)]"
                   />
                 </div>
                 <p className="text-[11px] text-muted-foreground">Price customer pays</p>
@@ -904,7 +904,7 @@ export function ProductCreator({
                         />
                         <div className="space-y-0.5">
                           <p className="text-sm font-medium flex items-center gap-1.5">
-                            <Star className="h-3.5 w-3.5 text-amber-500" />
+                            <Star className="h-3.5 w-3.5 text-warning" />
                             Fast Billing Me Dikhaye
                           </p>
                           <p className="text-[11px] text-muted-foreground">
@@ -964,11 +964,11 @@ export function ProductCreator({
         <div className="border-t bg-card px-5 py-4 shrink-0">
           {/* Validation errors */}
           {!isValid && (name.trim() !== "" || sellPrice !== "") && (
-            <div className="mb-3 flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-3 py-2">
-              <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+            <div className="mb-3 flex items-start gap-2 rounded-lg bg-[var(--stock-stock-out-bg)] border border-[var(--stock-stock-out-border)] px-3 py-2">
+              <AlertTriangle className="h-4 w-4 text-[var(--stock-stock-out-text)] shrink-0 mt-0.5" />
               <div className="space-y-0.5">
                 {errors.map((e, i) => (
-                  <p key={i} className="text-xs text-destructive">{e}</p>
+                  <p key={i} className="text-xs text-[var(--stock-stock-out-text)]">{e}</p>
                 ))}
               </div>
             </div>
