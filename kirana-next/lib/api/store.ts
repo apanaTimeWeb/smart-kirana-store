@@ -646,6 +646,7 @@ export function storeCreateBill(d: Omit<Bill, "id" | "createdAt">): Bill {
         amount: d.finalAmount,
         description: `Bill #${bill.id}`,
         createdAt: bill.createdAt,
+        items: deepClone(d.items),
       });
     }
   }

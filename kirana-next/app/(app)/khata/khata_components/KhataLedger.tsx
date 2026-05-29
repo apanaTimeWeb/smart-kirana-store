@@ -70,6 +70,14 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
       const amtStr = (tx.type === "credit" ? "+" : "-") + tx.amount.toFixed(0);
       
       msg += padRight(dateStr, 6) + "|" + padRight(desc, 10) + "|" + padLeft(amtStr, 10) + "\n";
+      
+      if (tx.items && tx.items.length > 0) {
+        tx.items.forEach(item => {
+          const itemText = `  - ${item.productName} ${item.variantName ? `(${item.variantName})` : ""} x ${item.displayQuantity || item.quantity} (Rs ${item.totalPrice})`;
+          msg += itemText + "\n";
+        });
+      }
+
       msg += "-".repeat(W) + "\n";
     });
 
@@ -97,6 +105,13 @@ export function KhataLedger({ customerId }: KhataLedgerProps) {
         <td style="padding:3px 0; text-align:right;">${tx.type === "credit" ? "+" : "-"}₹${tx.amount}</td>
         <td style="padding:3px 0; text-align:right;">₹${tx.balance}</td>
       </tr>
+      ${tx.items && tx.items.length > 0 ? `
+      <tr>
+        <td colspan="4" style="padding: 0 0 5px 15px; font-size: 11px; color: #555;">
+          ${tx.items.map(item => `<div style="padding:1px 0">- ${item.productName} ${item.variantName ? `(${item.variantName})` : ""} x ${item.displayQuantity || item.quantity} (₹${item.totalPrice})</div>`).join('')}
+        </td>
+      </tr>
+      ` : ""}
     `
       )
       .join("");

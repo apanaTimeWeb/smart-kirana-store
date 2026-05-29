@@ -90,6 +90,22 @@ export function LedgerTable({ rows }: LedgerTableProps) {
               <div className="text-xs font-bold text-foreground">₹{tx.balance.toFixed(0)}</div>
             </div>
           </div>
+          
+          {/* Purchased Items List */}
+          {tx.items && tx.items.length > 0 && (
+            <div className="bg-muted/10 px-4 sm:px-[140px] py-2 text-xs border-t border-dashed">
+              <div className="space-y-1">
+                {tx.items.map((item, idx) => (
+                  <div key={idx} className="flex justify-between text-muted-foreground">
+                    <span>
+                      {item.productName} {item.variantName ? `(${item.variantName})` : ""} x {item.displayQuantity || item.quantity}
+                    </span>
+                    <span>₹{item.totalPrice.toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       ))}
     </div>

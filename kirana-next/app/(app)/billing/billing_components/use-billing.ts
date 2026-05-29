@@ -4,7 +4,6 @@ import { useMemo, useState, useEffect } from "react";
 import {
   getGetDashboardSummaryQueryKey,
   getListBillsQueryKey,
-  getListCustomersQueryKey,
   getListProductsQueryKey,
   type BillInputPaymentMode,
   type Product,
@@ -357,7 +356,7 @@ export function useBilling() {
           queryClient.invalidateQueries({ queryKey: getListBillsQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
           queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getListCustomersQueryKey() });
+          queryClient.invalidateQueries({ queryKey: ["customers"] });
           queryClient.invalidateQueries({ queryKey: ["reports"] });
 
           const rawPhone = (billData.customerPhone ?? "")

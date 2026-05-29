@@ -106,6 +106,7 @@ export type KhataTransaction = {
   amount: number;
   description: string;
   createdAt: string;
+  items?: BillItem[];
 };
 
 export type Supplier = {

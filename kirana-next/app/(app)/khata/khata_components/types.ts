@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { type BillItem } from "@/lib/api";
 
 // ─── Zod Schemas ───────────────────────────────────────────────────────────────
 
@@ -28,4 +29,5 @@ export type LedgerRow = {
   description: string;
   createdAt: string;
   balance: number;
+  items?: BillItem[];
 };
