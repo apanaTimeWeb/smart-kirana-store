@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { UnitSelector } from "./UnitSelector";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Product, ProductVariantInput, BaseUnit, SellingMode, UnitType } from "@/lib/api";
 import { VariantDraft } from "./types";
@@ -156,31 +156,11 @@ export function EditVariantDialog({
               <Scale className="h-3.5 w-3.5 text-muted-foreground" />
               How is it measured / sold?
             </label>
-            <Select value={draft.unitType} onValueChange={handleUnitChange}>
-              <SelectTrigger className="h-12 text-sm font-medium">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="max-h-72">
-                {UNIT_GROUPS.map((g) => (
-                  <React.Fragment key={g.group}>
-                    <div className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b">
-                      {g.label}
-                    </div>
-                    {g.units.map((u) => {
-                      const c = UNIT_CONFIG[u];
-                      return (
-                        <SelectItem key={u} value={u} className="py-2.5">
-                          <div className="flex flex-col">
-                            <span className="font-medium text-sm">{c?.label ?? u}</span>
-                            <span className="text-[11px] text-muted-foreground">{c?.description}</span>
-                          </div>
-                        </SelectItem>
-                      );
-                    })}
-                  </React.Fragment>
-                ))}
-              </SelectContent>
-            </Select>
+            <UnitSelector
+              value={draft.unitType}
+              onChange={handleUnitChange}
+              triggerClassName="h-12 text-sm font-medium px-3"
+            />
 
             {/* Auto-wired Pills matching ProductCreator */}
             {cfg && (
