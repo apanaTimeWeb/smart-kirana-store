@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -36,6 +36,14 @@ export function ProductList() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const f = params.get("filter") as ProductFilter | null;
+      if (f) setFilter(f);
+    }
+  }, []);
+
   const { data: allProducts = [] } = useListProducts();
   const { data: products = [] } = useListProducts({ search: search || undefined });
   const createProduct = useCreateProduct();
@@ -69,6 +77,11 @@ export function ProductList() {
       if (filter === "khula") return product.sellingMode === "khula";
       if (filter === "wholesale") return product.sellingMode === "wholesale";
       if (filter === "quick") return product.quickSelect;
+      if (filter === "expiring") {
+        if (!product.expiryDate) return false;
+        const daysLeft = (new Date(product.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+        return daysLeft <= 15;
+      }
       return true;
     });
   }, [filter, sortedProducts]);
@@ -193,6 +206,7 @@ export function ProductList() {
           ["khula", "Khula"],
           ["wholesale", "Bora/Wholesale"],
           ["quick", "Quick"],
+          ["expiring", "Expiring"],
         ] as const).map(([value, label]) => (
           <button
             key={value}
