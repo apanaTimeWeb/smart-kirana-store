@@ -11,6 +11,7 @@ interface StatCardProps {
   bgClass: string;
   borderClass: string;
   iconColorClass: string;
+  onClick?: () => void;
 }
 
 export function StatCard({
@@ -23,9 +24,13 @@ export function StatCard({
   bgClass,
   borderClass,
   iconColorClass,
+  onClick,
 }: StatCardProps) {
   return (
-    <Card className={`border ${borderClass} ${bgClass}`}>
+    <Card 
+      className={`border ${borderClass} ${bgClass} ${onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}`}
+      onClick={onClick}
+    >
       <CardContent className="p-5">
         <div className="flex items-start justify-between">
           <div className="space-y-1">

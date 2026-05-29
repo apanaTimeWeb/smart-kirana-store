@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   getGetDashboardSummaryQueryKey,
   getListBillsQueryKey,
@@ -31,7 +31,7 @@ export function useBilling() {
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [discount, setDiscount] = useState(0);
-  const [paymentMode, setPaymentMode] = useState<BillInputPaymentMode | "">("");
+  const [paymentMode, setPaymentMode] = useState<BillInputPaymentMode | "">("cash");
   const [selectedCustomerId, setSelectedCustomerId] = useState("");
   const [quickPhone, setQuickPhone] = useState("");
   const [billSuccess, setBillSuccess] = useState(false);
@@ -41,6 +41,45 @@ export function useBilling() {
   const [khulaProduct, setKhulaProduct] = useState<Product | null>(null);
   const [filter, setFilter] = useState<BillingFilter>("all");
   const [whatsappBillData, setWhatsappBillData] = useState<BillData | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // ── Persist State ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("billing_draft_state");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.cart) setCart(parsed.cart);
+        if (parsed.discount !== undefined) setDiscount(parsed.discount);
+        if (parsed.paymentMode !== undefined) setPaymentMode(parsed.paymentMode);
+        if (parsed.selectedCustomerId !== undefined) setSelectedCustomerId(parsed.selectedCustomerId);
+        if (parsed.quickPhone !== undefined) setQuickPhone(parsed.quickPhone);
+        if (parsed.enableGST !== undefined) setEnableGST(parsed.enableGST);
+        if (parsed.gstRate !== undefined) setGstRate(parsed.gstRate);
+      }
+    } catch (e) {
+      console.error("Failed to load billing state", e);
+    } finally {
+      setIsLoaded(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    try {
+      localStorage.setItem("billing_draft_state", JSON.stringify({
+        cart,
+        discount,
+        paymentMode,
+        selectedCustomerId,
+        quickPhone,
+        enableGST,
+        gstRate,
+      }));
+    } catch (e) {
+      console.error("Failed to save billing state", e);
+    }
+  }, [cart, discount, paymentMode, selectedCustomerId, quickPhone, enableGST, gstRate, isLoaded]);
 
   // ── Derived values ────────────────────────────────────────────────────────
   const shopName = settings?.shopName?.trim() || "Smart Kirana Store";
@@ -123,8 +162,17 @@ export function useBilling() {
       const lineId = `${product.id}:fixed`;
       const existing = prev.find((item) => item.lineId === lineId);
       if (existing) {
-        // Toggle behavior: remove if it already exists
-        return prev.filter((item) => item.lineId !== lineId);
+        // Increment quantity instead of removing
+        return prev.map((item) =>
+          item.lineId === lineId
+            ? {
+                ...item,
+                quantity: item.quantity + qty,
+                stockDeltaBaseUnit: item.stockDeltaBaseUnit + stockDelta,
+                totalPrice: item.unitPrice * (item.quantity + qty),
+              }
+            : item
+        );
       }
       return [
         ...prev,
@@ -227,9 +275,20 @@ export function useBilling() {
     setCart((prev) => prev.filter((item) => item.lineId !== lineId));
   };
 
+  const handleProductRemove = (product: Product) => {
+    setCart((prev) => {
+      const itemsToRemove = prev.filter((item) => item.productId === product.id);
+      if (itemsToRemove.length > 0) {
+        toast({ title: "Removed from cart", description: product.name, variant: "destructive" });
+      }
+      return prev.filter((item) => item.productId !== product.id);
+    });
+  };
+
   const resetCart = () => {
     setCart([]);
     setDiscount(0);
+    setPaymentMode("cash");
     setSelectedCustomerId("");
     setQuickPhone("");
     setEnableGST(false);
@@ -390,6 +449,7 @@ export function useBilling() {
     setMobileTab,
     // handlers
     handleProductTap,
+    handleProductRemove,
     addKhula,
     updateQty,
     removeFromCart,

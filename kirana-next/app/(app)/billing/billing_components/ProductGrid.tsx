@@ -30,6 +30,7 @@ interface ProductGridProps {
   setFilter: (value: BillingFilter) => void;
   cartBaseQty: (productId: number) => number;
   onProductTap: (product: Product) => void;
+  onRemoveTap?: (product: Product) => void;
 }
 
 export function ProductGrid({
@@ -42,6 +43,7 @@ export function ProductGrid({
   setFilter,
   cartBaseQty,
   onProductTap,
+  onRemoveTap,
 }: ProductGridProps) {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
@@ -118,6 +120,7 @@ export function ProductGrid({
                 product={product}
                 inCartBaseQty={cartBaseQty(product.id)}
                 onTap={onProductTap}
+                onRemoveTap={onRemoveTap}
               />
             ))}
           </div>
