@@ -310,7 +310,6 @@ export function ProductCreator({
   const [sellPrice, setSellPrice] = useState<number | "">("");
 
   // ── Advanced fields ──────────────────────────────────────────────────────
-  const [showAdvanced, setShowAdvanced] = useState(false);
   const [category, setCategory] = useState("General");
   const [brand, setBrand] = useState("");
   const [keywords, setKeywords] = useState("");
@@ -372,7 +371,6 @@ export function ProductCreator({
   const addExtraVariant = () => {
     const newV = variantDraft({ variantName: "New Pack", sellingMode: "fixed", unitType: "PACKET" });
     setExtraVariants((prev) => [...prev, newV]);
-    setShowAdvanced(true);
   };
 
   const updateExtraVariant = (rowId: string, patch: Partial<VariantDraft>) => {
@@ -391,7 +389,6 @@ export function ProductCreator({
     setUnitType("KG");
     setBuyPrice("");
     setSellPrice("");
-    setShowAdvanced(false);
     setCategory("General");
     setBrand("");
     setKeywords("");
@@ -600,28 +597,8 @@ export function ProductCreator({
               />
             )}
 
-            {/* ── Advanced Options Toggle ───────────────────────────────── */}
-            <button
-              type="button"
-              onClick={() => setShowAdvanced((v) => !v)}
-              className="w-full flex items-center justify-between rounded-xl border border-dashed px-4 py-3 text-sm font-semibold text-muted-foreground hover:text-foreground hover:border-border hover:bg-muted/30 transition-all duration-200"
-            >
-              <span className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4" />
-                Advanced Options
-                <span className="text-[11px] font-normal">
-                  (Brand, Category, Keywords, Stock, MRP, Expiry, Extra Variants)
-                </span>
-              </span>
-              {showAdvanced
-                ? <ChevronUp className="h-4 w-4 shrink-0" />
-                : <ChevronDown className="h-4 w-4 shrink-0" />
-              }
-            </button>
-
-            {/* ── Advanced Section ──────────────────────────────────────── */}
-            {showAdvanced && (
-              <div className="space-y-5 animate-in fade-in-0 slide-in-from-top-2 duration-200">
+            {/* ── Additional Details Section ──────────────────────────────────────── */}
+            <div className="space-y-5">
 
                 {/* Variant name override */}
                 <div className="rounded-xl border bg-card p-4 space-y-4">
@@ -826,9 +803,8 @@ export function ProductCreator({
                   ))}
                 </div>
               </div>
-            )}
+            </div>
           </div>
-        </div>
 
         {/* ── Footer ─────────────────────────────────────────────────────── */}
         <div className="border-t bg-card px-5 py-4 shrink-0">
