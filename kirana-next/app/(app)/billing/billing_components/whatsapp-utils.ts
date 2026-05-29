@@ -55,10 +55,10 @@ export function buildWhatsAppMessage(
 
     msg += `${name}\n`;
     msg += padRight(quantityLabel, 10) + "|" + padLeft(`Rs ${rateStr}`, 8) + "|" + padLeft(`Rs ${totalStr}`, 8) + "\n";
+    msg += "-".repeat(W) + "\n";
   });
 
-  msg += "-".repeat(W) + "\n";
-  msg += padRight("Subtotal:", 16) + padLeft(`Rs ${billData.subtotal.toFixed(0)}`, 12) + "\n";
+  msg += padRight("Subtotal:", 14) + padLeft(`Rs ${billData.subtotal.toFixed(0)}`, 14) + "\n";
   if (billData.discount > 0) {
     msg += padRight("Discount:", 16) + padLeft(`-Rs ${billData.discount.toFixed(0)}`, 12) + "\n";
   }
