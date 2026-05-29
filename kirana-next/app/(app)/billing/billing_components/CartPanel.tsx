@@ -26,7 +26,7 @@ interface CartPanelProps {
   customers: Customer[];
   discount: number;
   setDiscount: (value: number) => void;
-  paymentMode: BillInputPaymentMode;
+  paymentMode: BillInputPaymentMode | "";
   setPaymentMode: (mode: BillInputPaymentMode) => void;
   selectedCustomerId: string;
   setSelectedCustomerId: (id: string) => void;
@@ -202,7 +202,7 @@ export function CartPanel({
               }}
             >
               <SelectTrigger className="w-full">
-                <SelectValue />
+                <SelectValue placeholder="Select Payment Mode" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="cash">Cash</SelectItem>
@@ -248,7 +248,7 @@ export function CartPanel({
         {/* Checkout button (Always Visible) */}
         <Button
           className="h-12 w-full text-base font-bold"
-          disabled={cart.length === 0 || isCheckoutPending || billSuccess}
+          disabled={cart.length === 0 || isCheckoutPending || billSuccess || (showOptions && !paymentMode)}
           onClick={() => {
             if (!showOptions) {
               setShowOptions(true);

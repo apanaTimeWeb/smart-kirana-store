@@ -31,7 +31,7 @@ export function useBilling() {
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [discount, setDiscount] = useState(0);
-  const [paymentMode, setPaymentMode] = useState<BillInputPaymentMode>("cash");
+  const [paymentMode, setPaymentMode] = useState<BillInputPaymentMode | "">("");
   const [selectedCustomerId, setSelectedCustomerId] = useState("");
   const [quickPhone, setQuickPhone] = useState("");
   const [billSuccess, setBillSuccess] = useState(false);
@@ -238,6 +238,10 @@ export function useBilling() {
   // ── Checkout ──────────────────────────────────────────────────────────────
   const handleCheckout = () => {
     if (cart.length === 0) return;
+    if (!paymentMode) {
+      toast({ title: "Payment Mode select karein", variant: "destructive" });
+      return;
+    }
     if (paymentMode === "khata" && !selectedCustomerId) {
       toast({ title: "Khata ke liye customer select karein", variant: "destructive" });
       return;
@@ -269,7 +273,7 @@ export function useBilling() {
           taxableValue,
           gstAmount,
           finalAmount,
-          paymentMode,
+          paymentMode: paymentMode as BillInputPaymentMode,
           enableGST,
           gstRate: enableGST ? gstRate : 0,
         },
@@ -285,7 +289,7 @@ export function useBilling() {
             taxableValue,
             gstAmount,
             finalAmount,
-            paymentMode,
+            paymentMode: paymentMode as BillInputPaymentMode,
             enableGST,
             gstRate,
           };
@@ -327,7 +331,7 @@ export function useBilling() {
             setDiscount(0);
             setSelectedCustomerId("");
             setQuickPhone("");
-            setPaymentMode("cash");
+            setPaymentMode("");
             setEnableGST(false);
             setBillSuccess(false);
             setMobileTab("products");
