@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   getGetDashboardSummaryQueryKey,
   getListBillsQueryKey,
@@ -41,6 +41,45 @@ export function useBilling() {
   const [khulaProduct, setKhulaProduct] = useState<Product | null>(null);
   const [filter, setFilter] = useState<BillingFilter>("all");
   const [whatsappBillData, setWhatsappBillData] = useState<BillData | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // ── Persist State ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("billing_draft_state");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.cart) setCart(parsed.cart);
+        if (parsed.discount !== undefined) setDiscount(parsed.discount);
+        if (parsed.paymentMode !== undefined) setPaymentMode(parsed.paymentMode);
+        if (parsed.selectedCustomerId !== undefined) setSelectedCustomerId(parsed.selectedCustomerId);
+        if (parsed.quickPhone !== undefined) setQuickPhone(parsed.quickPhone);
+        if (parsed.enableGST !== undefined) setEnableGST(parsed.enableGST);
+        if (parsed.gstRate !== undefined) setGstRate(parsed.gstRate);
+      }
+    } catch (e) {
+      console.error("Failed to load billing state", e);
+    } finally {
+      setIsLoaded(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    try {
+      localStorage.setItem("billing_draft_state", JSON.stringify({
+        cart,
+        discount,
+        paymentMode,
+        selectedCustomerId,
+        quickPhone,
+        enableGST,
+        gstRate,
+      }));
+    } catch (e) {
+      console.error("Failed to save billing state", e);
+    }
+  }, [cart, discount, paymentMode, selectedCustomerId, quickPhone, enableGST, gstRate, isLoaded]);
 
   // ── Derived values ────────────────────────────────────────────────────────
   const shopName = settings?.shopName?.trim() || "Smart Kirana Store";
