@@ -1,6 +1,7 @@
-import { HistoryBillList } from "./history_components/HistoryBillList";
+import { HistoryBillListContainer } from "./history_components/HistoryBillListContainer";
 import { HistoryProvider } from "./history_components/HistoryContext";
 import "./history.css";
+
 
 export const metadata = {
   title: "Bill History - Smart Kirana Store",
@@ -16,7 +17,7 @@ export default function HistoryPage() {
         </div>
         
         <div>
-          <HistoryBillList />
+          <HistoryBillListContainer />
         </div>
       </div>
     </HistoryProvider>
