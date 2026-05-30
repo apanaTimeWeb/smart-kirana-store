@@ -3,8 +3,8 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSettings } from "./SettingsContext";
-import { SettingsConstants } from "./SettingsConstants";
+import { useSettings } from "../../context/SettingsContext";
+import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
 
 /**
  * SettingsShopNameInput
@@ -17,13 +17,13 @@ export function SettingsShopNameInput() {
   return (
     <div className="space-y-1.5">
       <Label className="text-[var(--settings-foreground)]">
-        {SettingsConstants.TEXTS.SHOP_NAME}
+        {SettingsSharedConstants.TEXTS.SHOP_NAME}
       </Label>
       <Input
         id="settings-shop-name"
         value={form.shopName}
         onChange={(e) => updateForm("shopName", e.target.value)}
-        placeholder={SettingsConstants.TEXTS.SHOP_NAME_PLACEHOLDER}
+        placeholder={SettingsSharedConstants.TEXTS.SHOP_NAME_PLACEHOLDER}
         className="bg-[var(--settings-background)] border-[var(--settings-border)] text-[var(--settings-foreground)]"
       />
     </div>

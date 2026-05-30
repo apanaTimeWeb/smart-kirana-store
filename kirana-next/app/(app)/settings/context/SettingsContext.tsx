@@ -1,11 +1,11 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect, useMemo, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetSettings, useUpdateSettings, getSettingsQueryKey } from "@/lib/api";
-import { SettingsConstants } from "./SettingsConstants";
-import type { SettingsForm } from "./SettingsTypes";
+import { SettingsSharedConstants } from "../constants/SettingsSharedConstants";
+import type { SettingsForm } from "../types/SettingsTypes";
 
 interface SettingsContextType {
   form: SettingsForm;
@@ -25,13 +25,13 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const { data: serverSettings, isLoading: settingsLoading } = useGetSettings();
   const updateSettingsMutation = useUpdateSettings();
 
-  const [form, setForm] = useState<SettingsForm>(SettingsConstants.DEFAULTS);
+  const [form, setForm] = useState<SettingsForm>(SettingsSharedConstants.DEFAULTS);
   const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
     if (serverSettings) {
       setForm({
-        shopName: serverSettings.shopName ?? SettingsConstants.DEFAULTS.shopName,
+        shopName: serverSettings.shopName ?? SettingsSharedConstants.DEFAULTS.shopName,
         shopAddress: serverSettings.shopAddress ?? "",
         shopPhone: serverSettings.shopPhone ?? "",
         ownerName: serverSettings.ownerName ?? "",
@@ -46,36 +46,36 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     }
   }, [serverSettings]);
 
-  const updateForm = (key: keyof SettingsForm, value: string | boolean | number) => {
+  const updateForm = useCallback((key: keyof SettingsForm, value: string | boolean | number) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setIsDirty(true);
-  };
+  }, []);
 
-  const saveSettings = () => {
+  const saveSettings = useCallback(() => {
     updateSettingsMutation.mutate(
       { data: form },
       {
         onSuccess: () => {
-          toast({ title: SettingsConstants.TEXTS.SAVE_SUCCESS });
+          toast({ title: SettingsSharedConstants.TEXTS.SAVE_SUCCESS });
           queryClient.invalidateQueries({ queryKey: getSettingsQueryKey() });
           setIsDirty(false);
         },
-        onError: () => toast({ title: SettingsConstants.TEXTS.SAVE_ERROR, variant: "destructive" }),
+        onError: () => toast({ title: SettingsSharedConstants.TEXTS.SAVE_ERROR, variant: "destructive" }),
       }
     );
-  };
+  }, [form, toast, queryClient, updateSettingsMutation]);
+
+  const contextValue = useMemo(() => ({
+    form,
+    isDirty,
+    settingsLoading,
+    isSaving: updateSettingsMutation.isPending,
+    updateForm,
+    saveSettings,
+  }), [form, isDirty, settingsLoading, updateSettingsMutation.isPending, updateForm, saveSettings]);
 
   return (
-    <SettingsContext.Provider
-      value={{
-        form,
-        isDirty,
-        settingsLoading,
-        isSaving: updateSettingsMutation.isPending,
-        updateForm,
-        saveSettings,
-      }}
-    >
+    <SettingsContext.Provider value={contextValue}>
       {children}
     </SettingsContext.Provider>
   );

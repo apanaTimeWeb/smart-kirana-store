@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Store } from "lucide-react";
-import { SettingsConstants } from "./SettingsConstants";
+import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
 import { SettingsShopNameInput } from "./SettingsShopNameInput";
 import { SettingsShopOwnerNameInput } from "./SettingsShopOwnerNameInput";
 import { SettingsShopAddressInput } from "./SettingsShopAddressInput";
@@ -21,10 +21,10 @@ export function SettingsShopDetails() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-[var(--settings-foreground)]">
           <Store className="h-5 w-5 text-[var(--settings-primary)]" />{" "}
-          {SettingsConstants.TEXTS.DUKAAN_DETAILS}
+          {SettingsSharedConstants.TEXTS.DUKAAN_DETAILS}
         </CardTitle>
         <CardDescription className="text-[var(--settings-muted-text)]">
-          {SettingsConstants.TEXTS.DUKAAN_DESC}
+          {SettingsSharedConstants.TEXTS.DUKAAN_DESC}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">

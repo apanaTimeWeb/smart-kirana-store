@@ -16,37 +16,41 @@ app/(app)/settings/
 ├── error.tsx                         ← Next.js native error boundary
 ├── settings.css                      ← 🎨 SINGLE SOURCE OF TRUTH for all colors/tokens
 │
-└── settings_components/
+├── types/
+│   └── SettingsTypes.ts              ← TypeScript types
+│
+├── constants/
+│   └── SettingsSharedConstants.ts    ← ALL hardcoded data: texts, defaults, device types, mock sessions
+│
+├── context/
+│   └── SettingsContext.tsx           ← Module-scoped React Context; holds form state + save logic
+│
+├── hooks/
+│   └── SettingsActiveSessionsDataHook.ts ← 🔁 BACKEND SWAP POINT: mock → real API here
+│
+└── components/
     │
-    ├── ── Data & Types ───────────────────────────────────────────────
-    ├── SettingsTypes.ts              ← TypeScript types (DeviceType derived from SettingsConstants)
-    ├── SettingsConstants.ts          ← ALL hardcoded data: texts, defaults, device types, mock sessions
+    ├── Dashboard/
+    │   ├── SettingsDashboardContainer.tsx
+    │   ├── SettingsDashboardLoadingFallback.tsx
+    │   ├── SettingsHeader.tsx
+    │   └── SettingsSaveAction.tsx
     │
-    ├── ── State (Context) ────────────────────────────────────────────
-    ├── SettingsContext.tsx           ← Module-scoped React Context; holds form state + save logic
+    ├── ShopDetails/
+    │   ├── SettingsShopDetails.tsx        ← Layout card; NO logic; composes the 5 inputs below
+    │   ├── SettingsShopNameInput.tsx      ← ONLY: "Dukaan Ka Naam" input field
+    │   ├── SettingsShopOwnerNameInput.tsx ← ONLY: "Malik Ka Naam" input field
+    │   ├── SettingsShopAddressInput.tsx   ← ONLY: "Pata (Address)" input field
+    │   ├── SettingsShopPhoneInput.tsx     ← ONLY: "Phone Number" input field (type="tel")
+    │   └── SettingsShopCurrencyInput.tsx  ← ONLY: "Currency Symbol" input field
     │
-    ├── ── Layout / Orchestrators ─────────────────────────────────────
-    ├── SettingsDashboardContainer.tsx         ← Master layout; arranges all section cards
-    ├── SettingsDashboardLoadingFallback.tsx   ← "Loading settings..." UI state
-    ├── SettingsHeader.tsx                     ← Page title + subtitle
-    ├── SettingsSaveAction.tsx                 ← "Save All Settings" button
+    ├── Configurations/
+    │   ├── SettingsGSTConfig.tsx          ← GST enable/disable toggle + GSTIN input
+    │   ├── SettingsWhatsAppConfig.tsx     ← WhatsApp number input
+    │   └── SettingsPrinterConfig.tsx      ← Printer name / IP address input
     │
-    ├── ── Dukaan Details Card ────────────────────────────────────────
-    ├── SettingsShopDetails.tsx        ← Layout card; NO logic; composes the 5 inputs below
-    ├── SettingsShopNameInput.tsx      ← ONLY: "Dukaan Ka Naam" input field
-    ├── SettingsShopOwnerNameInput.tsx ← ONLY: "Malik Ka Naam" input field
-    ├── SettingsShopAddressInput.tsx   ← ONLY: "Pata (Address)" input field
-    ├── SettingsShopPhoneInput.tsx     ← ONLY: "Phone Number" input field (type="tel")
-    ├── SettingsShopCurrencyInput.tsx  ← ONLY: "Currency Symbol" input field
-    │
-    ├── ── Config Cards ───────────────────────────────────────────────
-    ├── SettingsGSTConfig.tsx          ← GST enable/disable toggle + GSTIN input
-    ├── SettingsWhatsAppConfig.tsx     ← WhatsApp number input
-    ├── SettingsPrinterConfig.tsx      ← Printer name / IP address input
-    │
-    └── ── Device Security Section ────────────────────────────────────
+    └── ActiveDevices/
         ├── SettingsActiveDevices.tsx                  ← Orchestrator: fetches + lists sessions
-        ├── SettingsActiveSessionsDataHook.ts          ← 🔁 BACKEND SWAP POINT: mock → real API here
         ├── SettingsActiveSessionCard.tsx              ← ONE session row (icon, info, logout btn)
         └── SettingsActiveSessionDeviceIconResolver.tsx ← Maps DeviceType → Lucide icon (pure util)
 ```
@@ -82,7 +86,7 @@ Any component that needs form data calls `useSettings()` — no props needed.
 ### Session Data (`SettingsActiveSessionsDataHook.ts`)
 ```
 useSettingsActiveSessions()
-  └── Currently: returns SETTINGS_MOCK_ACTIVE_SESSIONS from SettingsConstants.ts
+  └── Currently: returns SETTINGS_MOCK_ACTIVE_SESSIONS from SettingsSharedConstants.ts
   └── Tomorrow: replace useState with useQuery/fetch call → zero UI changes needed
 ```
 
@@ -115,8 +119,8 @@ All CSS variables are defined here. **Never add a hardcoded color to JSX.**
 
 ### Add a new settings field
 1. Add field to `SettingsForm` in **`SettingsTypes.ts`**
-2. Add default value in **`SettingsConstants.ts`** (`DEFAULTS`)
-3. Add label/placeholder text in **`SettingsConstants.ts`** (`TEXTS`)
+2. Add default value in **`SettingsSharedConstants.ts`** (`DEFAULTS`)
+3. Add label/placeholder text in **`SettingsSharedConstants.ts`** (`TEXTS`)
 4. Create new `SettingsShop[FieldName]Input.tsx` micro-component
 5. Add it to `SettingsShopDetails.tsx` (or relevant card)
 6. Add it to `SettingsContext.tsx` sync logic
@@ -126,7 +130,7 @@ All CSS variables are defined here. **Never add a hardcoded color to JSX.**
 2. Import and add to `SettingsDashboardContainer.tsx`
 
 ### Add a new device type
-1. Add to `SETTINGS_DEVICE_TYPES` array in **`SettingsConstants.ts`** — TypeScript type auto-updates
+1. Add to `SETTINGS_DEVICE_TYPES` array in **`SettingsSharedConstants.ts`** — TypeScript type auto-updates
 2. Add a `case` in **`SettingsActiveSessionDeviceIconResolver.tsx`**
 
 ### Integrate real session API

@@ -1,12 +1,12 @@
 import React from "react";
 import { Monitor, Smartphone, Tablet, Shield } from "lucide-react";
-import type { DeviceType } from "./SettingsTypes";
+import type { DeviceType } from "../../types/SettingsTypes";
 
 /**
  * SettingsActiveSessionDeviceIconResolver
  * Responsibility: Given a DeviceType, returns the correct Lucide icon element.
  * This is a pure utility component — zero state, zero side effects.
- * Adding a new device type requires ONLY updating SettingsConstants.ts + this file.
+ * Adding a new device type requires ONLY updating SettingsSharedConstants.ts + this file.
  */
 export function SettingsActiveSessionDeviceIconResolver({
   deviceType,

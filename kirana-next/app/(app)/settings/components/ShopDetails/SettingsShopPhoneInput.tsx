@@ -3,8 +3,8 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSettings } from "./SettingsContext";
-import { SettingsConstants } from "./SettingsConstants";
+import { useSettings } from "../../context/SettingsContext";
+import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
 
 /**
  * SettingsShopPhoneInput
@@ -17,14 +17,14 @@ export function SettingsShopPhoneInput() {
   return (
     <div className="space-y-1.5">
       <Label className="text-[var(--settings-foreground)]">
-        {SettingsConstants.TEXTS.PHONE}
+        {SettingsSharedConstants.TEXTS.PHONE}
       </Label>
       <Input
         id="settings-shop-phone"
         type="tel"
         value={form.shopPhone}
         onChange={(e) => updateForm("shopPhone", e.target.value)}
-        placeholder={SettingsConstants.TEXTS.PHONE_PLACEHOLDER}
+        placeholder={SettingsSharedConstants.TEXTS.PHONE_PLACEHOLDER}
         className="bg-[var(--settings-background)] border-[var(--settings-border)] text-[var(--settings-foreground)]"
       />
     </div>

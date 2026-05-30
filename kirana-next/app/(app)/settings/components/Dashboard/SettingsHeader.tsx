@@ -1,14 +1,14 @@
 import React from "react";
-import { SettingsConstants } from "./SettingsConstants";
+import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
 
 export function SettingsHeader() {
   return (
     <div>
       <h1 className="text-3xl font-bold tracking-tight text-[var(--settings-foreground)]">
-        {SettingsConstants.TEXTS.TITLE}
+        {SettingsSharedConstants.TEXTS.TITLE}
       </h1>
       <p className="mt-1 text-[var(--settings-muted-text)]">
-        {SettingsConstants.TEXTS.SUBTITLE}
+        {SettingsSharedConstants.TEXTS.SUBTITLE}
       </p>
     </div>
   );

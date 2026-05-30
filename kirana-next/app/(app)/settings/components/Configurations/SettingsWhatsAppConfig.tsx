@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MessageCircle } from "lucide-react";
-import { useSettings } from "./SettingsContext";
-import { SettingsConstants } from "./SettingsConstants";
+import { useSettings } from "../../context/SettingsContext";
+import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
 
 export function SettingsWhatsAppConfig() {
   const { form, updateForm } = useSettings();
@@ -16,16 +16,16 @@ export function SettingsWhatsAppConfig() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-[var(--settings-foreground)]">
           <MessageCircle className="h-5 w-5 text-[var(--settings-whatsapp-icon)]" />{" "}
-          {SettingsConstants.TEXTS.WHATSAPP_SETTINGS}
+          {SettingsSharedConstants.TEXTS.WHATSAPP_SETTINGS}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-1.5">
-          <Label className="text-[var(--settings-foreground)]">{SettingsConstants.TEXTS.WHATSAPP_NUMBER}</Label>
+          <Label className="text-[var(--settings-foreground)]">{SettingsSharedConstants.TEXTS.WHATSAPP_NUMBER}</Label>
           <Input
             value={form.whatsappNumber}
             onChange={(e) => updateForm("whatsappNumber", e.target.value)}
-            placeholder={SettingsConstants.TEXTS.WHATSAPP_PLACEHOLDER}
+            placeholder={SettingsSharedConstants.TEXTS.WHATSAPP_PLACEHOLDER}
             className="bg-[var(--settings-background)] border-[var(--settings-border)] text-[var(--settings-foreground)]"
           />
         </div>

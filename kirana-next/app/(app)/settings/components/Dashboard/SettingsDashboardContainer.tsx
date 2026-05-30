@@ -2,13 +2,13 @@
 
 import React from "react";
 import { Separator } from "@/components/ui/separator";
-import { useSettings } from "./SettingsContext";
+import { useSettings } from "../../context/SettingsContext";
 import { SettingsHeader } from "./SettingsHeader";
-import { SettingsShopDetails } from "./SettingsShopDetails";
-import { SettingsGSTConfig } from "./SettingsGSTConfig";
-import { SettingsWhatsAppConfig } from "./SettingsWhatsAppConfig";
-import { SettingsPrinterConfig } from "./SettingsPrinterConfig";
-import { SettingsActiveDevices } from "./SettingsActiveDevices";
+import { SettingsShopDetails } from "../ShopDetails/SettingsShopDetails";
+import { SettingsGSTConfig } from "../Configurations/SettingsGSTConfig";
+import { SettingsWhatsAppConfig } from "../Configurations/SettingsWhatsAppConfig";
+import { SettingsPrinterConfig } from "../Configurations/SettingsPrinterConfig";
+import { SettingsActiveDevices } from "../ActiveDevices/SettingsActiveDevices";
 import { SettingsSaveAction } from "./SettingsSaveAction";
 import { SettingsDashboardLoadingFallback } from "./SettingsDashboardLoadingFallback";
 

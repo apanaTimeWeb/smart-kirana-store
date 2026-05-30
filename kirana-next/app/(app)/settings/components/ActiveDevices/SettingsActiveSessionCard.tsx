@@ -5,9 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { SettingsConstants } from "./SettingsConstants";
+import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
 import { SettingsActiveSessionDeviceIconResolver } from "./SettingsActiveSessionDeviceIconResolver";
-import type { SettingsActiveSession } from "./SettingsTypes";
+import type { SettingsActiveSession } from "../../types/SettingsTypes";
 
 interface SettingsActiveSessionCardProps {
   session: SettingsActiveSession;
@@ -24,11 +24,11 @@ export function SettingsActiveSessionCard({ session }: SettingsActiveSessionCard
   const { toast } = useToast();
 
   const handleLogoutDevice = () => {
-    const message = SettingsConstants.TEXTS.LOGOUT_CONFIRM.replace("{0}", session.deviceName);
+    const message = SettingsSharedConstants.TEXTS.LOGOUT_CONFIRM.replace("{0}", session.deviceName);
     if (confirm(message)) {
       // 🔁 BACKEND INTEGRATION POINT: Call logout API here (e.g. mutate({ sessionId: session.id }))
       toast({
-        title: SettingsConstants.TEXTS.LOGOUT_SUCCESS.replace("{0}", session.deviceName),
+        title: SettingsSharedConstants.TEXTS.LOGOUT_SUCCESS.replace("{0}", session.deviceName),
       });
     }
   };
@@ -48,15 +48,15 @@ export function SettingsActiveSessionCard({ session }: SettingsActiveSessionCard
             <p className="font-semibold text-[var(--settings-foreground)]">{session.deviceName}</p>
             {session.isCurrent && (
               <Badge className="bg-[var(--settings-primary)] text-white hover:bg-[var(--settings-primary)]">
-                {SettingsConstants.TEXTS.CURRENT_DEVICE}
+                {SettingsSharedConstants.TEXTS.CURRENT_DEVICE}
               </Badge>
             )}
           </div>
           <p className="text-sm text-[var(--settings-muted-text)] mt-0.5">
-            {session.ip} • {session.location || SettingsConstants.TEXTS.UNKNOWN_LOCATION}
+            {session.ip} • {session.location || SettingsSharedConstants.TEXTS.UNKNOWN_LOCATION}
           </p>
           <p className="text-xs text-[var(--settings-muted-text)] mt-1">
-            {SettingsConstants.TEXTS.LAST_ACTIVE}: {session.lastActive}
+            {SettingsSharedConstants.TEXTS.LAST_ACTIVE}: {session.lastActive}
           </p>
         </div>
       </div>
@@ -69,7 +69,7 @@ export function SettingsActiveSessionCard({ session }: SettingsActiveSessionCard
           className="bg-[var(--settings-destructive)] text-white hover:opacity-90"
         >
           <LogOut className="h-4 w-4 mr-2" />
-          {SettingsConstants.TEXTS.LOGOUT}
+          {SettingsSharedConstants.TEXTS.LOGOUT}
         </Button>
       )}
     </div>

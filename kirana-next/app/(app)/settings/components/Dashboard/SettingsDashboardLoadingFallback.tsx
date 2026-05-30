@@ -1,5 +1,5 @@
 import React from "react";
-import { SettingsConstants } from "./SettingsConstants";
+import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
 
 /**
  * SettingsDashboardLoadingFallback
@@ -10,7 +10,7 @@ import { SettingsConstants } from "./SettingsConstants";
 export function SettingsDashboardLoadingFallback() {
   return (
     <div className="space-y-6 max-w-3xl text-[var(--settings-muted-text)]">
-      {SettingsConstants.TEXTS.LOADING_SETTINGS}
+      {SettingsSharedConstants.TEXTS.LOADING_SETTINGS}
     </div>
   );
 }

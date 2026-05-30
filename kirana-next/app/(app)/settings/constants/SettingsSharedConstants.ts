@@ -1,4 +1,4 @@
-import type { SettingsForm } from "./SettingsTypes";
+import type { SettingsForm } from "../types/SettingsTypes";
 
 // ─── Device Types ────────────────────────────────────────────────────────────
 // Const array → TypeScript union type is derived FROM this (see SettingsTypes.ts)
@@ -34,7 +34,7 @@ export const SETTINGS_MOCK_ACTIVE_SESSIONS = [
   },
 ];
 
-export const SettingsConstants = {
+export const SettingsSharedConstants = {
   DEFAULTS: {
     shopName: "Smart Kirana Store",
     shopAddress: "",

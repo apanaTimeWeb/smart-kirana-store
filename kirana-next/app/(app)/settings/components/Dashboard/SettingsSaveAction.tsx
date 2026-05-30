@@ -3,8 +3,8 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Save, Loader2 } from "lucide-react";
-import { useSettings } from "./SettingsContext";
-import { SettingsConstants } from "./SettingsConstants";
+import { useSettings } from "../../context/SettingsContext";
+import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
 
 export function SettingsSaveAction() {
   const { isDirty, isSaving, saveSettings } = useSettings();
@@ -19,12 +19,12 @@ export function SettingsSaveAction() {
       {isSaving ? (
         <>
           <Loader2 className="h-5 w-5 animate-spin mr-2" />
-          {SettingsConstants.TEXTS.SAVING}
+          {SettingsSharedConstants.TEXTS.SAVING}
         </>
       ) : (
         <>
           <Save className="h-5 w-5 mr-2" />
-          {SettingsConstants.TEXTS.SAVE_ALL}
+          {SettingsSharedConstants.TEXTS.SAVE_ALL}
         </>
       )}
     </Button>

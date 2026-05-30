@@ -3,8 +3,8 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSettings } from "./SettingsContext";
-import { SettingsConstants } from "./SettingsConstants";
+import { useSettings } from "../../context/SettingsContext";
+import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
 
 /**
  * SettingsShopCurrencyInput
@@ -17,7 +17,7 @@ export function SettingsShopCurrencyInput() {
   return (
     <div className="space-y-1.5">
       <Label className="text-[var(--settings-foreground)]">
-        {SettingsConstants.TEXTS.CURRENCY}
+        {SettingsSharedConstants.TEXTS.CURRENCY}
       </Label>
       <Input
         id="settings-currency-symbol"
