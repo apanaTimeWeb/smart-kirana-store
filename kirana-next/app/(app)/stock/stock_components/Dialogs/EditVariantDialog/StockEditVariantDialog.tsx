@@ -228,9 +228,9 @@ function StockEditVariantDialogInner() {
 
             {/* 1. Size Name */}
             <div className="space-y-2">
-              <FieldLabel required>Size Ka Naam</FieldLabel>
+              <FieldLabel required>Saman Ka Naam</FieldLabel>
               <FieldInput
-                placeholder="e.g. Maggi 70g, 500g Pouch…"
+                placeholder="e.g. Maggi 70g, Aashirvaad Atta 5kg…"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 autoFocus

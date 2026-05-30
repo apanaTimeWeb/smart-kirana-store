@@ -103,12 +103,12 @@ function useStockEditVariantDialogInternal() {
 
   const errors: string[] = [];
   if (draft) {
-    if (!draft.variantName.trim()) errors.push("Size Name is required");
-    if (sellPrice <= 0) errors.push("Sell price must be greater than 0");
-    if (draft.stockInBaseUnit < 0) errors.push("Current stock cannot be negative");
+    if (!draft.variantName.trim()) errors.push("Saman ka naam zaroori hai");
+    if (sellPrice <= 0) errors.push("Bikri (Sell) rate 0 se zyada hona chahiye");
+    if (draft.stockInBaseUnit < 0) errors.push("Current stock minus mein nahi ho sakta");
     
     if (cfg?.group === "wholesale" && (!bulkConversionRate || bulkConversionRate <= 0)) {
-      errors.push("Conversion rate (e.g., 1 Bora = ? KG) is required for bulk items");
+      errors.push("Bora me kitna KG/Piece hai, ye batana zaroori hai");
     }
   }
   const isValid = errors.length === 0;

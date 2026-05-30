@@ -219,7 +219,7 @@ function StockProductCreatorInner() {
 
             {/* 1. Product Name */}
             <div className="space-y-2">
-              <FieldLabel required>Product Ka Naam</FieldLabel>
+              <FieldLabel required>Saman Ka Naam</FieldLabel>
               <FieldInput
                 placeholder="e.g. Maggi 70g, Aashirvaad Atta 5kg…"
                 value={name}
