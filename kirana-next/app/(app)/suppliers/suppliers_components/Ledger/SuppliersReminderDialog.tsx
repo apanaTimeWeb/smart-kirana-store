@@ -22,13 +22,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useSuppliers } from "../../context/SuppliersContext";
-import { printSupplierThermalBill } from "../../utils/SuppliersPrintUtils";
+import { useSuppliers } from "../../suppliers_context/SuppliersContext";
+import { printSupplierThermalBill } from "../../suppliers_utils/SuppliersPrintUtils";
 import {
   SUPPLIER_SHOP_NAME_FALLBACK,
   buildSupplierReminderMessage,
   buildWhatsAppUrl,
-} from "../../constants/SuppliersSharedConstants";
+} from "../../suppliers_constants/SuppliersSharedConstants";
 
 export function SuppliersReminderDialog() {
   const { isReminderOpen, setIsReminderOpen, ledgerDetail, shopSettings } =

@@ -17,8 +17,8 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { IndianRupee, CreditCard, MessageCircle, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useSuppliers } from "../../context/SuppliersContext";
-import { printSupplierThermalBill } from "../../utils/SuppliersPrintUtils";
+import { useSuppliers } from "../../suppliers_context/SuppliersContext";
+import { printSupplierThermalBill } from "../../suppliers_utils/SuppliersPrintUtils";
 
 export function SuppliersLedgerActions() {
   const {

@@ -85,15 +85,15 @@ app/(app)/suppliers/
 ├── error.tsx
 ├── suppliers.css
 ├── suppliers_features.md                       ← (this file)
-├── types/
+├── suppliers_types/
 │   └── SuppliersTypes.ts
-├── constants/
+├── suppliers_constants/
 │   └── SuppliersSharedConstants.ts
-├── utils/
+├── suppliers_utils/
 │   └── SuppliersPrintUtils.ts
-├── context/
+├── suppliers_context/
 │   └── SuppliersContext.tsx
-└── components/
+└── suppliers_components/
     ├── Layout/
     │   └── SuppliersMainLayout.tsx
     ├── List/
@@ -163,14 +163,14 @@ SuppliersContext.tsx
 
 | Task | File to Edit |
 |------|-------------|
-| Fix thermal bill layout / content | `utils/SuppliersPrintUtils.ts` |
+| Fix thermal bill layout / content | `suppliers_utils/SuppliersPrintUtils.ts` |
 | Change WhatsApp reminder message text | `SuppliersSharedConstants.ts` → `buildSupplierReminderMessage()` |
 | Change toast messages | `SuppliersSharedConstants.ts` → `SUPPLIER_TOASTS` |
-| Fix supplier list row UI (avatar, name, due) | `components/List/SuppliersListTableRow.tsx` |
-| Fix ledger transaction row UI (amount, icon, colors) | `components/Ledger/SuppliersLedgerTableRow.tsx` |
-| Fix ledger column headers | `components/Ledger/SuppliersLedgerTableColumnHeaders.tsx` |
-| Add/remove an action button in ledger | `components/Ledger/SuppliersLedgerActions.tsx` |
-| Change transaction form fields | `components/Ledger/SuppliersTransactionForm.tsx` |
-| Change Zod validation rules | `types/SuppliersTypes.ts` |
+| Fix supplier list row UI (avatar, name, due) | `suppliers_components/List/SuppliersListTableRow.tsx` |
+| Fix ledger transaction row UI (amount, icon, colors) | `suppliers_components/Ledger/SuppliersLedgerTableRow.tsx` |
+| Fix ledger column headers | `suppliers_components/Ledger/SuppliersLedgerTableColumnHeaders.tsx` |
+| Add/remove an action button in ledger | `suppliers_components/Ledger/SuppliersLedgerActions.tsx` |
+| Change transaction form fields | `suppliers_components/Ledger/SuppliersTransactionForm.tsx` |
+| Change Zod validation rules | `suppliers_types/SuppliersTypes.ts` |
 | Change theme colors | `suppliers.css` |
-| Fix API query/mutation logic | `context/SuppliersContext.tsx` |
+| Fix API query/mutation logic | `suppliers_context/SuppliersContext.tsx` |

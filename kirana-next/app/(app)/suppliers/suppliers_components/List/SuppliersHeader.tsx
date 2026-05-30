@@ -3,7 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { useSuppliers } from "../../context/SuppliersContext";
+import { useSuppliers } from "../../suppliers_context/SuppliersContext";
 
 export function SuppliersHeader() {
   const { suppliers, setIsAddOpen } = useSuppliers();

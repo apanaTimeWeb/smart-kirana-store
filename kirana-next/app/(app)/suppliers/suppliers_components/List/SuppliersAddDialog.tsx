@@ -10,8 +10,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { getListSuppliersQueryKey } from "@/lib/api";
-import { useSuppliers } from "../../context/SuppliersContext";
-import { supplierSchema, type SupplierFormValues } from "../../types/SuppliersTypes";
+import { useSuppliers } from "../../suppliers_context/SuppliersContext";
+import { supplierSchema, type SupplierFormValues } from "../../suppliers_types/SuppliersTypes";
 
 export function SuppliersAddDialog() {
   const { isAddOpen, setIsAddOpen, createSupplierMutation } = useSuppliers();
