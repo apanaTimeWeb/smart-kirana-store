@@ -12,7 +12,7 @@ Next.js App Router uses Server Components by default, so you MUST explicitly inc
 Rename all components and files to be extremely descriptive based on exactly what they do (e.g., `[ModuleName]SearchFilter.tsx`, `[ModuleName]PaymentOptions.tsx`). Filename length doesn't matter; instant clarity for a new developer (or an AI context window) is the only priority.
 
 3. **Backend-Ready Centralized Data (Single Source of Truth)**: 
-Find all hardcoded UI data (dropdown options, filter lists, default preset arrays, payment modes, etc.) scattered across the UI components. Extract all of them into a single central `[ModuleName]Types.ts` or `[ModuleName]Constants.ts` file. 
+Find all hardcoded UI data (dropdown options, filter lists, default preset arrays, payment modes, etc.) scattered across the UI components. Extract them into feature-specific constant files alongside their components (e.g., `HeaderConstants.ts` inside the `/Header` folder) or a module-level `[ModuleName]SharedConstants.ts` for data used across multiple sub-folders.
 *Why?* Because tomorrow, this hardcoded data will be replaced by a Backend API call. By keeping it all in one file today, I will only have to change one file tomorrow to integrate the API, without touching the UI components. Derive your TypeScript types directly from these central arrays.
 
 4. **Theme Independence (No Inline Colors)**: 
@@ -25,6 +25,6 @@ Because the components will be heavily micro-modularized (Rule #1), avoid creati
 Ensure that the module properly utilizes Next.js native routing features for a great user experience. Extract loading states into `loading.tsx` and error boundaries into `error.tsx` wherever applicable in the module's directory.
 
 7. **Update AI-Context Documentation**: 
-Once the entire refactor is complete, update the project documentation in @[[MODULE_NAME]_features.md]. This document must serve as a map for future AI sessions. Clearly document the new "One File, One Component" directory structure, what each file precisely does, and where the centralized data/state is kept.
+Once the entire refactor is complete, update the project documentation in @[[MODULE_NAME]_features.md]. This document must serve as a map for future AI sessions. Clearly document the new "Feature-Based Sub-folder" directory structure, what each file precisely does, and where the centralized data/state is kept.
 
 Think step-by-step. Create a detailed implementation plan first so I can review it, and then execute it perfectly without breaking existing data flows!
