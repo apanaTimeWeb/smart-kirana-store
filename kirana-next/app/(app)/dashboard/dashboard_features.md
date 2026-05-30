@@ -19,18 +19,22 @@ app/(app)/dashboard/
 ├── types/
 │   └── DashboardTypes.ts                ← TypeScript types for the dashboard
 ├── constants/
-│   └── DashboardSharedConstants.ts      ← Central data: statically defined UI arrays and hardcoded configurations
+│   └── DashboardSharedConstants.ts      ← Central data: statically defined UI arrays and shared configurations
 │
 └── components/
-    ├── Layout/
+    ├── DashboardLayout/
     │   └── DashboardPageContent.tsx     ← Full dashboard UI: Maps config array to stat cards and places lists
-    ├── StatCards/
-    │   └── DashboardStatCard.tsx        ← Reusable metric card (Sale, Profit, Khata, Low Stock, Expiry)
-    ├── Lists/
+    ├── DashboardSummaryStats/
+    │   ├── DashboardStatCard.tsx        ← Reusable metric card (Sale, Profit, Khata, Low Stock, Expiry)
+    │   └── DashboardSummaryStatsConstants.ts ← Config array for stat cards
+    ├── DashboardRecentBills/
     │   ├── DashboardRecentBillsList.tsx ← Card: recent bills list with search + pagination
-    │   ├── DashboardLowStockList.tsx    ← Card: low-stock products list with search + pagination
+    │   └── DashboardRecentBillsConstants.ts  ← Payment mode labels
+    ├── DashboardLowStock/
+    │   └── DashboardLowStockList.tsx    ← Card: low-stock products list with search + pagination
+    ├── DashboardExpiringSoon/
     │   └── DashboardExpiringSoonList.tsx← Card: expiring-soon products list with search + pagination
-    └── Shared/
+    └── DashboardShared/
         ├── DashboardSearchFilter.tsx    ← Reusable search input with magnifier icon
         └── DashboardPagination.tsx      ← Reusable prev/next pagination controls
 ```
@@ -62,9 +66,9 @@ A minimal Context that calls `useGetDashboardSummary()` (React Query) and expose
 | `RecentBill` | type | Shape of a recent bill row |
 | `DashboardSummaryData` | type | Union of all above — the full API response shape |
 | **`DashboardSharedConstants.ts`** | | |
-| `DASHBOARD_CONSTANTS` | `const` | `{ ITEMS_PER_PAGE: 5 }` — pagination config |
-| `PAYMENT_MODE_LABELS` | `Record<string, string>` | `{ cash: "Cash", upi: "UPI", khata: "Khata" }` — badge labels |
-| `DASHBOARD_STAT_CARDS_CONFIG` | `const array` | Hardcoded configuration for stat cards, extracting UI logic from components |
+| `DashboardSharedConstants.ts` | `const` | `{ ITEMS_PER_PAGE: 5 }` — pagination config |
+| `DashboardRecentBillsConstants.ts` | `Record<string, string>` | `{ khata: "Khata", upi: "UPI", cash: "Cash" }` — badge labels |
+| `DashboardSummaryStatsConstants.ts` | `const array` | `DASHBOARD_STAT_CARDS_CONFIG` — Hardcoded configuration for stat cards, extracting UI logic from components |
 
 ---
 
@@ -140,8 +144,8 @@ All colors are CSS variables here. To port to another project, only change this 
 ## 📌 Quick Handover Summary
 
 - **Entry**: `page.tsx` — provider shell only (~20 lines).
-- **UI**: `DashboardPageContent.tsx` — all layout, heading, stat cards, lists grid.
+- **UI**: `DashboardPageContent.tsx` (in `DashboardLayout`) — all layout, heading, stat cards, lists grid.
 - **Data**: `DashboardContext.tsx` — single fetch, shared via context with `useMemo`. Zero prop drilling.
-- **Types/Constants**: `DashboardTypes.ts` & `DashboardSharedConstants.ts` — change here only when API integrates.
+- **Types/Constants**: `DashboardTypes.ts` & feature-specific Constants (`DashboardSummaryStatsConstants.ts`, etc.) — highly isolated for AI integration.
 - **Theming**: `dashboard.css` — all color variables. Copy folder to any project, retheme from here.
-- **Reusable micro-components**: `DashboardStatCard`, `DashboardSearchFilter`, `DashboardPagination` — organized in feature-based sub-folders.
+- **Reusable micro-components**: `DashboardStatCard`, `DashboardSearchFilter`, `DashboardPagination` — organized in strict feature-based sub-folders.

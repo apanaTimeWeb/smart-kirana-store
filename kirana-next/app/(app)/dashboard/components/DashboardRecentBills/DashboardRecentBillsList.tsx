@@ -6,9 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ShoppingBag } from "lucide-react";
 import { useDashboardContext } from "../../context/DashboardContext";
-import { DASHBOARD_CONSTANTS, PAYMENT_MODE_LABELS } from "../../constants/DashboardSharedConstants";
-import { DashboardSearchFilter } from "../Shared/DashboardSearchFilter";
-import { DashboardPagination } from "../Shared/DashboardPagination";
+import { DASHBOARD_CONSTANTS } from "../../constants/DashboardSharedConstants";
+import { PAYMENT_MODE_LABELS } from "./DashboardRecentBillsConstants";
+import { DashboardSearchFilter } from "../DashboardShared/DashboardSearchFilter";
+import { DashboardPagination } from "../DashboardShared/DashboardPagination";
 
 export function DashboardRecentBillsList() {
   const { summary } = useDashboardContext();

@@ -2,7 +2,7 @@
 
 import "./dashboard.css";
 import { DashboardProvider } from "./context/DashboardContext";
-import { DashboardPageContent } from "./components/Layout/DashboardPageContent";
+import { DashboardPageContent } from "./components/DashboardLayout/DashboardPageContent";
 
 /**
  * Dashboard — Route Entry Point

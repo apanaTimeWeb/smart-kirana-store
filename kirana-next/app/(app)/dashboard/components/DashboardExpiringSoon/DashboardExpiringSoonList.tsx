@@ -6,8 +6,8 @@ import { Clock } from "lucide-react";
 import { format } from "date-fns";
 import { useDashboardContext } from "../../context/DashboardContext";
 import { DASHBOARD_CONSTANTS } from "../../constants/DashboardSharedConstants";
-import { DashboardSearchFilter } from "../Shared/DashboardSearchFilter";
-import { DashboardPagination } from "../Shared/DashboardPagination";
+import { DashboardSearchFilter } from "../DashboardShared/DashboardSearchFilter";
+import { DashboardPagination } from "../DashboardShared/DashboardPagination";
 
 export function DashboardExpiringSoonList() {
   const { summary } = useDashboardContext();

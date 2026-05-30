@@ -4,11 +4,11 @@ import React from "react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useDashboardContext } from "../../context/DashboardContext";
-import { DashboardStatCard } from "../StatCards/DashboardStatCard";
-import { DashboardRecentBillsList } from "../Lists/DashboardRecentBillsList";
-import { DashboardLowStockList } from "../Lists/DashboardLowStockList";
-import { DashboardExpiringSoonList } from "../Lists/DashboardExpiringSoonList";
-import { DASHBOARD_STAT_CARDS_CONFIG } from "../../constants/DashboardSharedConstants";
+import { DashboardStatCard } from "../DashboardSummaryStats/DashboardStatCard";
+import { DashboardRecentBillsList } from "../DashboardRecentBills/DashboardRecentBillsList";
+import { DashboardLowStockList } from "../DashboardLowStock/DashboardLowStockList";
+import { DashboardExpiringSoonList } from "../DashboardExpiringSoon/DashboardExpiringSoonList";
+import { DASHBOARD_STAT_CARDS_CONFIG } from "../DashboardSummaryStats/DashboardSummaryStatsConstants";
 
 /**
  * DashboardPageContent

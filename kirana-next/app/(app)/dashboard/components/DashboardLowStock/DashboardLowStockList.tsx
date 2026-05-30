@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PackageOpen } from "lucide-react";
 import { useDashboardContext } from "../../context/DashboardContext";
 import { DASHBOARD_CONSTANTS } from "../../constants/DashboardSharedConstants";
-import { DashboardSearchFilter } from "../Shared/DashboardSearchFilter";
-import { DashboardPagination } from "../Shared/DashboardPagination";
+import { DashboardSearchFilter } from "../DashboardShared/DashboardSearchFilter";
+import { DashboardPagination } from "../DashboardShared/DashboardPagination";
 
 export function DashboardLowStockList() {
   const { summary } = useDashboardContext();
