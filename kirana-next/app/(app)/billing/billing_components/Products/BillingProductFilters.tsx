@@ -2,8 +2,8 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { type BillingFilter, BILLING_FILTER_OPTIONS } from "../../constants/BillingSharedConstants";
-import { useBilling } from "../../context/BillingContext";
+import { type BillingFilter, BILLING_FILTER_OPTIONS } from "../../billing_constants/BillingSharedConstants";
+import { useBilling } from "../../billing_context/BillingContext";
 
 export function BillingProductFilters() {
   const { filter, setFilter } = useBilling();

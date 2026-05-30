@@ -2,8 +2,8 @@
 
 import React from "react";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import type { CartItem as BillingCartItem } from "../../constants/BillingSharedConstants";
-import { lineLabel } from "../../utils/BillingSharedUtils";
+import type { CartItem as BillingCartItem } from "../../billing_constants/BillingSharedConstants";
+import { lineLabel } from "../../billing_utils/BillingSharedUtils";
 
 interface BillingCartItemRowProps {
   item: BillingCartItem;

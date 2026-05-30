@@ -2,7 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { useBilling } from "../../context/BillingContext";
+import { useBilling } from "../../billing_context/BillingContext";
 
 interface BillingMobileResponsiveLayoutProps {
   productGrid: React.ReactNode;

@@ -5,7 +5,7 @@ import { CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ChevronDown, ChevronUp, Settings2 } from "lucide-react";
 import { BillingCartAdvancedOptions } from "./BillingCartAdvancedOptions";
-import { useBilling } from "../../context/BillingContext";
+import { useBilling } from "../../billing_context/BillingContext";
 
 export function BillingCartFooter() {
   const {

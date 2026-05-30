@@ -5,7 +5,7 @@ import { CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, ShoppingCart } from "lucide-react";
 import { BillingCustomerSelector } from "../Customer/BillingCustomerSelector";
-import { useBilling } from "../../context/BillingContext";
+import { useBilling } from "../../billing_context/BillingContext";
 
 export function BillingCartHeader() {
   const {

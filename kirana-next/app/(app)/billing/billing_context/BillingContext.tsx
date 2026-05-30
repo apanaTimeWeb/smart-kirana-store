@@ -14,9 +14,9 @@ import {
 } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import type { BillData, BillingFilter, CartItem } from "../constants/BillingSharedConstants";
-import { formatBaseUnits, lineLabel, priceForBaseQuantity } from "../utils/BillingSharedUtils";
-import { buildWhatsAppMessage, printThermalBill } from "../utils/BillingWhatsAppUtils";
+import type { BillData, BillingFilter, CartItem } from "../billing_constants/BillingSharedConstants";
+import { formatBaseUnits, lineLabel, priceForBaseQuantity } from "../billing_utils/BillingSharedUtils";
+import { buildWhatsAppMessage, printThermalBill } from "../billing_utils/BillingWhatsAppUtils";
 
 // --- Internal Hook for State ---
 function useBillingStateInternal() {

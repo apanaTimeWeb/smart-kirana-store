@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useBilling } from "../../context/BillingContext";
+import { useBilling } from "../../billing_context/BillingContext";
 import { BillingProductSearchBar } from "./BillingProductSearchBar";
 import { BillingProductQuickPicks } from "./BillingProductQuickPicks";
 import { BillingProductFilters } from "./BillingProductFilters";

@@ -4,7 +4,7 @@ import React from "react";
 import { CardContent } from "@/components/ui/card";
 import { BillingCartEmptyState } from "./BillingCartEmptyState";
 import { BillingCartItemRow } from "./BillingCartItemRow";
-import { useBilling } from "../../context/BillingContext";
+import { useBilling } from "../../billing_context/BillingContext";
 
 export function BillingCartItemList() {
   const { cart, updateQty: onUpdateQty, removeFromCart: onRemove } = useBilling();

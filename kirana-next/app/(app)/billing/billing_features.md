@@ -16,7 +16,7 @@ app/(app)/billing/
 ├── billing.css                       ← ALL color tokens for this module (single source of truth for theming)
 ├── billing_features.md               ← THIS FILE — AI context & architecture map
 │
-├── components/
+├── billing_components/
 │   ├── Cart/                         ← Everything related to the right-side cart panel
 │   │   ├── BillingCartMainPanel.tsx
 │   │   ├── BillingCartHeader.tsx
@@ -44,20 +44,20 @@ app/(app)/billing/
 │   └── Layout/                       ← Global responsive layout wrappers
 │       └── BillingMobileResponsiveLayout.tsx
 │
-├── context/
+├── billing_context/
 │   └── BillingContext.tsx            ← Brain: all state, API mutations, cart logic. Return value is heavily memoized.
 │
-├── constants/
+├── billing_constants/
 │   └── BillingSharedConstants.ts     ← Central data: types + hardcoded UI options (PAYMENT_MODES, GST_RATES, etc.)
 │
-└── utils/
+└── billing_utils/
     ├── BillingSharedUtils.ts         ← Pure UI formatters, calculation helpers
     └── BillingWhatsAppUtils.ts       ← WhatsApp integration & thermal print helpers
 ```
 
 ---
 
-## 🧠 State Management: `context/BillingContext.tsx`
+## 🧠 State Management: `billing_context/BillingContext.tsx`
 
 **One file rules all state.** Every component pulls data from `useBilling()` — zero prop drilling. The return object is strictly memoized to prevent massive re-render chains across the micro-folders.
 
@@ -88,7 +88,7 @@ Cart state is auto-saved to `localStorage` under key `"billing_draft_state"`. On
 
 ---
 
-## 📦 Centralized Data: `constants/BillingSharedConstants.ts`
+## 📦 Centralized Data: `billing_constants/BillingSharedConstants.ts`
 
 **Single source of truth for all hardcoded data.** When the backend replaces these with API calls tomorrow, only this one file changes. All TS types are derived from these literal arrays.
 
@@ -158,19 +158,19 @@ All colors are defined as CSS variables here. To port this module to another pro
 
 | Feature | Where to touch | Notes |
 |---|---|---|
-| **Backend API for constants** | `constants/BillingSharedConstants.ts` only | Replace hardcoded arrays with API calls; zero UI changes needed |
-| **Barcode Scanner** | `components/Products/BillingProductSearchBar.tsx` | Add `keydown` listener for scanner input (fast typing) |
-| **Offline Mode** | `context/BillingContext.tsx` | Replace API calls with IndexedDB; add sync-queue on reconnect |
-| **Dynamic Offers (BOGO)** | `context/BillingContext.tsx` → `handleCheckout` / `addFixed` | Inject discount logic before cart total calculation |
-| **Multi-printer support** | `utils/BillingWhatsAppUtils.ts` | Add printer profile selection before `printThermalBill()` |
-| **Split payment** | `components/Cart/BillingCartAdvancedOptions.tsx` + `context/BillingContext.tsx` | Add partial cash + UPI fields; extend `BillData` type |
+| **Backend API for constants** | `billing_constants/BillingSharedConstants.ts` only | Replace hardcoded arrays with API calls; zero UI changes needed |
+| **Barcode Scanner** | `billing_components/Products/BillingProductSearchBar.tsx` | Add `keydown` listener for scanner input (fast typing) |
+| **Offline Mode** | `billing_context/BillingContext.tsx` | Replace API calls with IndexedDB; add sync-queue on reconnect |
+| **Dynamic Offers (BOGO)** | `billing_context/BillingContext.tsx` → `handleCheckout` / `addFixed` | Inject discount logic before cart total calculation |
+| **Multi-printer support** | `billing_utils/BillingWhatsAppUtils.ts` | Add printer profile selection before `printThermalBill()` |
+| **Split payment** | `billing_components/Cart/BillingCartAdvancedOptions.tsx` + `billing_context/BillingContext.tsx` | Add partial cash + UPI fields; extend `BillData` type |
 
 ---
 
 ## 📌 Quick Handover Summary
 
-- **Micro-Modular Layout**: Components split into specific domain folders (`components/Cart/`, `components/Products/`, etc.).
-- **Brain**: `context/BillingContext.tsx` — heavily memoized state controller. No prop drilling anywhere.
-- **Data**: `constants/BillingSharedConstants.ts` — all constants. One place to swap in API data tomorrow.
+- **Micro-Modular Layout**: Components split into specific domain folders (`billing_components/Cart/`, `billing_components/Products/`, etc.).
+- **Brain**: `billing_context/BillingContext.tsx` — heavily memoized state controller. No prop drilling anywhere.
+- **Data**: `billing_constants/BillingSharedConstants.ts` — all constants. One place to swap in API data tomorrow.
 - **Theming**: `billing.css` — all CSS variables. Copy this folder to any project and theme from here only.
-- **Post-checkout flow**: WhatsApp message → `utils/BillingWhatsAppUtils.ts`. Thermal print → `utils/BillingWhatsAppUtils.ts`.
+- **Post-checkout flow**: WhatsApp message → `billing_utils/BillingWhatsAppUtils.ts`. Thermal print → `billing_utils/BillingWhatsAppUtils.ts`.

@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { XCircle } from "lucide-react";
-import { MODE_LABEL } from "../../constants/BillingSharedConstants";
-import { rateUnit } from "../../utils/BillingSharedUtils";
+import { MODE_LABEL } from "../../billing_constants/BillingSharedConstants";
+import { rateUnit } from "../../billing_utils/BillingSharedUtils";
 
 interface BillingProductCardProps {
   product: Product;

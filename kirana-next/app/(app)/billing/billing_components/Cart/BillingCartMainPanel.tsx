@@ -3,7 +3,7 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { useBilling } from "../../context/BillingContext";
+import { useBilling } from "../../billing_context/BillingContext";
 
 import { BillingCartHeader } from "./BillingCartHeader";
 import { BillingCartItemList } from "./BillingCartItemList";

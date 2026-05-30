@@ -1,6 +1,6 @@
 import { format } from "date-fns";
-import type { BillData } from "../constants/BillingSharedConstants";
-import { lineLabel } from "../utils/BillingSharedUtils";
+import type { BillData } from "../billing_constants/BillingSharedConstants";
+import { lineLabel } from "../billing_utils/BillingSharedUtils";
 
 // ─── WhatsApp Message Builder ──────────────────────────────────────────────────
 
