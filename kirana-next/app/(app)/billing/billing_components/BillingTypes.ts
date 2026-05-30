@@ -29,7 +29,17 @@ export type BillData = {
   gstRate: number;
 };
 
-export type BillingFilter = "all" | "khula" | "fixed" | "variant" | "wholesale" | "in" | "low";
+export const BILLING_FILTER_OPTIONS = [
+  { id: "all", label: "All" },
+  { id: "khula", label: "Khula" },
+  { id: "fixed", label: "Fixed" },
+  { id: "variant", label: "Variant" },
+  { id: "wholesale", label: "Bora" },
+  { id: "low", label: "Low" },
+  { id: "in", label: "In Stock" },
+] as const;
+
+export type BillingFilter = typeof BILLING_FILTER_OPTIONS[number]["id"];
 
 export const MODE_LABEL: Record<string, string> = {
   khula: "Khula",
@@ -37,3 +47,15 @@ export const MODE_LABEL: Record<string, string> = {
   variant: "Variant",
   wholesale: "Wholesale",
 };
+
+export const GST_RATES = [5, 12, 18, 28] as const;
+
+export const PAYMENT_MODES = [
+  { id: "cash", label: "Cash" },
+  { id: "upi", label: "UPI" },
+  { id: "khata", label: "Khata" },
+] as const;
+
+export const PRESETS_GRAM = [100, 250, 500, 1000, 2000, 5000, 10000] as const;
+export const PRESETS_ML = [100, 250, 500, 1000, 5000, 15000] as const;
+export const PRESETS_PCS = [1, 2, 5, 10] as const;

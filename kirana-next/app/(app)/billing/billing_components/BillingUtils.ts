@@ -1,5 +1,6 @@
 import type { Product } from "@/lib/api";
 import type { CartItem } from "./BillingTypes";
+import { PRESETS_GRAM, PRESETS_ML, PRESETS_PCS } from "./BillingTypes";
 
 // ─── Stock / Unit Formatting ───────────────────────────────────────────────────
 
@@ -39,9 +40,9 @@ export function uniqueNumbers(values: Array<number | undefined>) {
 }
 
 export function defaultPresetsFor(product: Product) {
-  if (product.baseUnit === "gram") return [100, 250, 500, 1000, 2000, 5000, 10000];
-  if (product.baseUnit === "ml") return [100, 250, 500, 1000, 5000, 15000];
-  return [1, 2, 5, 10];
+  if (product.baseUnit === "gram") return [...PRESETS_GRAM];
+  if (product.baseUnit === "ml") return [...PRESETS_ML];
+  return [...PRESETS_PCS];
 }
 
 // ─── Cart Helpers ──────────────────────────────────────────────────────────────

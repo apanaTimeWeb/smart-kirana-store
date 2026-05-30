@@ -2,17 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import type { BillingFilter } from "./BillingTypes";
-
-const FILTER_OPTIONS = [
-  ["all", "All"],
-  ["khula", "Khula"],
-  ["fixed", "Fixed"],
-  ["variant", "Variant"],
-  ["wholesale", "Bora"],
-  ["low", "Low"],
-  ["in", "In Stock"],
-] as const;
+import { type BillingFilter, BILLING_FILTER_OPTIONS } from "./BillingTypes";
 
 interface BillingProductFiltersProps {
   filter: BillingFilter;
@@ -22,10 +12,10 @@ interface BillingProductFiltersProps {
 export function BillingProductFilters({ filter, setFilter }: BillingProductFiltersProps) {
   return (
     <div className="flex gap-2 overflow-x-auto pb-1">
-      {FILTER_OPTIONS.map(([value, label]) => (
+      {BILLING_FILTER_OPTIONS.map(({ id: value, label }) => (
         <button
           key={value}
-          onClick={() => setFilter(value as BillingFilter)}
+          onClick={() => setFilter(value)}
           className={cn(
             "shrink-0 rounded-md border px-3 py-1.5 text-xs font-bold transition-colors",
             filter === value

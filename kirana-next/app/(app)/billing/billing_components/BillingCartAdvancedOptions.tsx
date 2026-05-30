@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type { BillInputPaymentMode } from "@/lib/api";
+import { GST_RATES, PAYMENT_MODES } from "./BillingTypes";
 
 interface BillingCartAdvancedOptionsProps {
   showOptions: boolean;
@@ -80,10 +81,11 @@ export function BillingCartAdvancedOptions({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="5">5%</SelectItem>
-              <SelectItem value="12">12%</SelectItem>
-              <SelectItem value="18">18%</SelectItem>
-              <SelectItem value="28">28%</SelectItem>
+              {GST_RATES.map((rate) => (
+                <SelectItem key={rate} value={rate.toString()}>
+                  {rate}%
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         )}
@@ -110,9 +112,11 @@ export function BillingCartAdvancedOptions({
             <SelectValue placeholder="Select Payment Mode" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="cash">Cash</SelectItem>
-            <SelectItem value="upi">UPI</SelectItem>
-            <SelectItem value="khata">Khata</SelectItem>
+            {PAYMENT_MODES.map((mode) => (
+              <SelectItem key={mode.id} value={mode.id}>
+                {mode.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
