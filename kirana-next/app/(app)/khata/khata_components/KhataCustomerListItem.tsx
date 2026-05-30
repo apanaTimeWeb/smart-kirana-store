@@ -1,11 +1,25 @@
 "use client";
 
+// KhataCustomerListItem.tsx
+// ─────────────────────────────────────────────────────────────────────────────
+// Responsibility: Renders a single row in the customer list — avatar, name,
+// phone, due amount (or "Clear"), delete button, and chevron arrow.
+//
+// Clicking the row opens the Ledger Dialog via KhataContext.
+// The delete action is delegated UP to KhataCustomerListContainer which owns
+// the mutation logic, keeping this component purely presentational.
+// ─────────────────────────────────────────────────────────────────────────────
+
 import React from "react";
 import { Trash2, ChevronRight } from "lucide-react";
+import { type Customer } from "./KhataTypes";
 import { useKhata } from "./KhataContext";
+import { KhataConstants } from "./KhataConstants";
 
 interface KhataCustomerListItemProps {
-  customer: any;
+  /** The full Customer object from the API / KhataTypes. */
+  customer: Customer;
+  /** Delete handler owned by the parent container (KhataCustomerListContainer). */
   onDelete: (id: number, name: string) => void;
 }
 
@@ -33,7 +47,7 @@ export function KhataCustomerListItem({ customer, onDelete }: KhataCustomerListI
               ₹{customer.totalDue}
             </p>
           ) : (
-            <p className="text-[var(--khata-list-clear-text)]">Clear</p>
+            <p className="text-[var(--khata-list-clear-text)]">{KhataConstants.LABELS.CLEAR_DUE}</p>
           )}
         </div>
         <button

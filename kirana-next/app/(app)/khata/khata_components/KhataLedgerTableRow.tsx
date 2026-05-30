@@ -1,10 +1,22 @@
 "use client";
 
+// KhataLedgerTableRow.tsx
+// ─────────────────────────────────────────────────────────────────────────────
+// Responsibility: Renders one transaction row in the Khata ledger table.
+// Shows two layouts: Desktop (4-column grid) and Mobile (3-column grid).
+// If the transaction has attached bill items, delegates rendering to
+// KhataLedgerTransactionItemsList.
+//
+// Pure presentational component — no hooks, no state, no context.
+// To change how a single transaction row looks, touch ONLY this file.
+// ─────────────────────────────────────────────────────────────────────────────
+
 import React from "react";
 import { format } from "date-fns";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { KhataLedgerRow } from "./KhataTypes";
+import { KhataLedgerTransactionItemsList } from "./KhataLedgerTransactionItemsList";
 
 interface KhataLedgerTableRowProps {
   tx: KhataLedgerRow;
@@ -13,7 +25,7 @@ interface KhataLedgerTableRowProps {
 export function KhataLedgerTableRow({ tx }: KhataLedgerTableRowProps) {
   return (
     <div className="hover:bg-[var(--khata-muted-hover-bg)]">
-      {/* Desktop row */}
+      {/* ── Desktop Row ──────────────────────────────────────────── */}
       <div className="hidden sm:grid grid-cols-[120px_1fr_130px_130px] items-center px-6 py-4">
         <div className="text-sm text-[var(--khata-muted-text)]">
           {format(new Date(tx.createdAt), "dd MMM yyyy")}
@@ -42,10 +54,12 @@ export function KhataLedgerTableRow({ tx }: KhataLedgerTableRowProps) {
             {tx.type === "credit" ? "+" : "-"} ₹{tx.amount.toFixed(0)}
           </span>
         </div>
-        <div className="text-right font-bold text-base text-[var(--khata-foreground)]">₹{tx.balance.toFixed(0)}</div>
+        <div className="text-right font-bold text-base text-[var(--khata-foreground)]">
+          ₹{tx.balance.toFixed(0)}
+        </div>
       </div>
 
-      {/* Mobile row */}
+      {/* ── Mobile Row ───────────────────────────────────────────── */}
       <div className="sm:hidden grid grid-cols-[80px_1fr_90px] items-center px-3 py-3">
         <div className="text-xs text-[var(--khata-muted-text)]">
           {format(new Date(tx.createdAt), "dd MMM")}
@@ -74,24 +88,15 @@ export function KhataLedgerTableRow({ tx }: KhataLedgerTableRowProps) {
           >
             {tx.type === "credit" ? "+" : "-"}₹{tx.amount.toFixed(0)}
           </div>
-          <div className="text-xs font-bold text-[var(--khata-foreground)]">₹{tx.balance.toFixed(0)}</div>
+          <div className="text-xs font-bold text-[var(--khata-foreground)]">
+            ₹{tx.balance.toFixed(0)}
+          </div>
         </div>
       </div>
 
-      {/* Purchased Items List */}
+      {/* ── Purchased Items Sub-List (delegated to its own component) ── */}
       {tx.items && tx.items.length > 0 && (
-        <div className="bg-[var(--khata-muted-hover-bg)] px-4 sm:px-[140px] py-2 text-xs border-t border-dashed border-[var(--khata-border)]">
-          <div className="space-y-1">
-            {tx.items.map((item, idx) => (
-              <div key={idx} className="flex justify-between text-[var(--khata-muted-text)]">
-                <span>
-                  {item.productName} {item.variantName ? `(${item.variantName})` : ""} x {item.displayQuantity || item.quantity}
-                </span>
-                <span>₹{item.totalPrice.toFixed(2)}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <KhataLedgerTransactionItemsList items={tx.items} />
       )}
     </div>
   );

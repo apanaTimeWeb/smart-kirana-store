@@ -1,8 +1,16 @@
 "use client";
 
+// KhataCustomerListContainer.tsx
+// ─────────────────────────────────────────────────────────────────────────────
+// Responsibility: Orchestrates the customer list page. Fetches customer data,
+// handles delete mutations, and composes all sub-components into the list layout.
+//
+// This is the "smart" container — it owns the API calls and wires the data down
+// to pure presentational sub-components. It does NOT render the skeleton,
+// empty state, or ledger dialog itself — those are isolated in their own files.
+// ─────────────────────────────────────────────────────────────────────────────
+
 import React from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   useListCustomers,
   useDeleteCustomer,
@@ -11,15 +19,18 @@ import {
 } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { type Customer } from "./KhataTypes";
 import { useKhata } from "./KhataContext";
 import { KhataConstants } from "./KhataConstants";
 import { KhataCustomerListHeader } from "./KhataCustomerListHeader";
 import { KhataCustomerListItem } from "./KhataCustomerListItem";
+import { KhataCustomerListSkeleton } from "./KhataCustomerListSkeleton";
+import { KhataCustomerListEmptyState } from "./KhataCustomerListEmptyState";
 import { KhataAddCustomerDialog } from "./KhataAddCustomerDialog";
-import { KhataLedgerContainer } from "./KhataLedgerContainer";
+import { KhataLedgerDialog } from "./KhataLedgerDialog";
 
 export function KhataCustomerListContainer() {
-  const { customerSearch, selectedLedgerId, setSelectedLedgerId } = useKhata();
+  const { customerSearch } = useKhata();
   const { data: customers = [], isLoading } = useListCustomers({ search: customerSearch || undefined });
   const deleteCustomer = useDeleteCustomer();
   const queryClient = useQueryClient();
@@ -41,35 +52,28 @@ export function KhataCustomerListContainer() {
     );
   };
 
+  const renderListContent = () => {
+    if (isLoading) return <KhataCustomerListSkeleton />;
+    if (customers.length === 0) return <KhataCustomerListEmptyState />;
+    return (
+      <div className="divide-y divide-[var(--khata-border)]">
+        {(customers as Customer[]).map((customer) => (
+          <KhataCustomerListItem key={customer.id} customer={customer} onDelete={onDelete} />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <KhataCustomerListHeader totalCustomers={customers.length} />
 
+      {/* Dialogs are rendered here so they are always mounted in the tree */}
       <KhataAddCustomerDialog />
-
-      <Dialog open={selectedLedgerId !== null} onOpenChange={(open) => !open && setSelectedLedgerId(null)}>
-        <DialogContent className="max-w-3xl max-h-[92vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="px-6 py-4 border-b border-[var(--khata-border)]">
-            <DialogTitle>Khata Ledger</DialogTitle>
-          </DialogHeader>
-          {selectedLedgerId && <KhataLedgerContainer customerId={selectedLedgerId} />}
-        </DialogContent>
-      </Dialog>
+      <KhataLedgerDialog />
 
       <div className="rounded-2xl border border-[var(--khata-border)] bg-[var(--khata-card-bg)] overflow-hidden">
-        {isLoading ? (
-          <div className="p-8 space-y-4">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-20 w-full" />
-            ))}
-          </div>
-        ) : (
-          <div className="divide-y divide-[var(--khata-border)]">
-            {customers.map((customer: any) => (
-              <KhataCustomerListItem key={customer.id} customer={customer} onDelete={onDelete} />
-            ))}
-          </div>
-        )}
+        {renderListContent()}
       </div>
     </div>
   );

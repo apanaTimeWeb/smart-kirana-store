@@ -1,17 +1,30 @@
 "use client";
 
-import React, { useMemo } from "react";
+// KhataLedgerActions.tsx
+// ─────────────────────────────────────────────────────────────────────────────
+// Responsibility: Renders the 4 action buttons for a customer's ledger:
+//   1. Payment Mila  — sets transactionMode = "payment" in context
+//   2. Udhaar Diya   — sets transactionMode = "credit" in context
+//   3. Reminder      — opens the WhatsApp Reminder Dialog
+//   4. Thermal Print — triggers printThermalBill from KhataPrintUtils
+//
+// To add/remove/reorder ledger actions, touch ONLY this file.
+// ─────────────────────────────────────────────────────────────────────────────
+
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { IndianRupee, CreditCard, MessageCircle, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { type CustomerDetail, KhataLedgerRow } from "./KhataTypes";
 import { useKhata } from "./KhataContext";
 import { KhataConstants } from "./KhataConstants";
-import { printThermalBill, generateReminderMessage } from "./KhataPrintUtils";
+import { printThermalBill } from "./KhataPrintUtils";
 import { useGetSettings } from "@/lib/api";
-import { KhataLedgerRow } from "./KhataTypes";
 
 interface KhataLedgerActionsProps {
-  detail: any;
+  /** Full customer detail object including transactions. */
+  detail: CustomerDetail;
+  /** Computed ledger rows with running balance — passed in from the container. */
   ledgerRows: KhataLedgerRow[];
 }
 

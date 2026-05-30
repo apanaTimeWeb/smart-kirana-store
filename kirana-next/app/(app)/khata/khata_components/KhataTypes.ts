@@ -1,5 +1,22 @@
+// KhataTypes.ts
+// ─────────────────────────────────────────────────────────────────────────────
+// Single import point for ALL types used in the Khata module.
+//
+// Rules:
+//   - API types (Customer, CustomerDetail, AppSettings) are re-exported from
+//     the central @/lib/api/types so that UI components only ever import from
+//     THIS file — not from scattered lib paths.
+//   - Module-specific Zod schemas and derived types are defined here.
+// ─────────────────────────────────────────────────────────────────────────────
+
 import * as z from "zod";
 import { type BillItem } from "@/lib/api";
+
+// ─── Re-exported API Types (Single Import Point) ───────────────────────────────
+// Components import these from KhataTypes, NOT directly from @/lib/api/types.
+// When the API shape changes, only this re-export reference needs updating.
+
+export type { Customer, CustomerDetail, AppSettings } from "@/lib/api/types";
 
 // ─── Zod Schemas ───────────────────────────────────────────────────────────────
 

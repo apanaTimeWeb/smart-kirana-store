@@ -1,11 +1,23 @@
+// KhataPrintUtils.ts
+// ─────────────────────────────────────────────────────────────────────────────
+// Pure utility functions for generating WhatsApp reminder messages and
+// thermal print HTML for the Khata ledger.
+//
+// These functions are side-effect-free formatters — they take data in and
+// return strings/HTML out. No React, no hooks.
+// ─────────────────────────────────────────────────────────────────────────────
+
 import { format } from "date-fns";
-import { KhataLedgerRow } from "./KhataTypes";
+import { type CustomerDetail, type AppSettings, KhataLedgerRow } from "./KhataTypes";
 import { KhataConstants } from "./KhataConstants";
 
+// ─── generateReminderMessage ───────────────────────────────────────────────────
+// Builds a monospace-formatted WhatsApp message string for the customer ledger.
+
 export function generateReminderMessage(
-  detail: any,
+  detail: CustomerDetail,
   ledgerRows: KhataLedgerRow[],
-  settings: any,
+  settings: AppSettings | undefined,
   shopName: string = KhataConstants.SHOP_NAME_DEFAULT
 ): string {
   if (!detail) return "";
@@ -59,17 +71,21 @@ export function generateReminderMessage(
     "\n";
   msg += "-".repeat(W) + "\n\n";
 
-  msg += KhataConstants.WHATSAPP_TEMPLATE.KIRP + "\n";
+  msg += KhataConstants.WHATSAPP_TEMPLATE.PLEASE_PAY + "\n";
   msg += KhataConstants.WHATSAPP_TEMPLATE.THANK_YOU + "\n";
   msg += "```";
 
   return msg;
 }
 
+// ─── printThermalBill ──────────────────────────────────────────────────────────
+// Opens a new browser window with a thermal-print-optimized HTML layout and
+// triggers the browser print dialog after a short delay.
+
 export function printThermalBill(
-  detail: any,
+  detail: CustomerDetail,
   ledgerRows: KhataLedgerRow[],
-  settings: any,
+  settings: AppSettings | undefined,
   shopName: string = KhataConstants.SHOP_NAME_DEFAULT
 ) {
   if (!detail) return;
@@ -122,7 +138,7 @@ export function printThermalBill(
       </head><body>
         <div class="center bold">
           <h2>${shopName}</h2>
-          <p>Khata Ledger</p>
+          <p>${KhataConstants.WHATSAPP_TEMPLATE.THERMAL_BILL_TITLE}</p>
           ${settings?.shopAddress ? `<p>${settings.shopAddress}</p>` : ""}
           ${settings?.shopPhone ? `<p>Phone: ${settings.shopPhone}</p>` : ""}
         </div>
@@ -136,7 +152,7 @@ export function printThermalBill(
           2
         )}</span></div>
         <hr/>
-        <div class="center" style="margin-top:15px;font-size:12px;">Thank You!</div>
+        <div class="center" style="margin-top:15px;font-size:12px;">${KhataConstants.WHATSAPP_TEMPLATE.THANK_YOU}</div>
       </body></html>
     `);
   win.document.close();

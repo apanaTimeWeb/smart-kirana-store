@@ -1,5 +1,15 @@
 "use client";
 
+// KhataAddCustomerDialog.tsx
+// ─────────────────────────────────────────────────────────────────────────────
+// Responsibility: Renders the Dialog form for adding a new customer.
+// Manages form state with react-hook-form + Zod validation, fires the
+// createCustomer mutation, and invalidates the customer list cache on success.
+//
+// To change the "Add Customer" form fields, validations, or submission logic,
+// touch ONLY this file.
+// ─────────────────────────────────────────────────────────────────────────────
+
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -43,7 +53,7 @@ export function KhataAddCustomerDialog() {
     <Dialog open={isAddCustomerOpen} onOpenChange={setIsAddCustomerOpen}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>Naya Customer Add Karein</DialogTitle>
+          <DialogTitle>{KhataConstants.LABELS.ADD_CUSTOMER_DIALOG_TITLE}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -52,7 +62,7 @@ export function KhataAddCustomerDialog() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Naam</FormLabel>
+                  <FormLabel>{KhataConstants.LABELS.FIELD_NAME}</FormLabel>
                   <FormControl>
                     <Input {...field} className="bg-[var(--khata-background)]" />
                   </FormControl>
@@ -65,7 +75,7 @@ export function KhataAddCustomerDialog() {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
+                  <FormLabel>{KhataConstants.LABELS.FIELD_PHONE}</FormLabel>
                   <FormControl>
                     <Input {...field} className="bg-[var(--khata-background)]" />
                   </FormControl>
@@ -78,7 +88,7 @@ export function KhataAddCustomerDialog() {
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Address (Optional)</FormLabel>
+                  <FormLabel>{KhataConstants.LABELS.FIELD_ADDRESS}</FormLabel>
                   <FormControl>
                     <Input {...field} className="bg-[var(--khata-background)]" />
                   </FormControl>
