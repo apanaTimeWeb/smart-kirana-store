@@ -13,10 +13,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <Link
           href="/"
-          className="inline-flex items-center text-sm font-medium mb-6 transition-colors"
-          style={{ color: "var(--auth-muted-text)" }}
-          onMouseOver={(e) => (e.currentTarget.style.color = "var(--auth-back-hover)")}
-          onMouseOut={(e) => (e.currentTarget.style.color = "var(--auth-muted-text)")}
+          className="inline-flex items-center text-sm font-medium mb-6 transition-colors text-[var(--auth-muted-text)] hover:text-[var(--auth-back-hover)]"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Home pe wapas
