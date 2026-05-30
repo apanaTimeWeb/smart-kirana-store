@@ -1,48 +1,198 @@
-# Smart Kirana Store - Auth Module Documentation
+# Smart Kirana Store — Auth Module Documentation
 
-Yeh document `Smart Kirana Store` application ke **Auth (Authentication)** module ki functional aur UI details provide karta hai. Iska main purpose naye developers ko login aur signup flows samajhne me madad karna hai.
+> **AI CONTEXT DOCUMENT** — This file is the single source of truth for navigating the Auth module.
+> When an AI receives a bug report, it should read this file first to identify **exactly one file** to fix.
 
-## 📁 Directory Structure & Architecture
+---
 
-Auth module `app/auth` directory me sthit hai, jiske andar do main sub-modules hain: `login` aur `signup`.
+## 📐 Architecture Philosophy
 
-- **`layout.tsx`**: Dono pages ke liye ek common minimal layout provide karta hai (with a dark background and centered content).
-- **`login/`**:
-  - `page.tsx`: Login page render karta hai.
-  - `login.css`: Login page ke specific UI styles.
-  - `login_components/`: Isme `LoginForm.tsx` (Phone aur Password ka form), `LoginHeader.tsx` (Logo aur title), aur `DemoHint.tsx` (Demo account ke liye guidance box) hain.
-- **`signup/`**:
-  - `page.tsx`: Signup page render karta hai.
-  - `signup.css`: Signup page ke specific UI styles.
-  - `signup_components/`: Isme `SignupForm.tsx` (Dukaan ka naam, Malik ka naam, Phone, Password inputs), `SignupHeader.tsx`, aur `DemoHint.tsx` hain.
+This module follows strict **"One File, One Responsibility"** micro-modularization.
+
+- **No inline logic in UI files** — business logic lives in `AuthContext.tsx`; validation lives in `AuthTypes.ts`.
+- **No hardcoded strings in components** — all demo credentials live in `AuthSharedConstants.ts`.
+- **No `any` types** — `AuthUser` interface is defined in `AuthTypes.ts` and used throughout.
+- **Theme independence** — ZERO Tailwind color classes in JSX. All colors are `var(--auth-*)` CSS variables defined in `auth.css`.
+- **Isolated state** — `AuthContext.tsx` is the only shared state; no global store is polluted.
+- **Memoized context** — `login` and `signup` actions are `useCallback`-memoized; the context value object is `useMemo`-memoized to prevent re-render cascades across consumer components.
+
+---
+
+## 📂 Complete File Map
+
+### 🟦 Route Files (Next.js App Router)
+
+| File | Purpose |
+|------|---------|
+| `layout.tsx` | Auth layout shell — centers content, imports `auth.css` **once** for the entire route segment |
+| `login/page.tsx` | Login page — Server Component. Wraps `<AuthProvider>` around login micro-components |
+| `signup/page.tsx` | Signup page — Server Component. Wraps `<AuthProvider>` around signup micro-components |
+| `loading.tsx` | Next.js skeleton shown automatically during page load. Matches the visual shape of the form |
+| `error.tsx` | Next.js error boundary (`"use client"` required). Shows a retry button if the segment crashes |
+| `auth.css` | **All** CSS color variables for this module (`:root` + `.dark` overrides). Zero colors anywhere else |
+
+---
+
+### 🟩 Data Layer (Single Source of Truth)
+
+| File | Purpose |
+|------|---------|
+| `auth_types/AuthTypes.ts` | Zod schemas (`loginSchema`, `signupSchema`) and all inferred TypeScript types (`LoginFormValues`, `SignupFormValues`, `AuthUser`). **To change validation rules, only edit this file.** |
+| `auth_constants/AuthSharedConstants.ts` | All static/hardcoded data: demo phone numbers and demo password pre-filled in forms. **Tomorrow, when a real API provides defaults, only edit this file.** |
+
+---
+
+### 🟧 State Layer
+
+| File | Purpose |
+|------|---------|
+| `auth_context/AuthContext.tsx` | React Context Provider. Holds: `jwt`, `user`, `isLoginLoading`, `isSignupLoading`. Exposes `login()` and `signup()` actions (both `useCallback`-memoized). Context value is `useMemo`-memoized. Exposes `useAuth()` hook. **To integrate the real backend API, only edit this file.** |
+
+---
+
+### 🟨 Login View
+
+| File | Purpose |
+|------|---------|
+| `auth_components/Login/AuthLoginHeader.tsx` | Store logo icon + `<h1>` title + subtitle. Pure presentational, no state |
+| `auth_components/Login/AuthLoginForm.tsx` | Phone + password inputs with show/hide toggle. Reads `AUTH_PLACEHOLDERS` from Constants. Calls `login()` from Context |
+
+---
+
+### 🟪 Signup View
+
+| File | Purpose |
+|------|---------|
+| `auth_components/Signup/AuthSignupHeader.tsx` | Store logo icon + `<h1>` title + subtitle. Pure presentational, no state |
+| `auth_components/Signup/AuthSignupForm.tsx` | Shop name + owner name + phone + password inputs. Reads `AUTH_PLACEHOLDERS` from Constants. Calls `signup()` from Context |
+
+---
+
+### 🟫 Shared Components
+
+| File | Purpose |
+|------|---------|
+| `auth_components/Shared/AuthDemoHint.tsx` | Info banner shown below both login and signup forms. Tells the user any credentials work in demo mode. Pure presentational, no props, no state |
+
+---
+
+## 🗂 Directory Tree
+
+```
+app/auth/
+├── layout.tsx                        ← CSS import + centering shell
+├── loading.tsx                       ← Next.js loading skeleton (auto-shown)
+├── error.tsx                         ← Next.js error boundary (auto-shown on crash)
+├── auth.css                          ← ALL CSS color variables for this module
+├── auth_features.md                  ← (this file)
+│
+├── login/
+│   └── page.tsx                      ← Login entry point (Server Component)
+│
+├── signup/
+│   └── page.tsx                      ← Signup entry point (Server Component)
+│
+    │  ── DATA LAYER ──────────────────────────────────────────────
+    ├── auth_types/
+    │   └── AuthTypes.ts              ← Zod schemas + TypeScript types (AuthUser etc.)
+    ├── auth_constants/
+    │   └── AuthSharedConstants.ts    ← Demo credentials & static placeholder data
+    │
+    │  ── STATE LAYER ─────────────────────────────────────────────
+    ├── auth_context/
+    │   └── AuthContext.tsx           ← React Context: jwt, user, login(), signup()
+    │
+    │  ── COMPONENTS ──────────────────────────────────────────────
+    └── auth_components/
+        ├── Login/
+        │   ├── AuthLoginHeader.tsx   ← Logo + title for login page
+        │   └── AuthLoginForm.tsx     ← Phone + password form
+        ├── Signup/
+        │   ├── AuthSignupHeader.tsx  ← Logo + title for signup page
+        │   └── AuthSignupForm.tsx    ← Shop name, owner name, phone, password form
+        └── Shared/
+            └── AuthDemoHint.tsx      ← Demo mode info banner (shared by both pages)
+```
+
+---
 
 ## 🛠 Core Features & Workflow
 
-### 1. Login Flow (`/auth/login`)
-- **UI Elements**: 
-  - Phone Number input (type="tel").
-  - Password input jiske saath ek eye icon ("👁") diya gaya hai password ko show/hide karne ke liye.
-- **Demo Mode**: Abhi application demo state me hai, isliye form me ek demo phone number (`9876543210`) aur password (`demo1234`) pehle se pre-filled aate hain.
-- **Navigation**: Submit par click karne se form simulate karta hai (700ms loading state) aur fir seedha `/dashboard` par redirect kar deta hai. Saath hi ek link "Register Karein" Signup page par le jata hai.
+### 1. Login Flow
+- User opens `/auth/login` → `loading.tsx` skeleton shows while the Server Component loads.
+- `LoginPage` renders `<AuthProvider>` → `<AuthLoginHeader>` + `<AuthLoginForm>` + `<AuthDemoHint>`.
+- `AuthLoginForm` reads pre-filled demo values from `AuthSharedConstants.ts`.
+- On submit → calls `login()` from `AuthContext` → sets `jwt` + `user` → redirects to `/dashboard`.
 
-### 2. Signup Flow (`/auth/signup`)
-- **UI Elements**:
-  - Naya dukandaar onboard karne ke liye: Dukaan Ka Naam, Malik Ka Naam, Phone Number, aur Password Banayein (with show/hide eye icon).
-- **Demo Mode**: Naya account banane ke liye bhi ek demo set pehle se filled aata hai (jaise "Ramesh General Store", "Ramesh Kumar").
-- **Navigation**: Form submit karne par loading state show hoti hai aur fir `/dashboard` par user redirect ho jata hai. Ek link "Login Karein" back login screen par le jata hai.
+### 2. Signup Flow
+- User opens `/auth/signup` → `loading.tsx` skeleton shows.
+- `SignupPage` renders `<AuthProvider>` → `<AuthSignupHeader>` + `<AuthSignupForm>` + `<AuthDemoHint>`.
+- `AuthSignupForm` reads pre-filled demo values from `AuthSharedConstants.ts`.
+- On submit → calls `signup()` from `AuthContext` → sets `jwt` + `user` → redirects to `/dashboard`.
 
-## 🧠 State Management & API
-- **Client-Side Form**: Form state aur loading UI React ke `useState` hooks (`show`, `loading`, `phone`, `password` etc.) se handle hoti hai kyonki yeh `"use client"` components hain.
-- **No Real Backend (Yet)**: Abhi tak kisi real authentication provider (jaise Firebase, Auth0, ya NextAuth) ka integration nahi kiya gaya hai. Form submit hone par sirf `setTimeout` ka use karke mock API call simulate ki gayi hai.
+### 3. Error Handling
+- If any route segment throws a server-side error, Next.js automatically renders `error.tsx`.
+- The error boundary logs the error and shows a "Dobara Try Karein" button that calls `reset()`.
 
-## 🚀 AI & Developer Context: Future Enhancements
-Agar future me is module ko production ready banana ho:
+---
 
-1. **OTP Based Login**: Password ki jagah ya password ke saath Phone Number + OTP based authentication lagana Indian kirana store owners ke liye zyada easy rahega. Twilio ya Firebase Auth ka use karke.
-2. **NextAuth Integration**: Session management ke liye `next-auth` set up karna padega taaki secured routes (`/dashboard`, `/billing` etc.) par directly koi bina login ke access na kar paye. (Abhi un-protected routes hain).
-3. **Form Validation**: Zod aur React Hook Form ka use karke proper validation (jaise Phone number 10 digit ka ho) lagani hogi.
-4. **Forgot Password**: Password reset karne ka flow abhi missing hai, jise add karna hoga.
+## 🧠 State Management
 
-## 📌 Summary for Quick Handover
-- UI poori tarah responsive aur polished hai. Tailwind CSS aur ShadCN UI components (Card, Input, Button, Label) ka proper upyog kiya gaya hai.
-- Login/Signup forms components ke andar separated hain jisse aage chalkar unhe API ke saath jodna bohot aasan hoga.
+```
+AuthContext.tsx
+├── isLoginLoading: boolean       → shows spinner in AuthLoginForm button
+├── isSignupLoading: boolean      → shows spinner in AuthSignupForm button
+├── jwt: string | null            → mock token (replace with real JWT from API)
+├── user: AuthUser | null         → { phone, name?, shop? } — typed via AuthTypes.ts
+├── login(LoginFormValues)        → useCallback-memoized action
+└── signup(SignupFormValues)      → useCallback-memoized action
+
+Memoization:
+├── login / signup                → useCallback([router]) — stable refs across renders
+└── contextValue                  → useMemo([all state + actions]) — consumers only
+                                     re-render when actual values change
+```
+
+---
+
+## 🎨 Theme Variables (`auth.css`)
+
+| Variable | Usage |
+|----------|-------|
+| `--auth-card-bg` | Form card background |
+| `--auth-muted-bg` | Full-page background |
+| `--auth-muted-text` | Placeholder text, secondary labels, back-link |
+| `--auth-primary-bg` | Submit button background |
+| `--auth-primary-text` | Submit button text |
+| `--auth-primary-color` | General primary accent |
+| `--auth-border` | Card and input border color |
+| `--auth-foreground` | Primary text / labels |
+| `--auth-logo-bg` | Logo circle background |
+| `--auth-logo-text` | Logo icon color |
+| `--auth-link-text` | "Register Karein" / "Login Karein" link color |
+| `--auth-back-hover` | "Home pe wapas" hover color |
+| `--auth-demo-bg` | Demo hint banner background |
+| `--auth-demo-border` | Demo hint banner border |
+| `--auth-demo-icon` | Demo hint info icon color |
+| `--auth-demo-title` | Demo hint "Demo Mode" title color |
+
+---
+
+## 📌 AI Quick-Reference: Where to Look
+
+| Task | File to Edit |
+|------|-------------|
+| Change login/signup validation rules (min length etc.) | `auth_types/AuthTypes.ts` |
+| Change the pre-filled demo phone/password | `auth_constants/AuthSharedConstants.ts` |
+| Integrate real backend API for login | `auth_context/AuthContext.tsx` → `login()` |
+| Integrate real backend API for signup | `auth_context/AuthContext.tsx` → `signup()` |
+| Add a new field to the user session object | `auth_types/AuthTypes.ts` → `AuthUser` interface |
+| Fix login form UI (inputs, button) | `auth_components/Login/AuthLoginForm.tsx` |
+| Fix signup form UI (inputs, button) | `auth_components/Signup/AuthSignupForm.tsx` |
+| Change the page title / logo on login | `auth_components/Login/AuthLoginHeader.tsx` |
+| Change the page title / logo on signup | `auth_components/Signup/AuthSignupHeader.tsx` |
+| Change the demo hint banner text | `auth_components/Shared/AuthDemoHint.tsx` |
+| Change any color or theme token | `auth.css` |
+| Change page centering / outer shell | `layout.tsx` |
+| Change the loading skeleton shape | `loading.tsx` |
+| Change the error page message or button | `error.tsx` |

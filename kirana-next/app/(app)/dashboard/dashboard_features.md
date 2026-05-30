@@ -1,78 +1,151 @@
-# Smart Kirana Store - Dashboard Documentation
+# Smart Kirana Store — Dashboard Module Documentation
 
-Yeh document `Smart Kirana Store` application ke **Dashboard** module ki complete architectural aur functional details provide karta hai. Iska main purpose kisi bhi naye developer ya AI assistant ko ek comprehensive context dena hai taaki future me bina kisi Knowledge Transfer (KT) ke, aasani se modifications aur naye features add kiye ja sakein.
+> **AI Context Document** — This file is the authoritative map for this module. Before making any change to the dashboard feature, read this file first. It tells you exactly which file to touch and why.
 
-## 📁 Directory Structure & Architecture
+---
 
-Dashboard ka code `app/(app)/dashboard` directory ke andar maintain kiya gaya hai. Is module me Client-side rendering ka use kiya gaya hai (`"use client"`).
+## 📁 Directory Structure
 
-- **`page.tsx`**: Dashboard ka main entry point. Yeh saara logic handle karta hai, data ko aggregate karta hai, aur baaki child components ko props pass karta hai.
-- **`dashboard.css`**: Dashboard ke specific CSS variables aur styles (e.g., colors, borders, backgrounds) ko define karta hai.
-- **`loading.tsx`**: Next.js ka default loading state, jab tak dashboard render ho raha hota hai tab tak loader dikhane ke liye.
-- **`dashboard_components/`**: Yahan saare child components hain jo dashboard me use hote hain:
-  - `StatCard.tsx`: Metric cards ke liye reusable component (Sale, Profit, Khata, etc.).
-  - `LowStockList.tsx`: Kam stock waale items ko list, search, aur paginate karne wala component.
-  - `RecentBillsList.tsx`: Haal hi me banaye gaye bills ko list, search, aur paginate karne wala component.
-  - `ExpiringSoonList.tsx`: Jaldi expire hone wale items ko list, search, aur paginate karne wala component.
+```text
+app/(app)/dashboard/
+├── page.tsx                             ← Shell only: CSS import + DashboardProvider + DashboardPageContent
+├── loading.tsx                          ← Next.js skeleton loading UI (Server Component)
+├── error.tsx                            ← Next.js error boundary (Client Component)
+├── dashboard.css                        ← ALL color tokens for this module (single source of truth for theming)
+├── dashboard_features.md                ← THIS FILE — AI context & architecture map
+│
+├── dashboard_context/
+│   └── DashboardContext.tsx             ← Data layer: fetches summary, exposes via memoized Context
+├── dashboard_types/
+│   └── DashboardTypes.ts                ← TypeScript types for the dashboard
+├── dashboard_constants/
+│   └── DashboardSharedConstants.ts      ← Central data: statically defined UI arrays and shared configurations
+│
+└── dashboard_components/
+    ├── DashboardLayout/
+    │   └── DashboardPageContent.tsx     ← Full dashboard UI: Maps config array to stat cards and places lists
+    ├── DashboardSummaryStats/
+    │   ├── DashboardStatCard.tsx        ← Reusable metric card (Sale, Profit, Khata, Low Stock, Expiry)
+    │   └── DashboardSummaryStatsConstants.ts ← Config array for stat cards
+    ├── DashboardRecentBills/
+    │   ├── DashboardRecentBillsList.tsx ← Card: recent bills list with search + pagination
+    │   └── DashboardRecentBillsConstants.ts  ← Payment mode labels
+    ├── DashboardLowStock/
+    │   └── DashboardLowStockList.tsx    ← Card: low-stock products list with search + pagination
+    ├── DashboardExpiringSoon/
+    │   └── DashboardExpiringSoonList.tsx← Card: expiring-soon products list with search + pagination
+    └── DashboardShared/
+        ├── DashboardSearchFilter.tsx    ← Reusable search input with magnifier icon
+        └── DashboardPagination.tsx      ← Reusable prev/next pagination controls
+```
 
-## 🛠 Core Features & Components
+---
 
-### 1. Main Dashboard Page (`page.tsx`)
-- **Data Source**: Abhi ke liye `data.json` se mock data fetch kar raha hai. (Future me API call replace hogi).
-- **Data Aggregation**: Yahan calculations hoti hain:
-  - **Today's Sale & Profit**: Aakhri din ke `salesReportData` aur `profitReportData` se fetch karta hai.
-  - **Pending Khata**: Jin customers ka `totalDue > 0` hai, unka amount sum up hota hai.
-  - **Low Stock Items**: Jo products apne `lowStockThreshold` se kam ya barabar hain, unko filter karta hai aur 'Out of Stock' (count = 0) alag calculate karta hai.
-- Yeh page 5 `StatCard`, 1 `RecentBillsList`, 1 `LowStockList` aur 1 `ExpiringSoonList` component ko render karta hai.
+## 🧠 State Management: `DashboardContext.tsx`
 
-### 2. StatCard Component (`StatCard.tsx`)
-- Ek highly reusable, pure UI component hai.
-- **Props**: `title`, `subtitle`, `value`, `note`, `icon`, aur CSS variable based color classes (`colorClass`, `bgClass`, `borderClass`, `iconColorClass`).
-- 5 instances use hote hain dashboard me:
-  - **आज की बिक्री (Today's Sale)**: IndianRupee icon ke sath.
-  - **आज का मुनाफा (Today's Profit)**: TrendingUp icon ke sath.
-  - **उधार बाकी (Pending Khata)**: BookOpen icon ke sath.
-  - **कम स्टॉक (Low Stock Alert)**: AlertTriangle icon ke sath.
-  - **एक्सपायरी अलर्ट (Expiring Soon)**: Clock icon ke sath.
+A minimal Context that calls `useGetDashboardSummary()` (React Query) and exposes the result to all child components. **No prop drilling** — any component calls `useDashboardContext()` directly. The Context value is wrapped in `useMemo` to prevent large re-render chains across the dashboard sub-folders.
 
-### 3. Recent Bills List (`RecentBillsList.tsx`)
-- **UI**: Haal ki bikri (Recent Bills) ki list dikhata hai. Card view me `ShoppingBag` icon ke sath ata hai.
-- **Features**:
-  - **Search**: Customer ke naam ya bill ID ke basis pe filter kar sakte hain. Default naam "Walk-in Customer" hota hai agar name missing ho.
-  - **Pagination**: Ek baar me 5 items dikhata hai. Prev/Next buttons hain. Page switch hone par state update hoti hai.
-  - **Payment Mode Badges**: Payment mode (Khata, UPI, Cash) ke basis par alag-alag color ki `Badge` dikhata hai. Iske colors bhi CSS variables se aate hain.
+| Value | Type | Purpose |
+|---|---|---|
+| `summary` | `DashboardSummaryData \| undefined` | All dashboard data (stats + lists) |
+| `isLoading` | `boolean` | True while data is fetching |
+| `error` | `any` | Error from React Query (used by Next.js error.tsx) |
 
-### 4. Low Stock List (`LowStockList.tsx`)
-- **UI**: Kam stock wale products ko dikhata hai, taaki dukandaar ko inventory update karne me aasani ho.
-- **Features**:
-  - **Search**: Product ke naam ya category se item dhoondh sakte hain.
-  - **Pagination**: 5 items per page show karta hai.
-  - **Alerts**: Agar product ki stock `0` ho gayi hai toh usko red color me "Out of Stock" dikhata hai, warna "X unit left" dikhata hai. Item ka `lowStockThreshold` (Min value) bhi dikhta hai.
-  - **Mock Data**: UI testing ke liye API (store.ts) me hardcoded dummy data add kiya gaya hai agar actual low stock items na ho.
+---
 
-### 5. Expiring Soon List (`ExpiringSoonList.tsx`)
-- **UI**: Jaldi expire hone wale (agle 15 din me) products ki list dikhata hai.
-- **Features**:
-  - **Search**: Product ya variant ke naam se item dhoondh sakte hain.
-  - **Pagination**: Ek baar me 5 items dikhata hai. Prev/Next buttons hain.
-  - **Alerts**: Expired items par "Expired" ka tag aur kitne din baaki hain ye batata hai.
-  - **Mock Data**: Agar koi item expiry ke kareeb nahi hai, toh UI visualization ke liye dummy hardcoded products inject kiye jate hain (via API layer).
+## 📦 Centralized Data: `DashboardSharedConstants.ts` & `DashboardTypes.ts`
 
-## 🎨 Styling Approach
-- **Tailwind CSS**: Utility classes ka mainly use hua hai. Shadcn UI (`Card`, `Input`, `Button`, `Badge`) library internally use ho rahi hai.
-- **CSS Variables**: `dashboard.css` ke through custom colors define kiye gaye hain. Jaise `bg-[var(--dashboard-sale-bg)]` jisse theme change karne me easily consistency maintain hoti hai. Colors values design system se connected hain.
+**Single source of truth for all types and hardcoded data.** Tomorrow when backend replaces these, only this file changes.
 
-## 🚀 AI & Developer Context: Future Enhancements (Kya kya ho sakta hai)
-Agar kal ko koi naya feature banana ho ya AI se code likhwana ho, toh yahan kuch ideas aur scope of improvements hain:
+| Export | Type | Purpose |
+|---|---|---|
+| **`DashboardTypes.ts`** | | |
+| `DashboardStatSummary` | type | Numeric KPIs (sale, profit, khata, stock counts) |
+| `LowStockProduct` | type | Shape of a low-stock product item |
+| `ExpiringProduct` | type | Shape of an expiring product item |
+| `RecentBill` | type | Shape of a recent bill row |
+| `DashboardSummaryData` | type | Union of all above — the full API response shape |
+| **`DashboardSharedConstants.ts`** | | |
+| `DashboardSharedConstants.ts` | `const` | `{ ITEMS_PER_PAGE: 5 }` — pagination config |
+| `DashboardRecentBillsConstants.ts` | `Record<string, string>` | `{ khata: "Khata", upi: "UPI", cash: "Cash" }` — badge labels |
+| `DashboardSummaryStatsConstants.ts` | `const array` | `DASHBOARD_STAT_CARDS_CONFIG` — Hardcoded configuration for stat cards, extracting UI logic from components |
 
-1. **Real API Integration**: Abhi `lib/data.json` use ho raha hai. Isko `useEffect` + `fetch` / `axios` ya Next.js App Router API fetch se replace karna padega. SWR ya React Query lagaya ja sakta hai state management ke liye.
-2. **Date Range Filters**: Ek Global Date Picker add kiya ja sakta hai `page.tsx` me, jisse `StatCard` aur lists us timeframe ke according update hon.
-3. **Interactive Charts**: Dashboard me "Aaj ka hisaab" ke neeche Recharts ya Chart.js use karke pichle 7 din ka sales vs profit graph dikhaya ja sakta hai.
-4. **WebSocket / Real-time**: Agar naya bill banta hai POS se, toh dashboard auto-refresh ho without manual reload.
-5. **Actionable Buttons**: Low Stock list me sidhe "Reorder" ka button ho, aur Recent bills me "View Invoice" ka action icon ho.
+---
 
-## 📌 Summary for Quick Handover
-- Code `app/(app)/dashboard` folder me hai.
-- Architecture simple hai: 1 Parent (`page.tsx`) aur multiple presentational/stateful children (`dashboard_components/`).
-- Kisi bhi naye chart ya list ko banane ke liye `dashboard_components` me naya file create karein aur use `page.tsx` me grid system (`grid gap-4 md:grid-cols-2`) ke andar inject karein.
-- Search aur pagination har list me locally (client-side) managed hai `useState` ki madad se. Jab actual API aayegi, toh ise server-side pagination se replace kiya ja sakta hai agar data bahut bada ho.
+## 🎨 Theming: `dashboard.css`
+
+All colors are CSS variables here. To port to another project, only change this file.
+
+### Full CSS Variable Reference
+
+| Variable | Purpose | Light Value |
+|---|---|---|
+| `--dashboard-sale-value` | Today's Sale card — value text | `hsl(var(--primary))` |
+| `--dashboard-sale-bg` | Today's Sale card — background | `hsl(174 25% 95%)` |
+| `--dashboard-sale-border` | Today's Sale card — border | `hsl(174 25% 85%)` |
+| `--dashboard-sale-icon` | Today's Sale card — icon | `hsl(var(--primary))` |
+| `--dashboard-profit-value` | Today's Profit card — value | `hsl(142 60% 28%)` |
+| `--dashboard-profit-bg` | Today's Profit card — bg | `hsl(142 60% 97%)` |
+| `--dashboard-profit-border` | Today's Profit card — border | `hsl(142 60% 85%)` |
+| `--dashboard-profit-icon` | Today's Profit card — icon | `hsl(142 60% 28%)` |
+| `--dashboard-khata-value` | Pending Khata card — value | `hsl(38 90% 42%)` |
+| `--dashboard-khata-bg` | Pending Khata card — bg | `hsl(38 90% 95%)` |
+| `--dashboard-khata-border` | Pending Khata card — border | `hsl(38 90% 85%)` |
+| `--dashboard-khata-icon` | Pending Khata card — icon | `hsl(38 90% 42%)` |
+| `--dashboard-lowstock-value` | Low Stock card — value | `hsl(var(--destructive))` |
+| `--dashboard-lowstock-bg` | Low Stock card — bg | `hsl(0 84% 97%)` |
+| `--dashboard-lowstock-border` | Low Stock card — border | `hsl(0 84% 88%)` |
+| `--dashboard-lowstock-icon` | Low Stock card — icon | `hsl(var(--destructive))` |
+| `--dashboard-expiry-value` | Expiring Soon card — value | `hsl(32 95% 44%)` |
+| `--dashboard-expiry-bg` | Expiring Soon card — bg | `hsl(32 100% 96%)` |
+| `--dashboard-expiry-border` | Expiring Soon card — border | `hsl(32 95% 85%)` |
+| `--dashboard-expiry-icon` | Expiring Soon card — icon | `hsl(32 95% 44%)` |
+| `--dashboard-badge-khata-*` | Recent Bills — Khata badge (text/border/bg) | amber tones |
+| `--dashboard-badge-upi-*` | Recent Bills — UPI badge (text/border/bg) | teal tones |
+| `--dashboard-badge-cash-*` | Recent Bills — Cash badge (text/border/bg) | green tones |
+| `--dashboard-primary-icon` | Generic icon color (ShoppingBag in bills list) | `hsl(var(--primary))` |
+| `--dashboard-destructive-text` | Low Stock list — card title color | `hsl(var(--destructive))` |
+| `--dashboard-destructive-icon` | Generic destructive icon | `hsl(var(--destructive))` |
+| `--dashboard-muted-text` | All secondary/helper text (replaces `text-muted-foreground`) | `hsl(var(--muted-foreground))` |
+| `--dashboard-row-hover-bg` | Row hover bg in all 3 lists (replaces `hover:bg-muted/30`) | `hsl(var(--muted) / 0.35)` |
+| `--dashboard-card-header-bg` | Expiring Soon CardHeader bg (replaces `bg-muted/20`) | `hsl(var(--muted) / 0.20)` |
+| `--dashboard-error-icon-bg` | Error boundary icon circle background | `hsl(var(--destructive) / 0.10)` |
+| `--dashboard-error-icon-text` | Error boundary AlertTriangle icon color | `hsl(var(--destructive))` |
+
+---
+
+## ⚠️ Known Gotchas (Fixed)
+
+> Documented to prevent regression.
+
+1. **`DashboardStatCard.tsx` was missing `"use client"`.**
+   This component accepts an `onClick` prop (an event listener) which requires a Client Component. **Fixed: `"use client"` added.**
+
+2. **`page.tsx` had TWO components defined (`Dashboard` + `DashboardContent`).**
+   This violated the "One File, One Component" rule. `DashboardContent` has been extracted to `DashboardPageContent.tsx`. `page.tsx` is now a clean provider shell. **Fixed.**
+
+3. **Widespread hardcoded Tailwind semantic tokens (`text-muted-foreground`, `hover:bg-muted/30`, `bg-muted/20`, `bg-destructive/10`, `text-destructive`) across 7 files.**
+   All replaced with `--dashboard-*` CSS variables defined in `dashboard.css`. **Fixed.**
+
+---
+
+## 🚀 Future Enhancements
+
+| Feature | Where to touch | Notes |
+|---|---|---|
+| **Backend API swap** | `DashboardTypes.ts` + `DashboardContext.tsx` | Replace `useGetDashboardSummary` with a custom hook; type changes only in `DashboardTypes.ts` |
+| **Date range filter** | `DashboardContext.tsx` + `DashboardPageContent.tsx` | Add date state to context; pass to API query |
+| **Interactive charts** | New file: `DashboardSalesChart.tsx` | Use Recharts; read from context; add to grid in `DashboardPageContent.tsx` |
+| **WebSocket / real-time** | `DashboardContext.tsx` | Add WebSocket listener that calls `queryClient.invalidateQueries(...)` on new bill event |
+| **Actionable row buttons** | `DashboardRecentBillsList.tsx`, `DashboardLowStockList.tsx` | Add "View" / "Reorder" buttons inside each row |
+
+---
+
+## 📌 Quick Handover Summary
+
+- **Entry**: `page.tsx` — provider shell only (~20 lines).
+- **UI**: `DashboardPageContent.tsx` (in `DashboardLayout`) — all layout, heading, stat cards, lists grid.
+- **Data**: `DashboardContext.tsx` — single fetch, shared via context with `useMemo`. Zero prop drilling.
+- **Types/Constants**: `DashboardTypes.ts` & feature-specific Constants (`DashboardSummaryStatsConstants.ts`, etc.) — highly isolated for AI integration.
+- **Theming**: `dashboard.css` — all color variables. Copy folder to any project, retheme from here.
+- **Reusable micro-components**: `DashboardStatCard`, `DashboardSearchFilter`, `DashboardPagination` — organized in strict feature-based sub-folders.

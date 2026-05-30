@@ -1,49 +1,189 @@
-# Smart Kirana Store - History Module Documentation
+# Smart Kirana Store — History Module Documentation
 
-Yeh document `Smart Kirana Store` application ke **History & Returns** module ki complete architectural aur functional details provide karta hai. Iska main purpose purane bills ko dekhna aur usme se specific items ko return karke stock aur khata ko adjust karna hai.
-
-## 1. Module Overview
-**Path:** `app/(app)/history`
-History module dukandar ko allow karta hai:
-- Purane saare bills ki list dekhna.
-- Bill No. ya Customer Name se search karna.
-- Kisi bhi bill par click karke uski details (items, total, payment mode) dekhna.
-- Items ki return quantity daalkar unhe return karna.
-- Updated (Refunded) bill ko Thermal Printer par print karna.
-- Updated bill customer ko WhatsApp par bhejna.
-
-## 2. Key Components
-
-### 2.1. `BillHistoryList`
-**File:** `history_components/BillHistoryList.tsx`
-- Yeh component saare bills ko fetch karta hai (`useListBills` hook ka use karke).
-- **Search Bar:** Real-time search by `id` ya `customerName`.
-- **Card UI:** Mobile-first design me har ek bill ek tappable card ki tarah dikhta hai jisme amount, date, payment mode aur customer name hota hai.
-
-### 2.2. `BillDetailsDialog`
-**File:** `history_components/BillDetailsDialog.tsx`
-- Jab kisi bill par click hota hai, toh yeh dialog open hota hai.
-- Isme bill ke saare items listed hote hain.
-- **Return Logic:** Har item ke samne ek input box hota hai, jisme maximum purchased quantity tak ki value daali ja sakti hai.
-- **Total Refunds:** Automatically calculate hota hai.
-- **Success Screen:** Return confirm hone ke baad ek success screen aati hai jisme "WhatsApp" aur "Print" ke options hote hain.
-
-## 3. Data Flow & State Management
-
-### 3.1. Returning Items (`storeReturnBillItems` in `store.ts`)
-- **Stock Adjustment:** Jab bhi koi item return hota hai, uski `quantityToReturn` utni base unit quantity wapas product stock me add ho jati hai (`stockInBaseUnit + stockDelta`).
-- **Khata Adjustment:** Agar original bill `khata` (Udhaar) mode par tha, toh total refund amount customer ke `totalDue` me se deduct ho jata hai aur unke ledger me ek "Payment/Refund" transaction ki entry add ho jati hai.
-- **Daily Metrics:** Return date (original bill date) par based sales aur profit dono report se minus ho jate hain.
-
-## 4. UI & Styling (CSS & Design Tokens)
-- Is module me `history.css` ka use kiya gaya hai jisme `@app/color_code.md` ke hisaab se colors mapping ki gayi hai:
-  - `.history-returned-item`: Muted text (Color: `#6B7280`)
-  - `.history-refund-amount`: Destructive text (Color: `#E53535`)
-- Baki components Tailwind CSS ka standard use karte hain (jaise `text-destructive`, `text-muted-foreground`).
-
-## 5. WhatsApp & Print Utility
-- **Print Receipt:** Ek naye browser window (`window.open`) me HTML table generate hoti hai. Isme original bill, returns (strikethrough ke sath), aur updated total dikhaya jata hai.
-- **WhatsApp Share:** `encodeURIComponent` ka use karke ek text-based invoice banaya jata hai aur `https://wa.me/` link ke zariye customer ko message bheja jata hai. Phone number explicitly success screen par maanga jata hai ya blank chhodne par default WhatsApp app contact selection dikhata hai.
+> **AI Context Document** — This file is the authoritative map for this module. Before making any change to the history feature, read this file first. It tells you exactly which file to touch and why.
 
 ---
-**Summary:** History module business workflow ka ek crucial hissa hai jo ensure karta hai ki returns ke baad inventory aur accountancy (Udhaar) humesha accurate rahein.
+
+## 📁 Directory Structure
+
+```
+app/(app)/history/
+├── page.tsx                                  ← Main entry: layout + HistoryProvider wrapper (Server Component)
+├── loading.tsx                               ← Next.js skeleton loading UI (Server Component)
+├── error.tsx                                 ← Next.js error boundary (Client Component)
+├── history.css                               ← ALL color tokens for this module (single source of truth for theming)
+├── history_features.md                       ← THIS FILE — AI context & architecture map
+│
+├── history_components/
+│   ├── BillList/
+│   │   ├── HistoryBillListContainer.tsx      ← Orchestrator: reads context, manages searchQuery, renders correct state
+│   │   ├── HistoryBillCard.tsx               ← Single tappable bill row card (bill #, date, customer, amount, badge)
+│   │   └── HistoryBillListEmptyState.tsx     ← Empty state UI (FileText icon + "Koi bill nahi mila")
+│   │
+│   ├── BillDetailsDialog/
+│   │   ├── HistoryBillDetailsDialog.tsx      ← Dialog shell: owns return flow state, composes sub-components
+│   │   ├── HistoryBillDetailsHeader.tsx      ← Dialog sticky header: bill #, date, customer, payment badge
+│   │   └── HistoryBillDialogFooterActions.tsx← Footer button bar: Print / WhatsApp / Close / Confirm Return
+│   │
+│   ├── Returns/
+│   │   ├── HistoryBillItemsReturnList.tsx    ← Slim orchestrator: composes the 3 return sub-components
+│   │   ├── HistoryBillItemReturnRow.tsx      ← Single item row: name, qty, price, return input / "Fully Returned"
+│   │   ├── HistoryReturnInfoBanner.tsx       ← AlertCircle info box explaining the return process
+│   │   ├── HistoryReturnRefundSummary.tsx    ← Original total + refund amount highlighted block
+│   │   └── HistoryBillReturnSuccessScreen.tsx← Post-return success UI: phone input, Send/Print/Close buttons
+│   │
+│   └── Common/
+│       └── HistorySearchFilter.tsx           ← Reusable search input (used in list + inside dialog)
+│
+├── history_context/
+│   └── HistoryContext.tsx                    ← Brain: bills API call, selectedBill, dialog open state (Memoized)
+│
+├── history_shared/
+│   ├── HistoryTypes.ts                       ← Shared types for the module
+│   └── HistorySharedConstants.ts             ← Central data: hardcoded UI strings, payment mode styles, labels
+│
+└── history_utils/
+    ├── HistoryPrintUtils.ts                  ← Pure function: generates thermal print HTML in a new window
+    └── HistoryWhatsAppUtils.ts               ← Pure function: builds monospace invoice text + opens wa.me link
+```
+
+---
+
+## 🧠 State Management: `HistoryContext.tsx`
+
+**Module-scoped brain.** Every component reads from `useHistoryContext()` — zero prop drilling for shared state.
+
+### What lives in context (Memoized using useMemo):
+| State | Type | Purpose |
+|---|---|---|
+| `bills` | `HistoryBill[] \| undefined` | All bills fetched from API |
+| `isLoadingBills` | `boolean` | API loading state |
+| `settings` | `AppSettings \| undefined` | Store settings (currency, shop name) |
+| `currency` | `string` | Derived from settings, default `"Rs"` |
+| `selectedBill` | `HistoryBill \| null` | Bill currently shown in the detail dialog |
+| `setSelectedBill` | `fn` | Setter for selectedBill |
+| `isDialogOpen` | `boolean` | Controls Dialog open/close |
+| `setIsDialogOpen` | `fn` | Setter for isDialogOpen |
+| `openBillDetails` | `fn(bill)` | Sets selectedBill + opens dialog in one call |
+
+### What is NOT in context (intentionally local):
+| State | Lives In | Why |
+|---|---|---|
+| `searchQuery` (list) | `HistoryBillListContainer` | Only consumed by one component |
+| `returnQtys` | `HistoryBillDetailsDialog` | Return flow state; resets on every dialog open |
+| `isSuccess` | `HistoryBillDetailsDialog` | Post-return UI toggle |
+| `phoneNumber` | `HistoryBillDetailsDialog` | WhatsApp phone input |
+| `searchQuery` (dialog) | `HistoryBillDetailsDialog` | Item search inside dialog only |
+
+---
+
+## 📦 Centralized Data: `HistorySharedConstants.ts` & `HistoryTypes.ts`
+
+**Single source of truth for all shared types and constants.** When the backend replaces these with API calls tomorrow, only this one file changes.
+
+| Export | File | Purpose |
+|---|---|---|
+| `HISTORY_MESSAGES` | `HistorySharedConstants.ts` | All hardcoded UI texts, placeholders, and error messages |
+| `HISTORY_LABELS` | `HistorySharedConstants.ts` | Button labels and structural text |
+| `HISTORY_PAYMENT_MODE_STYLES` | `HistorySharedConstants.ts` | Tailwind classes for payment mode badges (cash/upi/khata) |
+| `HistoryBill` | `HistoryTypes.ts` | Re-export of `Bill` from `@/lib/api/types` for module-local convenience |
+| `HistoryReturnQtys` | `HistoryTypes.ts` | `Record<number, string>` — per-item return qty map |
+
+---
+
+## 🎨 Theming: `history.css`
+
+All colors are defined as CSS variables in this file. To port this module to another project, only change this file.
+
+### Full CSS Variable Reference
+
+| Variable | Purpose |
+|---|---|
+| `--history-warning-text/border/bg` | Khata payment mode badge + warning states |
+| `--history-primary-text/border/bg` | UPI badge, info banner, loading spinner, hover states |
+| `--history-positive-text/border/bg` | Cash payment mode badge |
+| `--history-destructive-text/border/bg` | Error states, "already returned" text, refund summary highlight |
+| `--history-success-text/bg` | Return success screen icon + WhatsApp button hover |
+| `--history-success-btn-bg/hover/text` | WhatsApp "Send Updated Bill" button (green) |
+| `--history-returned-item` | Struck-through item text in thermal print receipt |
+| `--history-refund-amount` | Refund line text in thermal print receipt |
+| `--history-card-bg/text` | Bill card and dialog content backgrounds |
+| `--history-muted-bg/text` | Secondary text, dialog header background, "Fully Returned" badge |
+| `--history-border` | All dividers and card borders |
+
+---
+
+## 🔄 Data Flow: Bill Return Process
+
+```
+User taps HistoryBillCard
+    → openBillDetails(bill) [HistoryContext]
+        → setSelectedBill(bill) + setIsDialogOpen(true)
+            → HistoryBillDetailsDialog renders
+
+User enters return qty
+    → handleQtyChange() [HistoryBillDetailsDialog]
+        → setReturnQtys() → calculateTotalRefund() → hasReturns=true
+
+User clicks "Confirm Return"
+    → handleConfirmReturn() [HistoryBillDetailsDialog]
+        → returnMutation.mutate({ billId, items })
+            → onSuccess: setUpdatedBill(newBill) + setIsSuccess(true)
+                → <HistoryBillReturnSuccessScreen /> renders
+
+User clicks "Send Updated Bill" (WhatsApp)
+    → sendHistoryWhatsAppBill(currentBill, phoneNumber, settings) [HistoryWhatsAppUtils]
+        → opens wa.me link with monospace invoice text
+
+User clicks "Print Thermal Receipt"
+    → printHistoryReceipt(currentBill, currency, settings) [HistoryPrintUtils]
+        → opens new window with HTML invoice, auto-triggers window.print()
+```
+
+### Backend Adjustment Logic (Server Side)
+When a return is processed (`POST /bills/:id/return`):
+- **Stock:** `returnedQty × baseUnit` added back to product stock
+- **Khata:** If original bill was `khata` mode, refund amount deducted from customer `totalDue`, ledger entry added
+- **Daily Metrics:** Sales and profit adjusted on the return date
+
+---
+
+## ⚠️ Known Gotchas
+
+> These issues were resolved during the enterprise refactor. Documented here to prevent regression.
+
+1. **`"use client"` is required on every component that uses hooks.**
+   Next.js App Router treats all files as Server Components by default. Files using `useState`, `useEffect`, `useContext`, or event handlers (`onClick`) MUST have `"use client"` as their first line. All components in this module comply.
+
+2. **`returnQtys` key is `productId` (number), not array index.**
+   The return qty map uses `productId` as the key (not the item's position in the array). This ensures correctness when items are filtered/reordered by the search query inside the dialog.
+
+3. **`updatedBill` overrides `selectedBill` for print/send after a return.**
+   After a successful return, the API returns a new bill object (`newBill`) with updated `returnedQuantity` values. `HistoryBillDetailsDialog` stores this as `updatedBill` and uses `currentBill = updatedBill || selectedBill` for all print/send actions.
+
+4. **WhatsApp uses `Rs` hardcoded in message body, not `currency` variable.**
+   In `HistoryWhatsAppUtils.ts` line 62, the rate column uses `Rs ${item.unitPrice}` directly (not the `currency` parameter). This is a pre-existing behaviour; if the store uses a different currency symbol, `HistoryWhatsAppUtils.ts` needs to be updated.
+
+---
+
+## 🚀 Future Enhancements
+
+| Feature | Where to Touch | Notes |
+|---|---|---|
+| **Backend API for constants** | `HistorySharedConstants.ts` | Replace hardcoded texts with API-driven config/i18n |
+| **Date range filter** | `HistoryBillListContainer.tsx` | Add date picker; filter in `filteredBills` useMemo |
+| **Payment mode filter chip** | `HistoryBillListContainer.tsx` | Add filter state; filter in `filteredBills` useMemo |
+| **Export bills to CSV** | New `HistoryExportUtils.ts` | Follow same pattern as Print/WhatsApp utils |
+| **Partial return history** | `HistoryBillItemReturnRow.tsx` | Show full return history timeline, not just count |
+| **Confirm dialog before return** | `HistoryBillDetailsDialog.tsx` | Add `AlertDialog` wrapper around `handleConfirmReturn` |
+
+---
+
+## 📌 Quick Handover Summary
+
+- **Brain**: `history_context/HistoryContext.tsx` — all API calls and shared dialog state. Zero prop drilling.
+- **Data**: `history_shared/HistorySharedConstants.ts` — all hardcoded texts. One place to swap API data tomorrow.
+- **Theming**: `history.css` — all CSS variables. Copy this folder to any project and theme from here only.
+- **Bill list**: `history_components/BillList/HistoryBillListContainer` → renders `HistoryBillCard` × N.
+- **Return flow**: `history_components/BillDetailsDialog/HistoryBillDetailsDialog` → composes sub-components.
+- **Post-return**: `history_components/Returns/HistoryBillReturnSuccessScreen` → `HistoryPrintUtils` / `HistoryWhatsAppUtils`.

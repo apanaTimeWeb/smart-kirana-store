@@ -1,21 +1,28 @@
-import "./login.css";
+// Server Component — no hooks used here directly.
+// AuthProvider and its children handle all client-side logic.
 import Link from "next/link";
-import { LoginHeader } from "./login_components/LoginHeader";
-import { DemoHint } from "./login_components/DemoHint";
-import { LoginForm } from "./login_components/LoginForm";
+import { ArrowLeft } from "lucide-react";
+import { AuthProvider } from "../auth_context/AuthContext";
+import { AuthLoginHeader } from "../auth_components/Login/AuthLoginHeader";
+import { AuthLoginForm } from "../auth_components/Login/AuthLoginForm";
+import { AuthDemoHint } from "../auth_components/Shared/AuthDemoHint";
 
 export default function LoginPage() {
   return (
-    <div className="w-full max-w-sm">
-      <LoginHeader />
-      <DemoHint />
-      <LoginForm />
-
-      <p className="text-center text-xs text-muted-foreground mt-4">
-        <Link href="/" className="hover:text-[var(--login-back-hover)] transition-colors">
-          ← Wapas Home Par
+    <AuthProvider>
+      <div className="w-full max-w-md">
+        <Link
+          href="/"
+          className="inline-flex items-center text-sm font-medium mb-6 transition-colors text-[var(--auth-muted-text)] hover:text-[var(--auth-back-hover)]"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Home pe wapas
         </Link>
-      </p>
-    </div>
+
+        <AuthLoginHeader />
+        <AuthLoginForm />
+        <AuthDemoHint />
+      </div>
+    </AuthProvider>
   );
 }

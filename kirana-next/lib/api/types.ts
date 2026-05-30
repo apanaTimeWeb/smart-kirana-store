@@ -56,6 +56,7 @@ export type Product = {
 
 export type ProductVariantInput = {
   id?: number;
+  productName?: string;
   variantName: string;
   unitType: UnitType;
   baseUnit: BaseUnit;
@@ -68,6 +69,7 @@ export type ProductVariantInput = {
   stockInBaseUnit: number;
   lowStockThresholdInBaseUnit: number;
   presetBaseQuantities?: number[];
+  expiryDate?: string | null;
 };
 
 export type ProductInput = {
@@ -106,6 +108,7 @@ export type KhataTransaction = {
   amount: number;
   description: string;
   createdAt: string;
+  items?: BillItem[];
 };
 
 export type Supplier = {

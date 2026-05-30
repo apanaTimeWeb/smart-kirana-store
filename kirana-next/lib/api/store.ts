@@ -408,7 +408,7 @@ export function storeCreateProduct(input: ProductInput): Product[] {
     popularBaseQuantities: [],
     usageCount: 0,
     isActive: true,
-    expiryDate: null,
+    expiryDate: variant.expiryDate ?? null,
     createdAt: now,
   }));
 
@@ -432,12 +432,14 @@ export function storeUpdateProduct(id: number, update: Partial<ProductVariantInp
   if (idx === -1) throw new Error("Product variant not found");
 
   const current = data.products[idx];
+  const newProductName = update.productName?.trim() || current.productName;
+
   const updated = withComputedFields({
     ...current,
     ...update,
     id: current.id,
     productId: current.productId,
-    productName: current.productName,
+    productName: newProductName,
     category: current.category,
     brand: current.brand,
     searchKeywords: current.searchKeywords,
@@ -447,9 +449,27 @@ export function storeUpdateProduct(id: number, update: Partial<ProductVariantInp
     sellingPrice: Number(update.sellingPrice ?? current.sellingPrice),
     stockInBaseUnit: Number(update.stockInBaseUnit ?? current.stockInBaseUnit),
     lowStockThresholdInBaseUnit: Number(update.lowStockThresholdInBaseUnit ?? current.lowStockThresholdInBaseUnit),
+    expiryDate: update.expiryDate !== undefined ? update.expiryDate : current.expiryDate,
   });
 
   data.products[idx] = updated;
+
+  // Sync productName across all variants of the same product
+  if (newProductName !== current.productName) {
+    data.products = data.products.map(p => {
+      if (p.productId === updated.productId && p.id !== updated.id) {
+        return withComputedFields({ ...p, productName: newProductName });
+      }
+      return p;
+    });
+
+    // Also update the Product Master
+    const master = data.productMasters.find(m => m.id === updated.productId);
+    if (master) {
+      master.name = newProductName;
+    }
+  }
+
   if (update.stockInBaseUnit !== undefined) {
     applySharedStock(updated, updated.stockInBaseUnit);
   }
@@ -646,6 +666,7 @@ export function storeCreateBill(d: Omit<Bill, "id" | "createdAt">): Bill {
         amount: d.finalAmount,
         description: `Bill #${bill.id}`,
         createdAt: bill.createdAt,
+        items: deepClone(d.items),
       });
     }
   }

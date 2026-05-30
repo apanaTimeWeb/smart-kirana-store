@@ -1,61 +1,176 @@
-# Smart Kirana Store - Billing Module Documentation
+# Smart Kirana Store — Billing Module Documentation
 
-Yeh document `Smart Kirana Store` application ke **Billing / POS (Point of Sale)** module ki detailed architectural aur functional information provide karta hai. Iska main purpose ek clear context dena hai taaki future me modifications aur feature enhancements aasani se kiye ja sakein bina kisi KT (Knowledge Transfer) ke.
+> **AI Context Document** — This file is the authoritative map for this module. Before making any change to the billing feature, read this file first. It tells you exactly which file to touch and why.
 
-## 📁 Directory Structure & Architecture
+---
 
-Billing module `app/(app)/billing` directory me sthit hai aur yeh poori tarah se Client-side (`"use client"`) state-driven module hai.
+## 📁 Directory Structure
 
-- **`page.tsx`**: Main entry point. Yeh layout manage karta hai (Desktop ke liye two-column grid aur Mobile ke liye `MobileBillingView`), aur `use-billing.ts` hook se saara state receive karke components ko pass karta hai.
-- **`billing.css`**: Billing module ke custom UI variables yahan define hote hain.
-- **`billing_components/`**: Yeh folder sabhi isolated child components aur utility hooks store karta hai:
-  - `use-billing.ts`: Core state management hook.
-  - `ProductGrid.tsx` & `ProductCard.tsx`: Products ko render aur filter karne ka logic.
-  - `CartPanel.tsx` & `CartItemRow.tsx`: Current bill ka UI (Subtotal, GST, Discount, Checkout).
-  - `CustomerPicker.tsx` & `KhulaPicker.tsx`: Customer select karne aur loose item (khula) ki quantity pick karne ke dialogs.
-  - `WhatsAppDialog.tsx` & `whatsapp-utils.ts`: Bill generation ke baad WhatsApp par message bhejna aur thermal print nikalne ke utils.
-  - `MobileBillingView.tsx`: Mobile devices ke liye tabbed UI (Products vs Cart).
+This module follows a strictly **Micro-Modularized, Feature-Based Architecture** designed for AI-friendliness and enterprise scale.
 
-## 🛠 Core Features & Workflow
+```
+app/(app)/billing/
+├── page.tsx                          ← Main entry: layout + BillingProvider wrapper
+├── loading.tsx                       ← Next.js skeleton loading UI (Server Component)
+├── error.tsx                         ← Next.js error boundary (Client Component)
+├── billing.css                       ← ALL color tokens for this module (single source of truth for theming)
+├── billing_features.md               ← THIS FILE — AI context & architecture map
+│
+├── billing_components/
+│   ├── Cart/                         ← Everything related to the right-side cart panel
+│   │   ├── BillingCartMainPanel.tsx
+│   │   ├── BillingCartHeader.tsx
+│   │   ├── BillingCartEmptyState.tsx
+│   │   ├── BillingCartItemList.tsx
+│   │   ├── BillingCartItemRow.tsx
+│   │   ├── BillingCartAdvancedOptions.tsx
+│   │   └── BillingCartFooter.tsx
+│   │
+│   ├── Products/                     ← Everything related to the left-side product grid
+│   │   ├── BillingProductMainGrid.tsx
+│   │   ├── BillingProductSearchBar.tsx
+│   │   ├── BillingProductQuickPicks.tsx
+│   │   ├── BillingProductFilters.tsx
+│   │   ├── BillingProductList.tsx
+│   │   └── BillingProductCard.tsx
+│   │
+│   ├── Customer/                     ← Customer selection logic
+│   │   └── BillingCustomerSelector.tsx
+│   │
+│   ├── Dialogs/                      ← All modal windows
+│   │   ├── BillingLooseItemQuantityPicker.tsx
+│   │   └── BillingWhatsAppInvoiceDialog.tsx
+│   │
+│   └── Layout/                       ← Global responsive layout wrappers
+│       └── BillingMobileResponsiveLayout.tsx
+│
+├── billing_context/
+│   └── BillingContext.tsx            ← Brain: all state, API mutations, cart logic. Return value is heavily memoized.
+│
+├── billing_constants/
+│   └── BillingSharedConstants.ts     ← Central data: types + hardcoded UI options (PAYMENT_MODES, GST_RATES, etc.)
+│
+└── billing_utils/
+    ├── BillingSharedUtils.ts         ← Pure UI formatters, calculation helpers
+    └── BillingWhatsAppUtils.ts       ← WhatsApp integration & thermal print helpers
+```
 
-### 1. Product Grid & Search
-- **Smart Search**: Dukandaar products ko naam, category, brand, ya **Shortcuts/Barcodes** (e.g. `att`, `chi`) type karke jaldi dhoondh sakta hai.
-- **Filters**: Products ko alag-alag filters (All, Khula, Fixed, Variant, Bora, Low Stock, In Stock) ke basis pe dekha ja sakta hai.
-- **Quick Select (Top Products)**: Jo items zyada bikte hain un par "Top" ka badge aata hai aur wo list me pehle dikhte hain.
+---
 
-### 2. Cart & Billing Panel
-- **Calculations**: `subtotal`, `discount`, `taxableValue`, aur `gstAmount` real-time me calculate hote hain.
-- **GST Support**: Ek checkbox hai "GST" add karne ke liye, jiske saath 5%, 12%, 18%, 28% ka dropdown diya gaya hai.
-- **Payment Modes**:
-  - **Cash** & **UPI**: Default fast modes.
-  - **Khata**: Agar Khata select kiya hai, toh Customer select karna mandatory (required) ho jata hai.
-- **Customer & WhatsApp**: 'CustomerPicker' se existing customer select kar sakte hain, ya directly 10-digit number enter kar sakte hain jispe bill banne ke baad automatic WhatsApp invoice link chala jaye.
+## 🧠 State Management: `billing_context/BillingContext.tsx`
 
-### 3. Add to Cart Mechanism
-- **Fixed/Packet items**: Ek baar click karne par direct 1 quantity cart me add ho jati hai.
-- **Khula Items (Loose)**: Jab dukandaar kisi 'khula' item (jaise chini, chawal) par click karta hai, toh `KhulaPicker` popup khulta hai jisme weight (e.g., 250g, 500g, 1kg) select karne ka option aata hai.
+**One file rules all state.** Every component pulls data from `useBilling()` — zero prop drilling. The return object is strictly memoized to prevent massive re-render chains across the micro-folders.
 
-### 4. Checkout & Post-Billing Actions
-- Jab "Bill Karo" par click hota hai:
-  - `useCreateBill` mutation ke through API call hoti hai.
-  - Success par cart reset ho jati hai aur related queries (Dashboards, Products) invalidate/refresh hoti hain.
-  - Customer ke WhatsApp par message bhej diya jata hai (`buildWhatsAppMessage`).
-  - Thermal Printer connect hone par automatically receipt print ka function call hota hai (`printThermalBill`).
+### What lives in context:
+| State | Type | Purpose |
+|---|---|---|
+| `cart` | `CartItem[]` | All items currently in the bill |
+| `search` | `string` | Product search query |
+| `filter` | `BillingFilter` | Active product filter chip |
+| `discount` | `number` | Manual discount in rupees |
+| `paymentMode` | `BillInputPaymentMode \| ""` | Cash / UPI / Khata |
+| `selectedCustomerId` | `string` | For Khata mode |
+| `quickPhone` | `string` | Optional WhatsApp number (non-customer) |
+| `enableGST` | `boolean` | GST toggle |
+| `gstRate` | `number` | GST % (from GST_RATES constant) |
+| `khulaProduct` | `Product \| null` | Triggers quantity picker dialog |
+| `whatsappBillData` | `BillData \| null` | Triggers post-checkout WhatsApp dialog |
+| `mobileTab` | `"products" \| "cart"` | Mobile tab switcher |
+| `billSuccess` | `boolean` | Shows success animation briefly |
 
-## 🧠 State Management (`use-billing.ts`)
-- Yeh file is module ka "Brain" hai. React Query (TanStack Query) se data fetch hota hai (`useListProducts`, `useListCustomers`).
-- Saara cart modification (`updateQty`, `removeFromCart`, `addKhula`, `addFixed`), total calculations, aur API triggers issi ek hook me rakhe gaye hain taaki UI components (CartPanel, ProductGrid) dumb / presentational rahein.
+### Derived values (computed, not stored):
+- `subtotal`, `taxableValue`, `gstAmount`, `finalAmount`, `cartCount`
+- `filteredProducts` (memoized from filter + search + products)
+- `quickProducts` (memoized top-8 quickSelect items)
 
-## 🚀 AI & Developer Context: Future Enhancements
-Agar future me aap ya AI isme naye features banana chahein:
+### Persistence:
+Cart state is auto-saved to `localStorage` under key `"billing_draft_state"`. On page load, it restores automatically.
 
-1. **Barcode Scanner Integration**: Keyboard listener banakar physical barcode scanner ka input capture karke directly cart me item add kiya ja sakta hai.
-2. **Offline Mode Support**: Abhi ye online API pe dependent hai. IndexedDB lagakar offline bil banne par sync-queue banai ja sakti hai.
-3. **Advanced Customer Creation**: Abhi existing customer select hota hai. `CustomerPicker` me ek "+ New Customer" ka dialog modal add karke on-the-fly customer register kiya ja sakta hai.
-4. **Dynamic Offers**: Buy 1 Get 1 (BOGO) ya specific product pe discount logic `use-billing.ts` ke calculation pipeline me inject kiya ja sakta hai.
+---
 
-## 📌 Summary for Quick Handover
-- UI do hisso me bati hai: Left side me `ProductGrid` aur right side me `CartPanel`. (Mobile par yeh Tabs me badal jaata hai).
-- Logic ko UI se alag rakhne ke liye `use-billing.ts` ka prayog kiya gaya hai.
-- Bill generation ke baad WhatsApp invoice aur Thermal Print ka flow already set hai (`whatsapp-utils.ts` dekhein).
-- Kisi bhi calculation me badlaav karna ho (jaise GST calculation ka tarika), toh direct `use-billing.ts` me changes karein.
+## 📦 Centralized Data: `billing_constants/BillingSharedConstants.ts`
+
+**Single source of truth for all hardcoded data.** When the backend replaces these with API calls tomorrow, only this one file changes. All TS types are derived from these literal arrays.
+
+| Export | Type | Purpose |
+|---|---|---|
+| `BILLING_FILTER_OPTIONS` | `const` array | Filter chip data (id + label) |
+| `BillingFilter` | derived type | Union of all filter ids |
+| `PAYMENT_MODES` | `const` array | `[{id, label}]` for Cash, UPI, Khata |
+| `GST_RATES` | `const` tuple | `[5, 12, 18, 28]` |
+| `PRESETS_GRAM` | `const` tuple | Quantity presets for gram-based khula items |
+| `PRESETS_ML` | `const` tuple | Quantity presets for ml-based khula items |
+| `PRESETS_PCS` | `const` tuple | Quantity presets for piece-based khula items |
+| `MODE_LABEL` | `Record` | Display labels for selling modes |
+| `CartItem` | type | Shape of one cart line item |
+| `BillData` | type | Shape of a completed bill (for WhatsApp/print) |
+
+---
+
+## 🎨 Theming: `billing.css`
+
+All colors are defined as CSS variables here. To port this module to another project, only change this file.
+
+### Full CSS Variable Reference
+
+| Variable | Purpose | Light Value |
+|---|---|---|
+| `--billing-primary` | Primary accent color | `hsl(var(--primary))` |
+| `--billing-primary-foreground` | Text on primary bg | `hsl(var(--primary-foreground))` |
+| `--billing-primary-bg` | Primary background (buttons, active states) | `hsl(var(--primary))` |
+| `--billing-primary-border` | Hover/active card & filter borders | `hsl(var(--primary))` |
+| `--billing-muted-bg` | Muted background | `hsl(var(--muted))` |
+| `--billing-muted-text` | Secondary/placeholder text | `hsl(var(--muted-foreground))` |
+| `--billing-card-bg` | Card backgrounds | `hsl(var(--card))` |
+| `--billing-background-bg` | Page/input backgrounds | `hsl(var(--background))` |
+| `--billing-foreground-text` | Primary text | `hsl(var(--foreground))` |
+| `--billing-destructive-text` | Error/remove text | `hsl(var(--destructive))` |
+| `--billing-border` | All borders | `hsl(var(--border))` |
+| `--billing-error-icon-bg` | Error boundary icon circle background | `hsl(0 62% 95%)` |
+| `--billing-error-icon-text` | Error boundary SVG icon color | `hsl(0 62% 45%)` |
+| `--billing-error-body-text` | Error boundary description text | `hsl(var(--muted-foreground))` |
+| `--billing-product-price` | Selling price on product card | `hsl(var(--primary))` |
+| `--billing-product-in-cart-bg` | Card background when in cart | `hsl(174 25% 95%)` |
+| `--billing-product-in-cart-border` | Card ring when in cart | `hsl(var(--primary))` |
+| `--billing-stock-ok` | In stock text | `hsl(142 60% 28%)` |
+| `--billing-stock-low` | Low stock text | `hsl(38 90% 42%)` |
+| `--billing-stock-out` | Out of stock text | `hsl(var(--destructive))` |
+| `--billing-cart-bg` | Cart panel card background | `hsl(var(--card))` |
+| `--billing-cart-footer-bg` | Cart footer area background | `hsl(var(--muted) / 0.30)` |
+| `--billing-cart-success-border` | Cart panel border on bill success | `hsl(142 60% 60%)` |
+| `--billing-cart-success-icon` | CheckCircle icon on success | `hsl(142 60% 28%)` |
+| `--billing-cart-badge-bg` | Cart count badge background | `hsl(var(--primary))` |
+| `--billing-cart-total-text` | Total amount text | `hsl(var(--primary))` |
+| `--billing-picker-required-border` | Customer selector border when Khata & empty | `hsl(38 90% 52%)` |
+| `--billing-picker-required-bg` | Customer selector bg when required & empty | `hsl(38 90% 95%)` |
+| `--billing-payment-cash-*` | Cash payment mode chip colors | (green tones) |
+| `--billing-payment-upi-*` | UPI payment mode chip colors | (teal tones) |
+| `--billing-payment-khata-*` | Khata payment mode chip colors | (amber tones) |
+| `--billing-whatsapp-btn-bg` | WhatsApp send button background | `hsl(142 72% 50%)` |
+| `--billing-whatsapp-btn-hover` | WhatsApp send button hover | `hsl(142 72% 43%)` |
+| `--billing-whatsapp-icon` | MessageCircle icon color | `hsl(142 72% 50%)` |
+| `--billing-quick-bg` | Quick picks chip background | `hsl(38 90% 95%)` |
+| `--billing-khula-chip-bg` | Khula preset chip background | `hsl(174 25% 95%)` |
+
+---
+
+## 🚀 Future Enhancements
+
+| Feature | Where to touch | Notes |
+|---|---|---|
+| **Backend API for constants** | `billing_constants/BillingSharedConstants.ts` only | Replace hardcoded arrays with API calls; zero UI changes needed |
+| **Barcode Scanner** | `billing_components/Products/BillingProductSearchBar.tsx` | Add `keydown` listener for scanner input (fast typing) |
+| **Offline Mode** | `billing_context/BillingContext.tsx` | Replace API calls with IndexedDB; add sync-queue on reconnect |
+| **Dynamic Offers (BOGO)** | `billing_context/BillingContext.tsx` → `handleCheckout` / `addFixed` | Inject discount logic before cart total calculation |
+| **Multi-printer support** | `billing_utils/BillingWhatsAppUtils.ts` | Add printer profile selection before `printThermalBill()` |
+| **Split payment** | `billing_components/Cart/BillingCartAdvancedOptions.tsx` + `billing_context/BillingContext.tsx` | Add partial cash + UPI fields; extend `BillData` type |
+
+---
+
+## 📌 Quick Handover Summary
+
+- **Micro-Modular Layout**: Components split into specific domain folders (`billing_components/Cart/`, `billing_components/Products/`, etc.).
+- **Brain**: `billing_context/BillingContext.tsx` — heavily memoized state controller. No prop drilling anywhere.
+- **Data**: `billing_constants/BillingSharedConstants.ts` — all constants. One place to swap in API data tomorrow.
+- **Theming**: `billing.css` — all CSS variables. Copy this folder to any project and theme from here only.
+- **Post-checkout flow**: WhatsApp message → `billing_utils/BillingWhatsAppUtils.ts`. Thermal print → `billing_utils/BillingWhatsAppUtils.ts`.

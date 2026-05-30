@@ -1,55 +1,213 @@
-# Smart Kirana Store - Reports Module Documentation
+# Smart Kirana Store — Reports Module Documentation
 
-Yeh document `Smart Kirana Store` application ke **Reports & Analytics** module ki detailed architectural aur functional information provide karta hai. Iska main purpose application ke data visualization aur business metrics ke logic ko samajhna hai.
+> **AI Context Document** — This file is the authoritative map for the Reports module.
+> Before making any change to the Reports feature, read this file first.
+> It tells you exactly which file to touch and why.
 
-## 📁 Directory Structure & Architecture
+---
 
-Reports module `app/(app)/reports` directory me sthit hai.
+## 📁 Directory Structure (Feature-Based Micro-Modularization)
 
-- **`page.tsx`**: Main entry point jahan poora dashboard layout, date picker aur sabhi child components render hote hain.
-- **`reports.css`**: Reports dashboard ke specific UI colors (jaise charts aur cards ke theme colors) yahan define hote hain.
-- **`reports_components/`**: Yahan specific visualization aur list components hain:
-  - `StatCard.tsx`: Top level summary dikhane ke liye reusable card component (Total Revenue, Total Profit, Pending Khata, Low Stock).
-  - `SalesChart.tsx`: `recharts` library ka use karke Daily Sales Trend dikhane wala Bar Chart.
-  - `ProfitChart.tsx`: `recharts` ka use karke Profit Trend dikhane wala Line Chart.
-  - `PendingKhataList.tsx`: Udhaar (dues) wale customers ki list search aur pagination ke sath.
-  - `LowStockList.tsx`: Jin products ka stock khatam hone wala hai ya ho gaya hai, unki list search aur pagination ke sath.
+```
+app/(app)/reports/
+├── page.tsx                                       ← Root Server Component
+├── loading.tsx                                    ← Next.js skeleton loading UI (Server Component)
+├── error.tsx                                      ← Next.js error boundary (Client Component, "use client")
+├── reports.css                                    ← ALL color tokens for this module (single source for theming)
+├── reports_features.md                            ← THIS FILE — AI context & architecture map
+│
+├── reports_constants/
+│   └── ReportsSharedConstants.ts                  ← ALL strings, labels, pagination config, formatMoney util
+│
+├── reports_context/
+│   └── ReportsContext.tsx                         ← Module state: dateRange + calOpen (memoized context provider)
+│
+├── reports_types/
+│   └── ReportsTypes.ts                            ← All TypeScript interfaces for this module
+│
+└── reports_components/
+    │
+    ├── Dashboard/                                 ← Core overview components and charts
+    │   ├── ReportsDashboardContainer.tsx          ← Fetches all 4 APIs, derives summary values, composes layout
+    │   ├── ReportsHeader.tsx                      ← Static title + subtitle row
+    │   ├── ReportsDatePicker.tsx                  ← Date range popover with calendar + quick-date preset buttons
+    │   ├── ReportsStatGrid.tsx                    ← Builds 4 card definitions, maps to ReportsStatCard
+    │   ├── ReportsStatCard.tsx                    ← One metric card: label, value, icon, themed colors
+    │   ├── ReportsSalesChart.tsx                  ← Bar chart (recharts): daily sales trend
+    │   └── ReportsProfitChart.tsx                 ← Area chart (recharts): profit trend with gradient fill
+    │
+    ├── Khata/                                     ← Pending Khata feature
+    │   ├── ReportsKhataContainer.tsx              ← Smart container: search state + pagination + composition
+    │   ├── ReportsKhataSearchInput.tsx            ← Search input field for the Pending Udhaar list
+    │   ├── ReportsKhataSkeletonList.tsx           ← 3 skeleton rows shown while khata API is loading
+    │   ├── ReportsKhataEmptyState.tsx             ← "Koi udhaar nahi" icon + message (zero results)
+    │   └── ReportsKhataItem.tsx                   ← One customer row: name, phone, total due amount
+    │
+    ├── Stock/                                     ← Low Stock feature
+    │   ├── ReportsStockContainer.tsx              ← Smart container: search state + pagination + composition
+    │   ├── ReportsStockSearchInput.tsx            ← Search input field for the Low Stock list
+    │   ├── ReportsStockSkeletonList.tsx           ← 3 skeleton rows shown while stock API is loading
+    │   ├── ReportsStockEmptyState.tsx             ← "Sab stock sahi" icon + message (zero results)
+    │   └── ReportsStockItem.tsx                   ← One product row: name, category, stock badge
+    │
+    └── Shared/                                    ← Shared UI components across features
+        └── ReportsPagination.tsx                  ← Prev/Next pagination bar shared by both list containers
+```
 
-## 🛠 Core Features & Workflow
+---
 
-### 1. Global Date Filter (Time Period Selection)
-- Page ke top-right me ek Date Range picker hai.
-- By default yeh pichle **14 dino** (2 weeks) ka data dikhata hai.
-- **Quick Filters**: Calendar popover me "Aaj", "7 din", "15 din", aur "30 din" ke quick selection buttons hain.
-- Date select karne par API calls (`useGetSalesReport`, `useGetProfitReport`) naye dates ke sath trigger hoti hain aur pura page naya data render karta hai.
+## 🧠 State Management: `reports_context/ReportsContext.tsx`
 
-### 2. High-Level Metrics (Stat Cards)
-4 mukhya (main) business metrics highlight kiye gaye hain:
-1. **Total Revenue**: Selected time period me total kitne rupaye ki sale hui.
-2. **Total Profit**: Us sale par estimated profit kitna hua (aur profit margin percentage).
-3. **Pending Khata**: Total kitne rupaye ka udhaar market me pending hai aur kitne customers ka baki hai.
-4. **Low Stock**: Kitne items low stock alert par hain aur kitne bilkul "out of stock" ho chuke hain.
+**Only two cross-component state values live here** — date range and calendar open/close.
+Everything else (search queries, pagination page numbers) is local state inside the container components.
 
-### 3. Data Visualizations (Charts)
-- **Daily Sales Trend (Bar Chart)**: Har din ki sales ko bar chart ke roop me dikhata hai taaki peak sales day easily identify ho sake. Tooltips hover karne par exact amount dikhate hain.
-- **Profit Trend (Line Chart)**: Har din ke profit ka trend dikhata hai (Smooth curve / Area chart) jisse business ki growth track ki ja sakti hai.
+### What lives in Context:
 
-### 4. Actionable Lists
-- **Pending Udhaar**: Jin customers ka udhaar baki hai unki list yahan dikhti hai. Isme ek search bar hai jisse customer ko naam ya phone number se turant dhunda ja sakta hai. Ye list 5 items per page ke hisaab se paginated hai.
-- **Low Stock Alert**: Aise products jinki base quantity low stock threshold ke neeche chali gayi hai. Yahan bhi pagination aur search functionality di gayi hai taaki turant purchase order banaya ja sake.
+| State | Type | Purpose |
+|---|---|---|
+| `dateRange` | `DateRange` | The selected from/to date range — drives all 4 API queries |
+| `calOpen` | `boolean` | Controls the date picker popover open/close state |
 
-## 🧠 State Management & API
-- **TanStack Query Hooks**: Data fetching ke liye custom hooks (`useGetSalesReport`, `useGetProfitReport`, `useGetPendingKhataReport`, `useGetLowStockReport`) jo `@/lib/api` se aate hain, unka use hota hai.
-- **Loading States**: Jab data fetch ho raha hota hai, toh charts aur lists ki jagah `Skeleton` loaders show hote hain jisse UI smooth lagta hai.
+*Note: The context provider uses `useMemo` to prevent massive re-render chains across the sub-folders.*
 
-## 🚀 AI & Developer Context: Future Enhancements
-Agar future me is module ko aur bada banana ho:
+### What does NOT live in Context:
 
-1. **Category Wise Sales (Pie Chart)**: Ek naya chart add kiya ja sakta hai jo bataye ki kis category (jaise Snacks, Oil, Dal) se sabse zyada revenue aa raha hai.
-2. **Export to Excel/PDF**: Ek button jisse CA (Chartered Accountant) ko bhejne ke liye selected date range ki poori report CSV ya PDF format me download ho jaye.
-3. **Top Customers List**: Aise customers ki list jinhone sabse zyada shopping ki hai taaki unhe special discount ya offers diye ja sakein.
-4. **Expense Tracker Integration**: Agar future me dukan ke kharche (bijli bill, staff salary) track hote hain, toh unhe profit calculation se minus karke "Net Profit" dikhaya ja sakta hai.
+- API data (`salesReport`, `profitReport`, `khataReport`, `lowStockProducts`) — fetched by TanStack Query in `ReportsDashboardContainer`
+- Search query for khata/stock — local `useState` inside each Container
+- Pagination page number — local `useState` inside each Container
+- Money formatter — pure function exported from `ReportsSharedConstants.UTILS`, not state at all
 
-## 📌 Summary for Quick Handover
-- UI me `recharts` library ka heavily use hua hai charts banane ke liye, isliye chart components me changes karte waqt `recharts` ke docs (XAxis, YAxis, Tooltip) refer karna zaroori hai.
-- Data presentation bilkul client-side (`"use client"`) state par dependent hai.
+---
+
+## 📦 Centralized Data: `reports_constants/ReportsSharedConstants.ts`
+
+**Single source of truth for ALL data in this module.** When the backend replaces hardcoded values with API calls, only these files change — zero UI component edits required.
+
+### `ReportsSharedConstants.ts` — All hardcoded data and utilities
+
+| Key Path | Purpose |
+|---|---|
+| `TEXTS.TITLE` | "Reports" — page heading |
+| `TEXTS.SUBTITLE` | Subtitle description line |
+| `TEXTS.SELECT_DATE_RANGE` | Placeholder text for the date picker trigger button |
+| `TEXTS.DATE_RANGE / DATE_RANGE_DESC / DONE` | Date popover header labels and Done button |
+| `TEXTS.NO_SALES / NO_PROFIT` | Empty state messages for charts |
+| `TEXTS.PENDING_UDHAAR` | Khata section card title |
+| `TEXTS.SEARCH_CUSTOMER` | Placeholder for khata search input |
+| `TEXTS.NO_UDHAAR` | Empty state for khata section |
+| `TEXTS.LOW_STOCK_ALERT` | Stock section card title |
+| `TEXTS.SEARCH_PRODUCT` | Placeholder for stock search input |
+| `TEXTS.OUT_OF_STOCK / LEFT / ALL_STOCK_GOOD` | Stock item badge labels |
+| `TEXTS.PAGE / OF` | Pagination display strings |
+| `QUICK_DATES` | Array of `{ label, days }` preset buttons (Aaj, 7 din, 15 din, 30 din) |
+| `LABELS.*` | Stat card labels (Total Revenue, Total Profit, Pending Khata, Low Stock, etc.) |
+| `PAGINATION.ITEMS_PER_PAGE` | Items per page for both Khata and Stock lists (currently `5`) |
+| `UTILS.formatMoney` | Pure function: `(value: number) => "Rs 1234"` — used by all money displays |
+
+### `reports_types/ReportsTypes.ts` — TypeScript interfaces
+
+| Interface | Purpose |
+|---|---|
+| `ReportsProduct` | Shape of a low-stock product from the API |
+| `ReportsKhataCustomer` | Shape of a pending khata customer from the API |
+| `ReportsSalesData` | One day's sales data point `{ date, sales }` |
+| `ReportsProfitData` | One day's profit data point `{ date, profit }` |
+| `ReportsStatCardDefinition` | Shape of each stat card config in `ReportsStatGrid` |
+| `ReportsQuickDate` | One entry in the `QUICK_DATES` preset array `{ label, days }` |
+
+---
+
+## 🎨 Theming: `reports.css`
+
+All colors are defined as CSS variables here. To port this module to another project, change **only this file**. Zero JSX edits needed.
+
+### Full CSS Variable Reference
+
+| Variable | Purpose |
+|---|---|
+| `--reports-card-bg` | Card/panel backgrounds |
+| `--reports-background` | Page and input field backgrounds |
+| `--reports-border` | All border colors |
+| `--reports-muted-bg` | Muted area backgrounds (chart cursor) |
+| `--reports-muted-hover-bg` | Row hover state background |
+| `--reports-muted-text` | Secondary/placeholder text color |
+| `--reports-foreground` | Primary text color |
+| `--reports-primary` | Brand primary color (used for sales bar fill) |
+| `--reports-destructive` | Error/danger color (used for stock alert title) |
+| `--reports-destructive-bg / border` | Light background/border for destructive elements |
+| `--reports-sale-color / bg / border` | Revenue stat card theme colors |
+| `--reports-profit-color / bg / border` | Profit stat card theme colors |
+| `--reports-khata-color / bg / border` | Khata stat card theme colors |
+| `--reports-lowstock-color / bg / border` | Low stock stat card theme colors |
+| `--reports-timebar-*` | Date picker trigger bar theme (bg, border, icon, label, input, ring) |
+| `--reports-profit-chart-stroke / grad` | Profit area chart line and gradient colors |
+| `--reports-badge-out-bg / text / border` | "Out of Stock" badge colors |
+| `--reports-badge-low-bg / text / border` | "Low Stock" badge colors |
+
+All variables have both `:root` (light) and `.dark` overrides defined.
+
+---
+
+## 🔄 Data Flow
+
+### Date Range → API Calls
+
+```
+User interacts with ReportsDatePicker
+  → setDateRange(range)  [via useReports() from ReportsContext]
+    → ReportsDashboardContainer reads dateRange from context
+      → Derives `from` / `to` strings for query params
+        → useGetSalesReport({ from, to })   → ReportsSalesChart
+        → useGetProfitReport({ from, to })  → ReportsProfitChart
+        → useGetPendingKhataReport()        → ReportsKhataContainer
+        → useGetLowStockReport()            → ReportsStockContainer
+```
+
+### Khata Search + Pagination Flow
+
+```
+User types in ReportsKhataSearchInput
+  → onChange fires → setSearchQuery in ReportsKhataContainer
+    → filteredCustomers recomputed
+      → setCurrentPage(1) resets to page 1
+        → currentCustomers slice computed
+          → ReportsKhataItem rendered for each visible customer
+```
+
+### Stock Search + Pagination Flow
+
+```
+(Identical pattern to Khata, but inside ReportsStockContainer)
+User types in ReportsStockSearchInput
+  → onChange fires → setSearchQuery in ReportsStockContainer
+    → filteredProducts recomputed → currentProducts slice
+      → ReportsStockItem rendered for each visible product
+```
+
+---
+
+## 🚀 Future Enhancements
+
+| Feature | Where to Touch | Notes |
+|---|---|---|
+| **Export Reports as PDF** | New `ReportsPdfExport.ts` | Pure function; zero UI changes. Add button in `ReportsHeader.tsx` |
+| **CSV Export** | New `ReportsCsvExport.ts` | Same pattern as PDF |
+| **Change items per page** | `ReportsSharedConstants.PAGINATION.ITEMS_PER_PAGE` | One number to change; affects both Khata and Stock lists |
+| **Backend API for currency format** | `ReportsSharedConstants.UTILS.formatMoney` | One function to swap; zero UI edits |
+| **Add expense tracking to profit** | `ReportsDashboardContainer.tsx` | New API hook + pass to `ReportsProfitChart` |
+| **Sales breakdown by category** | New `ReportsSalesByCategoryChart.tsx` | Add to dashboard grid; zero other file changes |
+| **Multi-language support** | `ReportsSharedConstants.TEXTS` | All strings centralized; swap to i18n object tomorrow |
+| **User-configurable date default** | `ReportsContext.tsx` | Change the `subDays(today, 14)` default; one place only |
+| **Khata customer click → navigate** | `ReportsKhataItem.tsx` | Add `onClick` + `useRouter`; touch only this file |
+
+---
+
+## 📌 Quick Handover Summary
+
+- **Brain**: `reports_context/ReportsContext.tsx` — only `dateRange` and `calOpen`. Proper `useMemo` implemented.
+- **Data**: `reports_types/ReportsTypes.ts` (interfaces) + `reports_constants/ReportsSharedConstants.ts` (strings, pagination, formatMoney). One place to swap in API data tomorrow.
+- **Theming**: `reports.css` — all CSS variables with light + dark mode. Copy this folder to any project and theme from here only.
+- **API layer**: `ReportsDashboardContainer` is the only file that calls APIs. All data flows down via props.
+- **Charts**: `recharts` library. When modifying charts, refer to recharts docs for `XAxis`, `YAxis`, `Tooltip` props.
+- **Lists**: Both Khata and Stock sections follow identical patterns — Container (owns state) → SearchInput + SkeletonList + EmptyState + Item.
+- **Architecture**: 21 component files, structured into distinct feature sub-folders. To fix any bug, identify the exact feature folder and provide only the necessary micro-file to an AI.

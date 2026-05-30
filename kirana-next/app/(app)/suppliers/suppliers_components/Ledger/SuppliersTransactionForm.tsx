@@ -1,0 +1,110 @@
+"use client";
+
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { X } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import {
+  getGetSupplierQueryKey,
+  getListSuppliersQueryKey,
+  getGetDashboardSummaryQueryKey,
+} from "@/lib/api";
+import { useSuppliers } from "../../suppliers_context/SuppliersContext";
+import { txSchema, type TxFormValues } from "../../suppliers_types/SuppliersTypes";
+import {
+  TX_MODE_LABELS,
+  TX_FORM_TITLES,
+  TX_DESCRIPTION_LABELS,
+  SUPPLIER_TOASTS,
+} from "../../suppliers_constants/SuppliersSharedConstants";
+
+export function SuppliersTransactionForm() {
+  const { ledgerId, transactionMode, setTransactionMode, addTxMutation } = useSuppliers();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const form = useForm<TxFormValues>({
+    resolver: zodResolver(txSchema),
+    defaultValues: { type: transactionMode || "payment", amount: 0, description: "" },
+  });
+
+  if (!transactionMode || !ledgerId) return null;
+
+  const onSubmit = (values: TxFormValues) => {
+    const data = { ...values, type: transactionMode };
+    addTxMutation.mutate(
+      { id: ledgerId, data },
+      {
+        onSuccess: () => {
+          toast({
+            title:
+              data.type === "payment"
+                ? SUPPLIER_TOASTS.txPaymentSuccess
+                : SUPPLIER_TOASTS.txCreditSuccess,
+          });
+          queryClient.invalidateQueries({ queryKey: getGetSupplierQueryKey(ledgerId) });
+          queryClient.invalidateQueries({ queryKey: getListSuppliersQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+          queryClient.invalidateQueries({ queryKey: ["reports"] });
+          form.reset({ type: data.type, amount: 0, description: "" });
+          setTransactionMode(null);
+        },
+      }
+    );
+  };
+
+  return (
+    <div className="rounded-xl border border-[var(--supplier-border)] p-6 mb-6 bg-[var(--supplier-form-panel-bg)] shadow-sm">
+      <div className="flex justify-between items-center mb-5">
+        <p className="font-semibold text-lg">
+          {TX_FORM_TITLES[transactionMode]}
+        </p>
+        <button onClick={() => setTransactionMode(null)}>
+          <X className="h-5 w-5 text-[var(--supplier-muted-text)]" />
+        </button>
+      </div>
+
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="grid grid-cols-1 md:grid-cols-12 gap-4"
+        >
+          <FormField
+            control={form.control}
+            name="amount"
+            render={({ field }) => (
+              <FormItem className="md:col-span-4">
+                <FormLabel>Amount (₹)</FormLabel>
+                <FormControl>
+                  <Input type="number" step="0.01" placeholder="0.00" {...field} className="h-11" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem className="md:col-span-8">
+                <FormLabel>{TX_DESCRIPTION_LABELS[transactionMode]}</FormLabel>
+                <FormControl>
+                  <Input {...field} className="h-11" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" className="md:col-span-12 h-11 bg-[var(--supplier-primary-bg)] text-[var(--supplier-primary-text)]" disabled={addTxMutation.isPending}>
+            {addTxMutation.isPending ? "Saving..." : "Save Entry"}
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
+}

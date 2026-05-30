@@ -13,6 +13,25 @@
 @layer components {
 
   :root {
+    /* ── Standard Theme Mappings ──────────────────────────────── */
+    --billing-primary:                  hsl(var(--primary));
+    --billing-primary-foreground:       hsl(var(--primary-foreground));
+    --billing-primary-bg:               hsl(var(--primary));
+    --billing-primary-border:           hsl(var(--primary));           /* hover/active border on cards & filter chips */
+    --billing-muted-bg:                 hsl(var(--muted));
+    --billing-muted-text:               hsl(var(--muted-foreground));
+    --billing-card-bg:                  hsl(var(--card));
+    --billing-background-bg:            hsl(var(--background));
+    --billing-foreground-text:          hsl(var(--foreground));
+    --billing-destructive-text:         hsl(var(--destructive));
+    --billing-border:                   hsl(var(--border));
+    --billing-destructive-bg:           hsl(var(--destructive));
+
+    /* ── Error Boundary ────────────────────────────────────────── */
+    --billing-error-icon-bg:            hsl(0 62% 95%);               /* bg of the error icon circle */
+    --billing-error-icon-text:          hsl(0 62% 45%);               /* error SVG icon color */
+    --billing-error-body-text:          hsl(var(--muted-foreground)); /* description paragraph */
+
     /* ── Product Grid ─────────────────────────────────────────── */
     --billing-product-price:            hsl(var(--primary));          /* selling price on product card */
     --billing-product-in-cart-bg:       hsl(174 25% 95%);             /* teal-50 — card bg when in cart */
@@ -83,6 +102,11 @@
   }
 
   .dark {
+    --billing-primary-border:           hsl(var(--primary));
+    --billing-error-icon-bg:            hsl(0 62% 15%);
+    --billing-error-icon-text:          hsl(0 62% 65%);
+    --billing-error-body-text:          hsl(var(--muted-foreground));
+
     --billing-product-price:            hsl(var(--primary));
     --billing-product-in-cart-bg:       hsl(174 72% 15%);
     --billing-product-in-cart-border:   hsl(var(--primary));
