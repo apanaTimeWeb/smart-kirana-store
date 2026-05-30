@@ -59,6 +59,21 @@ function useStockEditVariantDialogInternal() {
     });
   };
 
+  const handleBulkConversionChange = (val: number | "") => {
+    if (!draft) return;
+    const cfg = UNIT_CONFIG[draft.unitType];
+    if (!cfg || cfg.group !== "wholesale") return;
+    if (val === "") {
+      patchDraft({ baseQuantity: 1 });
+      return;
+    }
+    let newBaseQuantity = Number(val);
+    if (cfg.baseUnit === "gram" || cfg.baseUnit === "ml") {
+      newBaseQuantity *= 1000;
+    }
+    patchDraft({ baseQuantity: newBaseQuantity });
+  };
+
   const handleUnitChange = (newUnit: string) => {
     const cfg = UNIT_CONFIG[newUnit];
     if (!cfg) return;
@@ -77,9 +92,25 @@ function useStockEditVariantDialogInternal() {
   const isLoss = sellPrice > 0 && buyPrice > 0 && sellPrice < buyPrice;
   const margin = buyPrice > 0 ? (((sellPrice - buyPrice) / buyPrice) * 100).toFixed(1) : null;
 
+  // Compute bulkConversionRate for UI
+  const bulkConversionRate = React.useMemo(() => {
+    if (!draft || !cfg || cfg.group !== "wholesale") return "";
+    if (cfg.baseUnit === "gram" || cfg.baseUnit === "ml") {
+      return draft.baseQuantity / 1000;
+    }
+    return draft.baseQuantity;
+  }, [draft, cfg]);
+
   const errors: string[] = [];
-  if (draft && !draft.variantName.trim()) errors.push("Size Name is required");
-  if (sellPrice <= 0) errors.push("Sell price must be > 0");
+  if (draft) {
+    if (!draft.variantName.trim()) errors.push("Size Name is required");
+    if (sellPrice <= 0) errors.push("Sell price must be greater than 0");
+    if (draft.stockInBaseUnit < 0) errors.push("Current stock cannot be negative");
+    
+    if (cfg?.group === "wholesale" && (!bulkConversionRate || bulkConversionRate <= 0)) {
+      errors.push("Conversion rate (e.g., 1 Bora = ? KG) is required for bulk items");
+    }
+  }
   const isValid = errors.length === 0;
 
   const handleSave = () => {
@@ -92,6 +123,8 @@ function useStockEditVariantDialogInternal() {
     draft,
     patchDraft,
     handleUnitChange,
+    bulkConversionRate,
+    handleBulkConversionChange,
     cfg,
     buyPrice,
     sellPrice,
