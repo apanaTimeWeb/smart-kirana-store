@@ -37,8 +37,8 @@ This module follows strict **"One File, One Responsibility"** micro-modularizati
 
 | File | Purpose |
 |------|---------|
-| `auth_components/AuthTypes.ts` | Zod schemas (`loginSchema`, `signupSchema`) and all inferred TypeScript types (`LoginFormValues`, `SignupFormValues`, `AuthUser`). **To change validation rules, only edit this file.** |
-| `auth_components/AuthConstants.ts` | All static/hardcoded data: demo phone numbers and demo password pre-filled in forms. **Tomorrow, when a real API provides defaults, only edit this file.** |
+| `types/AuthTypes.ts` | Zod schemas (`loginSchema`, `signupSchema`) and all inferred TypeScript types (`LoginFormValues`, `SignupFormValues`, `AuthUser`). **To change validation rules, only edit this file.** |
+| `constants/AuthConstants.ts` | All static/hardcoded data: demo phone numbers and demo password pre-filled in forms. **Tomorrow, when a real API provides defaults, only edit this file.** |
 
 ---
 
@@ -46,7 +46,7 @@ This module follows strict **"One File, One Responsibility"** micro-modularizati
 
 | File | Purpose |
 |------|---------|
-| `auth_components/AuthContext.tsx` | React Context Provider. Holds: `jwt`, `user`, `isLoginLoading`, `isSignupLoading`. Exposes `login()` and `signup()` actions (both `useCallback`-memoized). Context value is `useMemo`-memoized. Exposes `useAuth()` hook. **To integrate the real backend API, only edit this file.** |
+| `context/AuthContext.tsx` | React Context Provider. Holds: `jwt`, `user`, `isLoginLoading`, `isSignupLoading`. Exposes `login()` and `signup()` actions (both `useCallback`-memoized). Context value is `useMemo`-memoized. Exposes `useAuth()` hook. **To integrate the real backend API, only edit this file.** |
 
 ---
 
@@ -54,8 +54,8 @@ This module follows strict **"One File, One Responsibility"** micro-modularizati
 
 | File | Purpose |
 |------|---------|
-| `auth_components/AuthLoginHeader.tsx` | Store logo icon + `<h1>` title + subtitle. Pure presentational, no state |
-| `auth_components/AuthLoginForm.tsx` | Phone + password inputs with show/hide toggle. Reads `AUTH_PLACEHOLDERS` from Constants. Calls `login()` from Context |
+| `components/Login/AuthLoginHeader.tsx` | Store logo icon + `<h1>` title + subtitle. Pure presentational, no state |
+| `components/Login/AuthLoginForm.tsx` | Phone + password inputs with show/hide toggle. Reads `AUTH_PLACEHOLDERS` from Constants. Calls `login()` from Context |
 
 ---
 
@@ -63,8 +63,8 @@ This module follows strict **"One File, One Responsibility"** micro-modularizati
 
 | File | Purpose |
 |------|---------|
-| `auth_components/AuthSignupHeader.tsx` | Store logo icon + `<h1>` title + subtitle. Pure presentational, no state |
-| `auth_components/AuthSignupForm.tsx` | Shop name + owner name + phone + password inputs. Reads `AUTH_PLACEHOLDERS` from Constants. Calls `signup()` from Context |
+| `components/Signup/AuthSignupHeader.tsx` | Store logo icon + `<h1>` title + subtitle. Pure presentational, no state |
+| `components/Signup/AuthSignupForm.tsx` | Shop name + owner name + phone + password inputs. Reads `AUTH_PLACEHOLDERS` from Constants. Calls `signup()` from Context |
 
 ---
 
@@ -72,7 +72,7 @@ This module follows strict **"One File, One Responsibility"** micro-modularizati
 
 | File | Purpose |
 |------|---------|
-| `auth_components/AuthDemoHint.tsx` | Info banner shown below both login and signup forms. Tells the user any credentials work in demo mode. Pure presentational, no props, no state |
+| `components/Shared/AuthDemoHint.tsx` | Info banner shown below both login and signup forms. Tells the user any credentials work in demo mode. Pure presentational, no props, no state |
 
 ---
 
@@ -92,25 +92,26 @@ app/auth/
 ├── signup/
 │   └── page.tsx                      ← Signup entry point (Server Component)
 │
-└── auth_components/
-    │
     │  ── DATA LAYER ──────────────────────────────────────────────
-    ├── AuthTypes.ts                  ← Zod schemas + TypeScript types (AuthUser etc.)
-    ├── AuthConstants.ts              ← Demo credentials & static placeholder data
+    ├── types/
+    │   └── AuthTypes.ts              ← Zod schemas + TypeScript types (AuthUser etc.)
+    ├── constants/
+    │   └── AuthConstants.ts          ← Demo credentials & static placeholder data
     │
     │  ── STATE LAYER ─────────────────────────────────────────────
-    ├── AuthContext.tsx               ← React Context: jwt, user, login(), signup()
+    ├── context/
+    │   └── AuthContext.tsx           ← React Context: jwt, user, login(), signup()
     │
-    │  ── LOGIN VIEW ──────────────────────────────────────────────
-    ├── AuthLoginHeader.tsx           ← Logo + title for login page
-    ├── AuthLoginForm.tsx             ← Phone + password form
-    │
-    │  ── SIGNUP VIEW ─────────────────────────────────────────────
-    ├── AuthSignupHeader.tsx          ← Logo + title for signup page
-    ├── AuthSignupForm.tsx            ← Shop name, owner name, phone, password form
-    │
-    │  ── SHARED ──────────────────────────────────────────────────
-    └── AuthDemoHint.tsx              ← Demo mode info banner (shared by both pages)
+    │  ── COMPONENTS ──────────────────────────────────────────────
+    └── components/
+        ├── Login/
+        │   ├── AuthLoginHeader.tsx   ← Logo + title for login page
+        │   └── AuthLoginForm.tsx     ← Phone + password form
+        ├── Signup/
+        │   ├── AuthSignupHeader.tsx  ← Logo + title for signup page
+        │   └── AuthSignupForm.tsx    ← Shop name, owner name, phone, password form
+        └── Shared/
+            └── AuthDemoHint.tsx      ← Demo mode info banner (shared by both pages)
 ```
 
 ---
@@ -181,16 +182,16 @@ Memoization:
 
 | Task | File to Edit |
 |------|-------------|
-| Change login/signup validation rules (min length etc.) | `auth_components/AuthTypes.ts` |
-| Change the pre-filled demo phone/password | `auth_components/AuthConstants.ts` |
-| Integrate real backend API for login | `auth_components/AuthContext.tsx` → `login()` |
-| Integrate real backend API for signup | `auth_components/AuthContext.tsx` → `signup()` |
-| Add a new field to the user session object | `auth_components/AuthTypes.ts` → `AuthUser` interface |
-| Fix login form UI (inputs, button) | `auth_components/AuthLoginForm.tsx` |
-| Fix signup form UI (inputs, button) | `auth_components/AuthSignupForm.tsx` |
-| Change the page title / logo on login | `auth_components/AuthLoginHeader.tsx` |
-| Change the page title / logo on signup | `auth_components/AuthSignupHeader.tsx` |
-| Change the demo hint banner text | `auth_components/AuthDemoHint.tsx` |
+| Change login/signup validation rules (min length etc.) | `types/AuthTypes.ts` |
+| Change the pre-filled demo phone/password | `constants/AuthConstants.ts` |
+| Integrate real backend API for login | `context/AuthContext.tsx` → `login()` |
+| Integrate real backend API for signup | `context/AuthContext.tsx` → `signup()` |
+| Add a new field to the user session object | `types/AuthTypes.ts` → `AuthUser` interface |
+| Fix login form UI (inputs, button) | `components/Login/AuthLoginForm.tsx` |
+| Fix signup form UI (inputs, button) | `components/Signup/AuthSignupForm.tsx` |
+| Change the page title / logo on login | `components/Login/AuthLoginHeader.tsx` |
+| Change the page title / logo on signup | `components/Signup/AuthSignupHeader.tsx` |
+| Change the demo hint banner text | `components/Shared/AuthDemoHint.tsx` |
 | Change any color or theme token | `auth.css` |
 | Change page centering / outer shell | `layout.tsx` |
 | Change the loading skeleton shape | `loading.tsx` |

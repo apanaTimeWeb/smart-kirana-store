@@ -2,10 +2,10 @@
 // AuthProvider and its children handle all client-side logic.
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { AuthProvider } from "../auth_components/AuthContext";
-import { AuthSignupHeader } from "../auth_components/AuthSignupHeader";
-import { AuthSignupForm } from "../auth_components/AuthSignupForm";
-import { AuthDemoHint } from "../auth_components/AuthDemoHint";
+import { AuthProvider } from "../context/AuthContext";
+import { AuthSignupHeader } from "../components/Signup/AuthSignupHeader";
+import { AuthSignupForm } from "../components/Signup/AuthSignupForm";
+import { AuthDemoHint } from "../components/Shared/AuthDemoHint";
 
 export default function SignupPage() {
   return (

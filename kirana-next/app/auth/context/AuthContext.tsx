@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { LoginFormValues, SignupFormValues, AuthUser } from "./AuthTypes";
+import { LoginFormValues, SignupFormValues, AuthUser } from "../types/AuthTypes";
 
 // ─── Context Shape ────────────────────────────────────────────────────────────
 
