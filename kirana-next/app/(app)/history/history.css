@@ -20,6 +20,7 @@
     --history-success-bg: hsl(142 70% 90%);
     --history-success-btn-bg: hsl(142 70% 40%);
     --history-success-btn-hover: hsl(142 70% 35%);
+    --history-success-btn-text: hsl(0 0% 100%);           /* white text on green send button */
 
     --history-returned-item: hsl(215 16% 47%);
     --history-refund-amount: hsl(var(--destructive));
@@ -52,6 +53,7 @@
     --history-success-bg: hsl(142 60% 15%);
     --history-success-btn-bg: hsl(142 60% 30%);
     --history-success-btn-hover: hsl(142 60% 25%);
+    --history-success-btn-text: hsl(0 0% 100%);           /* stays white in dark mode */
 
     --history-returned-item: hsl(215 16% 65%);
     --history-refund-amount: hsl(0 84% 65%);
