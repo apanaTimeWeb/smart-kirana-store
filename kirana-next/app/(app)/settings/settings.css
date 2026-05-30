@@ -8,6 +8,18 @@
 @layer components {
 
   :root {
+    /* ── Global Structure ─────────────────────────────────────── */
+    --settings-card-bg:                 hsl(var(--card));
+    --settings-background:              hsl(var(--background));
+    --settings-border:                  hsl(var(--border));
+    --settings-muted-bg:                hsl(var(--muted));
+    --settings-muted-hover-bg:          hsl(var(--muted) / 0.2);
+    --settings-muted-text:              hsl(var(--muted-foreground));
+    --settings-foreground:              hsl(var(--foreground));
+    --settings-primary:                 hsl(var(--primary));
+    --settings-primary-bg:              hsl(var(--primary) / 0.05);
+    --settings-destructive:             hsl(var(--destructive));
+    
     /* ── Section Header Icons ─────────────────────────────────── */
     --settings-whatsapp-icon:           hsl(142 60% 35%);             /* text-green-600 */
 
@@ -18,6 +30,17 @@
   }
 
   .dark {
+    --settings-card-bg:                 hsl(var(--card));
+    --settings-background:              hsl(var(--background));
+    --settings-border:                  hsl(var(--border));
+    --settings-muted-bg:                hsl(var(--muted));
+    --settings-muted-hover-bg:          hsl(var(--muted) / 0.2);
+    --settings-muted-text:              hsl(var(--muted-foreground));
+    --settings-foreground:              hsl(var(--foreground));
+    --settings-primary:                 hsl(var(--primary));
+    --settings-primary-bg:              hsl(var(--primary) / 0.05);
+    --settings-destructive:             hsl(var(--destructive));
+
     --settings-whatsapp-icon:           hsl(142 60% 50%);
 
     --settings-device-computer:         hsl(217 91% 60%);

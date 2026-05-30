@@ -1,8 +1,13 @@
 "use client";
 
 import "./settings.css";
-import { SettingsManager } from "./settings_components/SettingsManager";
+import { SettingsProvider } from "./settings_components/SettingsContext";
+import { SettingsDashboardContainer } from "./settings_components/SettingsDashboardContainer";
 
 export default function Settings() {
-  return <SettingsManager />;
+  return (
+    <SettingsProvider>
+      <SettingsDashboardContainer />
+    </SettingsProvider>
+  );
 }

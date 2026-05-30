@@ -1,4 +1,4 @@
-export type ActiveSession = {
+export type SettingsActiveSession = {
   id: string;
   deviceType: "Computer" | "Mobile" | "Tablet" | "Other";
   deviceName: string;
@@ -19,17 +19,4 @@ export type SettingsForm = {
   lowStockThreshold: number;
   whatsappNumber: string;
   printerName: string;
-};
-
-export const DEFAULTS: SettingsForm = {
-  shopName: "Smart Kirana Store",
-  shopAddress: "",
-  shopPhone: "",
-  ownerName: "",
-  gstNumber: "",
-  gstEnabled: false,
-  currency: "₹",
-  lowStockThreshold: 5,
-  whatsappNumber: "",
-  printerName: "",
 };
