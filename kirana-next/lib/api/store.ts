@@ -408,7 +408,7 @@ export function storeCreateProduct(input: ProductInput): Product[] {
     popularBaseQuantities: [],
     usageCount: 0,
     isActive: true,
-    expiryDate: null,
+    expiryDate: variant.expiryDate ?? null,
     createdAt: now,
   }));
 
