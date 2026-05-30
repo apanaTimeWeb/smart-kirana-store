@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAuth } from "../../context/AuthContext";
-import { AUTH_PLACEHOLDERS } from "../../constants/AuthConstants";
+import { useAuth } from "../../auth_context/AuthContext";
+import { AUTH_PLACEHOLDERS } from "../../auth_constants/AuthSharedConstants";
 
 export function AuthSignupForm() {
   const { signup, isSignupLoading } = useAuth();
