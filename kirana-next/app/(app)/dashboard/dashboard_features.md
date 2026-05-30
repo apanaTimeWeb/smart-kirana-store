@@ -9,21 +9,23 @@ Dashboard ka code `app/(app)/dashboard` directory ke andar maintain kiya gaya ha
 - **`page.tsx`**: Dashboard ka main entry point. Yeh saara logic handle karta hai, data ko aggregate karta hai, aur baaki child components ko props pass karta hai.
 - **`dashboard.css`**: Dashboard ke specific CSS variables aur styles (e.g., colors, borders, backgrounds) ko define karta hai.
 - **`loading.tsx`**: Next.js ka default loading state, jab tak dashboard render ho raha hota hai tab tak loader dikhane ke liye.
-- **`dashboard_components/`**: Yahan saare child components hain jo dashboard me use hote hain:
-  - `StatCard.tsx`: Metric cards ke liye reusable component (Sale, Profit, Khata, etc.).
-  - `LowStockList.tsx`: Kam stock waale items ko list, search, aur paginate karne wala component.
-  - `RecentBillsList.tsx`: Haal hi me banaye gaye bills ko list, search, aur paginate karne wala component.
-  - `ExpiringSoonList.tsx`: Jaldi expire hone wale items ko list, search, aur paginate karne wala component.
+- **`error.tsx`**: Next.js Error boundary component, jo dashboard me aane wali errors ko gracefully handle karta hai taaki poora app crash na ho.
+- **`dashboard_components/`**: Yahan saare child components aur strict isolated logic hain:
+  - `DashboardTypes.ts`: Centralized file jahan saare TypeScript types (e.g. `DashboardSummaryData`, `RecentBill`) aur hardcoded options (e.g. `PAYMENT_MODE_LABELS`, pagination values) hain. Yeh backend integration ke liye "Single Source of Truth" hai.
+  - `DashboardContext.tsx`: Dashboard module ka apna private state store. Yeh `useGetDashboardSummary` ko call karke data hold karta hai taaki prop drilling na karni pade.
+  - `DashboardStatCard.tsx`: Metric cards ke liye reusable component (Sale, Profit, Khata, etc.).
+  - `DashboardSearchFilter.tsx`: Search input ke liye extracted reusable micro-component.
+  - `DashboardPagination.tsx`: Pagination controls ke liye extracted reusable micro-component.
+  - `DashboardLowStockList.tsx`: Kam stock waale items ko list, search, aur paginate karne wala component.
+  - `DashboardRecentBillsList.tsx`: Haal hi me banaye gaye bills ko list, search, aur paginate karne wala component.
+  - `DashboardExpiringSoonList.tsx`: Jaldi expire hone wale items ko list, search, aur paginate karne wala component.
 
 ## 🛠 Core Features & Components
 
 ### 1. Main Dashboard Page (`page.tsx`)
-- **Data Source**: Abhi ke liye `data.json` se mock data fetch kar raha hai. (Future me API call replace hogi).
-- **Data Aggregation**: Yahan calculations hoti hain:
-  - **Today's Sale & Profit**: Aakhri din ke `salesReportData` aur `profitReportData` se fetch karta hai.
-  - **Pending Khata**: Jin customers ka `totalDue > 0` hai, unka amount sum up hota hai.
-  - **Low Stock Items**: Jo products apne `lowStockThreshold` se kam ya barabar hain, unko filter karta hai aur 'Out of Stock' (count = 0) alag calculate karta hai.
-- Yeh page 5 `StatCard`, 1 `RecentBillsList`, 1 `LowStockList` aur 1 `ExpiringSoonList` component ko render karta hai.
+- **Data Source**: Context API (`DashboardContext.tsx`) ke jariye data obtain karta hai jisse child components directly data pick karte hain.
+- **Data Aggregation**: Yahan se hatakar Context / backend API hooks me move kiya gaya hai.
+- Yeh page 5 `DashboardStatCard`, 1 `DashboardRecentBillsList`, 1 `DashboardLowStockList` aur 1 `DashboardExpiringSoonList` component ko render karta hai aur in sabko `DashboardProvider` se wrap karta hai.
 
 ### 2. StatCard Component (`StatCard.tsx`)
 - Ek highly reusable, pure UI component hai.
@@ -73,6 +75,7 @@ Agar kal ko koi naya feature banana ho ya AI se code likhwana ho, toh yahan kuch
 
 ## 📌 Summary for Quick Handover
 - Code `app/(app)/dashboard` folder me hai.
-- Architecture simple hai: 1 Parent (`page.tsx`) aur multiple presentational/stateful children (`dashboard_components/`).
-- Kisi bhi naye chart ya list ko banane ke liye `dashboard_components` me naya file create karein aur use `page.tsx` me grid system (`grid gap-4 md:grid-cols-2`) ke andar inject karein.
-- Search aur pagination har list me locally (client-side) managed hai `useState` ki madad se. Jab actual API aayegi, toh ise server-side pagination se replace kiya ja sakta hai agar data bahut bada ho.
+- Architecture highly isolated aur micro-modularized hai (One File, One Component principle).
+- **State**: `DashboardContext.tsx` handle karta hai. Global state me dashboard ka kachra nahi hai.
+- **Types/Constants**: `DashboardTypes.ts` me hain taaki AI ya developer ek jagah change kare.
+- Kisi bhi naye chart ya list ko banane ke liye `dashboard_components` me naya file create karein aur use `page.tsx` me grid system me inject karein.

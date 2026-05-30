@@ -1,21 +1,20 @@
 "use client";
 
 import "./dashboard.css";
-import { Card, CardContent } from "@/components/ui/card";
+import { DashboardProvider, useDashboardContext } from "./dashboard_components/DashboardContext";
 import { IndianRupee, TrendingUp, BookOpen, AlertTriangle, Clock } from "lucide-react";
 import { format } from "date-fns";
-import { StatCard } from "./dashboard_components/StatCard";
-import { RecentBillsList } from "./dashboard_components/RecentBillsList";
-import { LowStockList } from "./dashboard_components/LowStockList";
-import { ExpiringSoonList } from "./dashboard_components/ExpiringSoonList";
-import { useGetDashboardSummary } from "@/lib/api";
+import { DashboardStatCard } from "./dashboard_components/DashboardStatCard";
+import { DashboardRecentBillsList } from "./dashboard_components/DashboardRecentBillsList";
+import { DashboardLowStockList } from "./dashboard_components/DashboardLowStockList";
+import { DashboardExpiringSoonList } from "./dashboard_components/DashboardExpiringSoonList";
 import { useRouter } from "next/navigation";
 
-export default function Dashboard() {
-  const { data: summary } = useGetDashboardSummary();
+function DashboardContent() {
+  const { summary, isLoading } = useDashboardContext();
   const router = useRouter();
 
-  if (!summary) return <div className="p-4 text-muted-foreground">Loading dashboard...</div>;
+  if (isLoading || !summary) return <div className="p-4 text-muted-foreground">Loading dashboard...</div>;
 
   const today = format(new Date(), "EEEE, dd MMM yyyy");
 
@@ -31,7 +30,7 @@ export default function Dashboard() {
 
       {/* Stat cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <StatCard
+        <DashboardStatCard
           title="आज की बिक्री"
           subtitle="Today's Sale"
           value={`₹${(summary.todaySale ?? 0).toFixed(0)}`}
@@ -43,7 +42,7 @@ export default function Dashboard() {
           iconColorClass="text-[var(--dashboard-sale-icon)]"
           onClick={() => router.push("/history")}
         />
-        <StatCard
+        <DashboardStatCard
           title="आज का मुनाफा"
           subtitle="Today's Profit"
           value={`₹${(summary.todayProfit ?? 0).toFixed(0)}`}
@@ -54,7 +53,7 @@ export default function Dashboard() {
           iconColorClass="text-[var(--dashboard-profit-icon)]"
           onClick={() => router.push("/reports")}
         />
-        <StatCard
+        <DashboardStatCard
           title="उधार बाकी"
           subtitle="Pending Khata"
           value={`₹${(summary.pendingKhataAmount ?? 0).toFixed(0)}`}
@@ -66,7 +65,7 @@ export default function Dashboard() {
           iconColorClass="text-[var(--dashboard-khata-icon)]"
           onClick={() => router.push("/khata")}
         />
-        <StatCard
+        <DashboardStatCard
           title="कम स्टॉक"
           subtitle="Low Stock Alert"
           value={`${summary.lowStockCount}`}
@@ -78,7 +77,7 @@ export default function Dashboard() {
           iconColorClass="text-[var(--dashboard-lowstock-icon)]"
           onClick={() => router.push("/stock?filter=low")}
         />
-        <StatCard
+        <DashboardStatCard
           title="एक्सपायरी अलर्ट"
           subtitle="Expiring Soon"
           value={`${summary.expiringProducts?.length || 0}`}
@@ -94,10 +93,18 @@ export default function Dashboard() {
 
       {/* Lists */}
       <div className="grid gap-4 md:grid-cols-3">
-        <RecentBillsList bills={summary.recentBills ?? []} />
-        <LowStockList products={summary.lowStockProducts ?? []} />
-        <ExpiringSoonList products={summary.expiringProducts ?? []} />
+        <DashboardRecentBillsList />
+        <DashboardLowStockList />
+        <DashboardExpiringSoonList />
       </div>
     </div>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <DashboardProvider>
+      <DashboardContent />
+    </DashboardProvider>
   );
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 
-interface StatCardProps {
+interface DashboardStatCardProps {
   title: string;
   subtitle: string;
   value: string;
@@ -14,7 +14,7 @@ interface StatCardProps {
   onClick?: () => void;
 }
 
-export function StatCard({
+export function DashboardStatCard({
   title,
   subtitle,
   value,
@@ -25,7 +25,7 @@ export function StatCard({
   borderClass,
   iconColorClass,
   onClick,
-}: StatCardProps) {
+}: DashboardStatCardProps) {
   return (
     <Card 
       className={`border ${borderClass} ${bgClass} ${onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}`}
