@@ -37,14 +37,14 @@ export function DashboardExpiringSoonList() {
 
   return (
     <Card className="flex flex-col h-full shadow-sm">
-      <CardHeader className="border-b bg-muted/20 px-4 py-3 flex flex-row items-center justify-between">
+      <CardHeader className="border-b bg-[var(--dashboard-card-header-bg)] px-4 py-3 flex flex-row items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--dashboard-expiry-bg)] text-[var(--dashboard-expiry-icon)]">
             <Clock className="h-4 w-4" />
           </div>
           <div>
             <CardTitle className="text-base font-bold">Expiring Soon</CardTitle>
-            <p className="text-xs text-muted-foreground">अलेर्ट</p>
+            <p className="text-xs text-[var(--dashboard-muted-text)]">अलेर्ट</p>
           </div>
         </div>
       </CardHeader>
@@ -57,23 +57,23 @@ export function DashboardExpiringSoonList() {
       </div>
       <CardContent className="flex-1 overflow-auto p-0">
         {currentProducts.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center p-8 text-center text-muted-foreground">
+          <div className="flex h-full flex-col items-center justify-center p-8 text-center text-[var(--dashboard-muted-text)]">
             <Clock className="mb-2 h-8 w-8 opacity-20" />
             <p className="text-sm">No items match your search.</p>
           </div>
         ) : (
           <div className="divide-y">
             {currentProducts.map((product) => (
-              <div key={product.id} className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors">
+              <div key={product.id} className="flex items-center justify-between p-4 hover:bg-[var(--dashboard-row-hover-bg)] transition-colors">
                 <div className="flex flex-col gap-1">
                   <span className="font-semibold text-sm leading-none">{product.name}</span>
-                  <span className="text-xs text-muted-foreground">{product.variantName}</span>
+                  <span className="text-xs text-[var(--dashboard-muted-text)]">{product.variantName}</span>
                 </div>
                 <div className="flex flex-col items-end gap-1">
                   <span className="text-xs font-medium bg-[var(--dashboard-expiry-bg)] text-[var(--dashboard-expiry-value)] px-2 py-0.5 rounded-md">
                     {product.daysLeft <= 0 ? "Expired" : `${product.daysLeft} days left`}
                   </span>
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-[10px] text-[var(--dashboard-muted-text)]">
                     {format(new Date(product.expiryDate), "dd MMM yyyy")}
                   </span>
                 </div>

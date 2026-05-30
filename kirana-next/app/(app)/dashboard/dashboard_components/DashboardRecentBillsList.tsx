@@ -41,7 +41,7 @@ export function DashboardRecentBillsList() {
         <CardTitle className="flex items-center gap-2 text-base">
           <ShoppingBag className="h-4 w-4 text-[var(--dashboard-primary-icon)]" />
           हाल की बिक्री
-          <span className="text-sm font-normal text-muted-foreground ml-1">(Recent Bills)</span>
+          <span className="text-sm font-normal text-[var(--dashboard-muted-text)] ml-1">(Recent Bills)</span>
         </CardTitle>
       </CardHeader>
       <div className="px-5 pb-2">
@@ -57,12 +57,12 @@ export function DashboardRecentBillsList() {
             {currentBills.map((bill) => (
               <div
                 key={bill.id}
-                className="flex items-center justify-between px-5 py-3 hover:bg-muted/30 transition-colors"
+                className="flex items-center justify-between px-5 py-3 hover:bg-[var(--dashboard-row-hover-bg)] transition-colors"
                 data-testid={`row-bill-${bill.id}`}
               >
                 <div>
                   <p className="font-semibold text-sm">{bill.customerName || "Walk-in Customer"}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-[var(--dashboard-muted-text)]">
                     Bill #{bill.id} · {format(new Date(bill.createdAt), "hh:mm a")}
                   </p>
                 </div>
@@ -85,7 +85,7 @@ export function DashboardRecentBillsList() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <div className="flex flex-col items-center justify-center py-12 text-[var(--dashboard-muted-text)]">
             <ShoppingBag className="h-10 w-10 mb-3 opacity-20" />
             <p className="text-sm">No bills found</p>
           </div>

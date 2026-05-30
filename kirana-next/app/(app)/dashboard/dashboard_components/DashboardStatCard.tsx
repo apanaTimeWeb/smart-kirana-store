@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -27,24 +29,24 @@ export function DashboardStatCard({
   onClick,
 }: DashboardStatCardProps) {
   return (
-    <Card 
-      className={`border ${borderClass} ${bgClass} ${onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}`}
+    <Card
+      className={`border ${borderClass} ${bgClass} ${onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""}`}
       onClick={onClick}
     >
       <CardContent className="p-5">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--dashboard-muted-text)]">
               {title}
             </p>
-            <p className="text-[10px] text-muted-foreground">{subtitle}</p>
+            <p className="text-[10px] text-[var(--dashboard-muted-text)]">{subtitle}</p>
           </div>
           <div className={`rounded-lg p-2 ${bgClass} border ${borderClass}`}>
             <Icon className={`h-4 w-4 ${iconColorClass}`} />
           </div>
         </div>
         <div className={`mt-3 text-3xl font-extrabold ${colorClass}`}>{value}</div>
-        {note && <p className="mt-1 text-xs text-muted-foreground">{note}</p>}
+        {note && <p className="mt-1 text-xs text-[var(--dashboard-muted-text)]">{note}</p>}
       </CardContent>
     </Card>
   );

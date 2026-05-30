@@ -17,12 +17,12 @@ export default function DashboardError({
 
   return (
     <div className="flex h-[80vh] w-full flex-col items-center justify-center gap-4 text-center">
-      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10">
-        <AlertTriangle className="h-10 w-10 text-destructive" />
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--dashboard-error-icon-bg)]">
+        <AlertTriangle className="h-10 w-10 text-[var(--dashboard-error-icon-text)]" />
       </div>
       <div className="space-y-2">
         <h2 className="text-2xl font-bold tracking-tight">Something went wrong!</h2>
-        <p className="text-muted-foreground max-w-[500px]">
+        <p className="text-[var(--dashboard-muted-text)] max-w-[500px]">
           We encountered an error loading the dashboard data. Please try again or contact support if the issue persists.
         </p>
       </div>

@@ -53,6 +53,13 @@
     --dashboard-primary-icon:           hsl(var(--primary));
     --dashboard-destructive-text:       hsl(var(--destructive));
     --dashboard-destructive-icon:       hsl(var(--destructive));
+
+    /* ── Shared Semantic Tokens ───────────────────────────────── */
+    --dashboard-muted-text:             hsl(var(--muted-foreground));  /* replaces text-muted-foreground */
+    --dashboard-row-hover-bg:           hsl(var(--muted) / 0.35);      /* replaces hover:bg-muted/30 and hover:bg-muted/50 */
+    --dashboard-card-header-bg:         hsl(var(--muted) / 0.20);      /* replaces bg-muted/20 on CardHeader */
+    --dashboard-error-icon-bg:          hsl(var(--destructive) / 0.10); /* replaces bg-destructive/10 in error.tsx */
+    --dashboard-error-icon-text:        hsl(var(--destructive));        /* replaces text-destructive in error.tsx */
   }
 
   .dark {
@@ -94,6 +101,12 @@
     --dashboard-primary-icon:           hsl(var(--primary));
     --dashboard-destructive-text:       hsl(0 84% 65%);
     --dashboard-destructive-icon:       hsl(0 84% 65%);
+
+    --dashboard-muted-text:             hsl(var(--muted-foreground));
+    --dashboard-row-hover-bg:           hsl(var(--muted) / 0.35);
+    --dashboard-card-header-bg:         hsl(var(--muted) / 0.20);
+    --dashboard-error-icon-bg:          hsl(var(--destructive) / 0.15);
+    --dashboard-error-icon-text:        hsl(0 84% 65%);
   }
 
 }

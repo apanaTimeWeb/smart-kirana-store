@@ -13,7 +13,7 @@ interface DashboardPaginationProps {
 export function DashboardPagination({ currentPage, totalPages, onPageChange }: DashboardPaginationProps) {
   return (
     <>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-[var(--dashboard-muted-text)]">
         Page {totalPages === 0 ? 0 : currentPage} of {totalPages}
       </p>
       <div className="flex gap-2">

@@ -13,7 +13,7 @@ interface DashboardSearchFilterProps {
 export function DashboardSearchFilter({ placeholder, value, onChange }: DashboardSearchFilterProps) {
   return (
     <div className="relative">
-      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--dashboard-muted-text)]" />
       <Input
         type="search"
         placeholder={placeholder}

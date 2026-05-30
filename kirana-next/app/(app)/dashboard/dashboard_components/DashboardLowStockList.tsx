@@ -37,7 +37,7 @@ export function DashboardLowStockList() {
         <CardTitle className="flex items-center gap-2 text-base text-[var(--dashboard-destructive-text)]">
           <PackageOpen className="h-4 w-4" />
           कम स्टॉक वाले सामान
-          <span className="text-sm font-normal text-muted-foreground ml-1">(Low Stock)</span>
+          <span className="text-sm font-normal text-[var(--dashboard-muted-text)] ml-1">(Low Stock)</span>
         </CardTitle>
       </CardHeader>
       <div className="px-5 pb-2">
@@ -53,12 +53,12 @@ export function DashboardLowStockList() {
             {currentProducts.map((product) => (
               <div
                 key={product.id}
-                className="flex items-center justify-between px-5 py-3 hover:bg-muted/30 transition-colors"
+                className="flex items-center justify-between px-5 py-3 hover:bg-[var(--dashboard-row-hover-bg)] transition-colors"
                 data-testid={`row-lowstock-${product.id}`}
               >
                 <div>
                   <p className="font-semibold text-sm">{product.name}</p>
-                  <p className="text-xs text-muted-foreground">{product.category}</p>
+                  <p className="text-xs text-[var(--dashboard-muted-text)]">{product.category}</p>
                 </div>
                 <div className="text-right">
                   <p
@@ -72,13 +72,13 @@ export function DashboardLowStockList() {
                       ? "Out of Stock"
                       : `${product.currentStock} ${product.unit} left`}
                   </p>
-                  <p className="text-[10px] text-muted-foreground">Min: {product.lowStockThreshold}</p>
+                  <p className="text-[10px] text-[var(--dashboard-muted-text)]">Min: {product.lowStockThreshold}</p>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <div className="flex flex-col items-center justify-center py-12 text-[var(--dashboard-muted-text)]">
             <PackageOpen className="h-10 w-10 mb-3 opacity-20" />
             <p className="text-sm">No items match your search</p>
           </div>
