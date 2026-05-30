@@ -40,21 +40,21 @@ export function StockLivePreview({
 
       <div className="grid grid-cols-2 gap-2 text-sm">
         <div className="space-y-0.5">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Variant Name</p>
+          <p className="text-[10px] uppercase tracking-wider text-[var(--stock-muted-text)] font-semibold">Variant Name</p>
           <p className="font-semibold">{variantName || "—"}</p>
         </div>
         <div className="space-y-0.5">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Selling Mode</p>
+          <p className="text-[10px] uppercase tracking-wider text-[var(--stock-muted-text)] font-semibold">Selling Mode</p>
           <p className="font-semibold">{MODE_LABEL[cfg.sellingMode]}</p>
         </div>
         <div className="space-y-0.5">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Conversion</p>
-          <p className="font-semibold text-primary">
+          <p className="text-[10px] uppercase tracking-wider text-[var(--stock-muted-text)] font-semibold">Conversion</p>
+          <p className="font-semibold text-[var(--stock-primary-color)]">
             1 {unit} = {formatBaseUnits(cfg.baseQuantity, cfg.baseUnit)}
           </p>
         </div>
         <div className="space-y-0.5">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Base Unit</p>
+          <p className="text-[10px] uppercase tracking-wider text-[var(--stock-muted-text)] font-semibold">Base Unit</p>
           <p className="font-semibold">{cfg.baseUnit}</p>
         </div>
       </div>
@@ -66,7 +66,7 @@ export function StockLivePreview({
             ? "bg-[var(--stock-preview-loss-bg)] border-[var(--stock-preview-loss-border)]"
             : "bg-[var(--stock-preview-ok-bg)] border-[var(--stock-preview-ok-border)]"
         )}>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs text-[var(--stock-muted-text)]">
             Buy ₹{buyPrice} → Sell ₹{sellPrice}
           </span>
           {margin !== null && (
@@ -89,7 +89,7 @@ export function StockLivePreview({
         </div>
       )}
 
-      <p className="text-[11px] text-muted-foreground italic">{cfg.description}</p>
+      <p className="text-[11px] text-[var(--stock-muted-text)] italic">{cfg.description}</p>
     </div>
   );
 }

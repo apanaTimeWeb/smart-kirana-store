@@ -34,7 +34,7 @@ export function StockUnitSelector({
               <span className="font-medium">{selectedConfig?.label ?? value}</span>
             </div>
           ) : (
-            <span className="text-muted-foreground">Select unit...</span>
+            <span className="text-[var(--stock-muted-text)]">Select unit...</span>
           )}
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -59,7 +59,7 @@ export function StockUnitSelector({
                     >
                       <div className="flex flex-col">
                         <span className="font-medium text-sm">{c?.label ?? u}</span>
-                        <span className="text-[11px] text-muted-foreground">{c?.description}</span>
+                        <span className="text-[11px] text-[var(--stock-muted-text)]">{c?.description}</span>
                       </div>
                       <Check
                         className={cn(

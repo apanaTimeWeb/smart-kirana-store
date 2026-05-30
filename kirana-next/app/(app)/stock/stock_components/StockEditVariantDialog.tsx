@@ -88,14 +88,14 @@ export function StockEditVariantDialog() {
     <Dialog open={Boolean(product)} onOpenChange={(open) => !open && setEditingProduct(null)}>
       <DialogContent className="max-w-2xl max-h-[95vh] flex flex-col p-0 gap-0 overflow-hidden">
         {/* Header */}
-        <DialogHeader className="bg-card px-6 py-4 border-b shrink-0">
+        <DialogHeader className="bg-[var(--stock-card-bg)] px-6 py-4 border-b shrink-0">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--stock-primary-bg)] text-[var(--stock-primary-text)] shadow-sm">
               <Package className="h-4.5 w-4.5" />
             </div>
             <div className="text-left">
               <DialogTitle className="text-lg font-bold">Edit Pack / Size</DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+              <DialogDescription className="text-xs text-[var(--stock-muted-text)] mt-0.5">
                 Update details for {product.productName}. Unit changes will auto-wire base calculations.
               </DialogDescription>
             </div>
@@ -108,9 +108,9 @@ export function StockEditVariantDialog() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-semibold flex items-center gap-1.5">
-                <Package className="h-3.5 w-3.5 text-muted-foreground" />
+                <Package className="h-3.5 w-3.5 text-[var(--stock-muted-text)]" />
                 Size Name
-                <span className="text-destructive">*</span>
+                <span className="text-[var(--stock-destructive-text)]">*</span>
               </label>
               <Input
                 autoFocus
@@ -119,12 +119,12 @@ export function StockEditVariantDialog() {
                 placeholder="e.g. 500g Pouch, 1 Litre Bottle..."
                 className="h-12 text-base font-medium"
               />
-              <p className="text-[11px] text-muted-foreground">Shown in billing and tables</p>
+              <p className="text-[11px] text-[var(--stock-muted-text)]">Shown in billing and tables</p>
             </div>
             
             <div className="space-y-2">
               <label className="text-sm font-semibold flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                <Calendar className="h-3.5 w-3.5 text-[var(--stock-muted-text)]" />
                 Expiry Date
               </label>
               <Input
@@ -133,14 +133,14 @@ export function StockEditVariantDialog() {
                 onChange={(e) => patchDraft({ expiryDate: e.target.value })}
                 className="h-12 text-base"
               />
-              <p className="text-[11px] text-muted-foreground">Leave empty if not applicable</p>
+              <p className="text-[11px] text-[var(--stock-muted-text)]">Leave empty if not applicable</p>
             </div>
           </div>
 
           {/* ROW 2: Unit Type */}
           <div className="space-y-2">
             <label className="text-sm font-semibold flex items-center gap-1.5">
-              <Scale className="h-3.5 w-3.5 text-muted-foreground" />
+              <Scale className="h-3.5 w-3.5 text-[var(--stock-muted-text)]" />
               How is it measured / sold?
             </label>
             <StockUnitSelector
@@ -172,11 +172,11 @@ export function StockEditVariantDialog() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-semibold flex items-center gap-1.5">
-                <IndianRupee className="h-3.5 w-3.5 text-muted-foreground" />
+                <IndianRupee className="h-3.5 w-3.5 text-[var(--stock-muted-text)]" />
                 Buy Price (₹)
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium">₹</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--stock-muted-text)] text-sm font-medium">₹</span>
                 <Input
                   type="number"
                   min={0}
@@ -190,12 +190,12 @@ export function StockEditVariantDialog() {
 
             <div className="space-y-2">
               <label className="text-sm font-semibold flex items-center gap-1.5">
-                <IndianRupee className="h-3.5 w-3.5 text-muted-foreground" />
+                <IndianRupee className="h-3.5 w-3.5 text-[var(--stock-muted-text)]" />
                 Sell Price (₹)
-                <span className="text-destructive">*</span>
+                <span className="text-[var(--stock-destructive-text)]">*</span>
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium">₹</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--stock-muted-text)] text-sm font-medium">₹</span>
                 <Input
                   type="number"
                   min={0}
@@ -217,7 +217,7 @@ export function StockEditVariantDialog() {
                 : "bg-[var(--stock-preview-ok-bg)] border-[var(--stock-preview-ok-border)]"
             )}>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground font-medium">
+                <span className="text-xs text-[var(--stock-muted-text)] font-medium">
                   Buy ₹{buyPrice} → Sell ₹{sellPrice}
                 </span>
                 {margin !== null && (
@@ -239,14 +239,14 @@ export function StockEditVariantDialog() {
           )}
 
           {/* ROW 4: Stock & Extras */}
-          <div className="rounded-xl border bg-card p-4 space-y-4">
+          <div className="rounded-xl border bg-[var(--stock-card-bg)] p-4 space-y-4">
             <h4 className="text-sm font-semibold flex items-center gap-2">
-              <Box className="h-4 w-4 text-muted-foreground" />
+              <Box className="h-4 w-4 text-[var(--stock-muted-text)]" />
               Stock & Extras
             </h4>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <div className="space-y-1.5">
-                <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
                   Current Stock ({unitStr})
                 </label>
                 <Input
@@ -258,7 +258,7 @@ export function StockEditVariantDialog() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
                   Low Stock Alert
                 </label>
                 <Input
@@ -270,7 +270,7 @@ export function StockEditVariantDialog() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
                   MRP ₹
                 </label>
                 <Input
@@ -283,13 +283,13 @@ export function StockEditVariantDialog() {
                 />
               </div>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-2 border-t pt-2">
+            <p className="text-[11px] text-[var(--stock-muted-text)] mt-2 border-t pt-2">
               Note: Stock changes automatically update Base Units. Current base inventory: <strong>{formatBaseUnits(draft.stockInBaseUnit, draft.baseUnit)}</strong>.
             </p>
           </div>
 
           {/* Quick Settings */}
-          <div className="rounded-xl border bg-card p-4">
+          <div className="rounded-xl border bg-[var(--stock-card-bg)] p-4">
             <label className="flex items-start gap-3 cursor-pointer group">
               <Checkbox
                 checked={draft.quickSelect}
@@ -297,11 +297,11 @@ export function StockEditVariantDialog() {
                 className="mt-1"
               />
               <div className="space-y-1">
-                <p className="text-sm font-semibold flex items-center gap-1.5 group-hover:text-primary transition-colors">
-                  <Star className="h-3.5 w-3.5 text-warning" />
+                <p className="text-sm font-semibold flex items-center gap-1.5 group-hover:text-[var(--stock-primary-color)] transition-colors">
+                  <Star className="h-3.5 w-3.5 text-[var(--stock-warning-text)]" />
                   Fast Billing Me Dikhaye
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-[var(--stock-muted-text)]">
                   Pin this variant to the Quick-Select panel on the billing screen for 2-click checkout.
                 </p>
               </div>
@@ -311,7 +311,7 @@ export function StockEditVariantDialog() {
         </div>
 
         {/* Footer */}
-        <div className="border-t bg-card px-5 py-4 shrink-0">
+        <div className="border-t bg-[var(--stock-card-bg)] px-5 py-4 shrink-0">
           {!isValid && (
             <div className="mb-3 flex items-start gap-2 rounded-lg bg-[var(--stock-stock-out-bg)] border border-[var(--stock-stock-out-border)] px-3 py-2">
               <AlertTriangle className="h-4 w-4 text-[var(--stock-stock-out-text)] shrink-0 mt-0.5" />

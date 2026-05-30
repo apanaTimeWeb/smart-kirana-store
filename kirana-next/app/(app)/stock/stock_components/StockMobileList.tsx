@@ -11,7 +11,7 @@ export function StockMobileList() {
   return (
     <div className="grid gap-2 md:hidden">
       {paginatedProducts.length === 0 && (
-        <div className="rounded-lg border bg-card p-8 text-center text-sm text-muted-foreground">
+        <div className="rounded-lg border bg-[var(--stock-card-bg)] p-8 text-center text-sm text-[var(--stock-muted-text)]">
           Koi product nahi mila
         </div>
       )}

@@ -12,7 +12,7 @@ export default function ProductsLoading() {
         </div>
       </div>
       <div className="rounded-xl border overflow-hidden">
-        <div className="grid grid-cols-7 gap-4 p-3 border-b bg-muted/50">
+        <div className="grid grid-cols-7 gap-4 p-3 border-b bg-[var(--stock-muted-bg-50)]">
           {Array.from({ length: 7 }).map((_, i) => (
             <Skeleton key={i} className="h-4 w-full" />
           ))}

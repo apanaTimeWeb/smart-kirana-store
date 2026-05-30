@@ -10,10 +10,10 @@ export function StockMainTable() {
   const { paginatedProducts } = useStock();
 
   return (
-    <div className="hidden overflow-hidden rounded-lg border bg-card md:block">
+    <div className="hidden overflow-hidden rounded-lg border bg-[var(--stock-card-bg)] md:block">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/60">
+          <TableRow className="bg-[var(--stock-muted-bg-60)]">
             <TableHead>Product</TableHead>
             <TableHead>Variant</TableHead>
             <TableHead>Mode</TableHead>
@@ -30,7 +30,7 @@ export function StockMainTable() {
           ))}
           {paginatedProducts.length === 0 && (
             <TableRow>
-              <TableCell colSpan={8} className="py-8 text-center text-muted-foreground">Koi product nahi mila</TableCell>
+              <TableCell colSpan={8} className="py-8 text-center text-[var(--stock-muted-text)]">Koi product nahi mila</TableCell>
             </TableRow>
           )}
         </TableBody>

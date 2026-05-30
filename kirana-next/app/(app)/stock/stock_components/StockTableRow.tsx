@@ -18,7 +18,7 @@ export function StockTableRow({ product }: { product: Product }) {
     <TableRow>
       <TableCell>
         <p className="font-semibold">{product.productName}</p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-[var(--stock-muted-text)]">
           {product.category}{product.shortcut ? ` / ${product.shortcut}` : ""}
         </p>
       </TableCell>
@@ -35,13 +35,13 @@ export function StockTableRow({ product }: { product: Product }) {
       </TableCell>
       <TableCell>
         <p className="font-semibold">{product.currentStock} {product.unit}</p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-[var(--stock-muted-text)]">
           {formatBaseUnits(product.stockInBaseUnit, product.baseUnit)}
         </p>
       </TableCell>
       <TableCell>
         <p className="font-semibold text-[var(--stock-selling-price)]">Rs {product.sellingPrice}</p>
-        <p className="text-xs text-muted-foreground">Buy Rs {product.purchasePrice}</p>
+        <p className="text-xs text-[var(--stock-muted-text)]">Buy Rs {product.purchasePrice}</p>
       </TableCell>
       <TableCell>
         <StockBadge product={product} />

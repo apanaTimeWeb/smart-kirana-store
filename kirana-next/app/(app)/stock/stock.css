@@ -1,5 +1,5 @@
 /*
- * stock.css — Products Feature Color Tokens
+ * stock.css � Products Feature Color Tokens
  *
  * All colors for the Products page live here.
  * Usage in JSX: className="[color:var(--stock-purchase-rate)]"
@@ -8,7 +8,25 @@
 @layer components {
 
   :root {
-    /* ── Bulk Calculation Box ──────────────────────────────────── */
+    /* -- Generic UI Colors ------------------------------------------ */
+    --stock-card-bg:                 hsl(var(--card));
+    --stock-muted-bg:                hsl(var(--muted));
+    --stock-muted-bg-20:             hsl(var(--muted) / 0.2);
+    --stock-muted-bg-30:             hsl(var(--muted) / 0.3);
+    --stock-muted-bg-40:             hsl(var(--muted) / 0.4);
+    --stock-muted-bg-50:             hsl(var(--muted) / 0.5);
+    --stock-muted-bg-60:             hsl(var(--muted) / 0.6);
+    --stock-muted-text:              hsl(var(--muted-foreground));
+    --stock-primary-bg:              hsl(var(--primary));
+    --stock-primary-text:            hsl(var(--primary-foreground));
+    --stock-primary-color:           hsl(var(--primary));
+    --stock-destructive-text:        hsl(var(--destructive));
+    --stock-destructive-bg:          hsl(var(--destructive));
+    --stock-destructive-bg-10:       hsl(var(--destructive) / 0.1);
+    --stock-border:                  hsl(var(--border));
+    --stock-warning-text:            hsl(38 92% 50%);
+
+    /* -- Bulk Calculation Box ------------------------------------ */
     --stock-calc-border:             hsl(217 91% 80%);             /* border-blue-200 */
     --stock-calc-bg:                 hsl(217 91% 97%);             /* bg-blue-50/70 */
     --stock-calc-icon:               hsl(217 91% 50%);             /* text-blue-600 */
@@ -17,17 +35,17 @@
     --stock-calc-result-label:       hsl(142 60% 28%);             /* text-green-700 */
     --stock-calc-result-value:       hsl(142 60% 28%);             /* text-green-700 */
 
-    /* ── Table Columns ────────────────────────────────────────── */
+    /* -- Table Columns ------------------------------------------ */
     --stock-purchase-rate:           hsl(217 91% 35%);             /* text-blue-700 */
     --stock-selling-price:           hsl(142 60% 28%);             /* text-green-700 */
     --stock-margin:                  hsl(152 60% 35%);             /* text-emerald-600 */
 
-    /* ── Stock Status Badge ───────────────────────────────────── */
+    /* -- Stock Status Badge ------------------------------------- */
     --stock-badge-lowstock-bg:       hsl(24 90% 93%);              /* bg-orange-100 */
     --stock-badge-lowstock-text:     hsl(24 90% 35%);              /* text-orange-700 */
     --stock-badge-lowstock-border:   hsl(24 90% 75%);              /* border-orange-200 */
 
-    /* ── Delete Button ────────────────────────────────────────── */
+    /* -- Delete Button ------------------------------------------ */
     --stock-btn-delete-text:         hsl(var(--destructive));      /* text-red-600 */
 
     --stock-type-bg:                 hsl(210 20% 97%);
@@ -42,7 +60,7 @@
     --stock-stock-out-text:          hsl(var(--destructive));
     --stock-stock-out-border:        hsl(0 76% 82%);
 
-    /* ── Live Preview Dialog ──────────────────────────────────── */
+    /* -- Live Preview Dialog ------------------------------------ */
     --stock-preview-neutral-bg:      hsl(174 45% 94%);             /* bg-teal-50 */
     --stock-preview-neutral-border:  hsl(174 45% 72%);             /* border-teal-200 */
     --stock-preview-neutral-text:    hsl(174 70% 24%);             /* text-primary */
@@ -123,14 +141,3 @@
   }
 
 }
-
-    /* General UI Colors */
-    --stock-card-bg:                 hsl(var(--card));
-    --stock-muted-bg:                hsl(var(--muted));
-    --stock-muted-text:              hsl(var(--muted-foreground));
-    --stock-primary-bg:              hsl(var(--primary));
-    --stock-primary-text:            hsl(var(--primary-foreground));
-    --stock-destructive-text:        hsl(var(--destructive));
-    --stock-border:                  hsl(var(--border));
-    --stock-warning-text:            hsl(38 92% 50%);
-

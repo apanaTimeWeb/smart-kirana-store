@@ -114,7 +114,7 @@ export function StockPurchaseDialog() {
               <p className="mt-1 text-2xl font-extrabold text-[var(--stock-purchase-preview-text)]">
                 + {formatBaseUnits(addedBase, selected.baseUnit)}
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[var(--stock-muted-text)]">
                 Stock base me add hoga. Current: {selected.currentStock} {selected.unit}
               </p>
             </div>

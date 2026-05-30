@@ -17,7 +17,7 @@ export function StockFilterBar() {
           onClick={() => handleFilterChange(id as ProductFilter)}
           className={cn(
             "rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors",
-            filter === id ? "border-primary bg-primary text-primary-foreground" : "bg-card text-muted-foreground hover:bg-muted/60"
+            filter === id ? "border-primary bg-[var(--stock-primary-bg)] text-[var(--stock-primary-text)]" : "bg-[var(--stock-card-bg)] text-[var(--stock-muted-text)] hover:bg-[var(--stock-muted-bg-60)]"
           )}
         >
           {label}

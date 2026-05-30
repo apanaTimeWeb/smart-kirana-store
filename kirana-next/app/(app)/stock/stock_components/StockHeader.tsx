@@ -12,7 +12,7 @@ export function StockHeader() {
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Product Master</h1>
-        <p className="text-sm text-muted-foreground">Khula, packet, bora, tin, box aur carton variants ek jagah.</p>
+        <p className="text-sm text-[var(--stock-muted-text)]">Khula, packet, bora, tin, box aur carton variants ek jagah.</p>
       </div>
       <div className="flex flex-wrap gap-2">
         <Button variant="outline" onClick={() => setIsPurchaseOpen(true)}>

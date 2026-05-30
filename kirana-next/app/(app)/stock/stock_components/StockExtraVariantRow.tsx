@@ -38,14 +38,14 @@ export function StockExtraVariantRow({
   };
 
   return (
-    <div className="rounded-xl border bg-muted/20 p-4 space-y-3">
+    <div className="rounded-xl border bg-[var(--stock-muted-bg-20)] p-4 space-y-3">
       <div className="flex items-center justify-between">
         <Badge variant="outline" className="text-xs">Extra Pack {index + 1}</Badge>
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          className="h-7 px-2 text-destructive hover:bg-destructive/10"
+          className="h-7 px-2 text-[var(--stock-destructive-text)] hover:bg-[var(--stock-destructive-bg-10)]"
           onClick={onRemove}
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -54,7 +54,7 @@ export function StockExtraVariantRow({
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         <div className="space-y-1.5">
-          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
             Variant Name
           </label>
           <Input
@@ -65,7 +65,7 @@ export function StockExtraVariantRow({
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
             Unit
           </label>
           <StockUnitSelector
@@ -75,7 +75,7 @@ export function StockExtraVariantRow({
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
             Buy Price ₹
           </label>
           <Input
@@ -88,7 +88,7 @@ export function StockExtraVariantRow({
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
             Sell Price ₹
           </label>
           <Input
@@ -101,7 +101,7 @@ export function StockExtraVariantRow({
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
             Stock
           </label>
           <Input
@@ -113,7 +113,7 @@ export function StockExtraVariantRow({
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
             Low Stock Alert
           </label>
           <Input
@@ -125,7 +125,7 @@ export function StockExtraVariantRow({
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+          <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
             MRP ₹
           </label>
           <Input
@@ -140,7 +140,7 @@ export function StockExtraVariantRow({
       </div>
 
       {cfg && (
-        <p className="text-[11px] text-muted-foreground bg-background rounded px-2 py-1 border">
+        <p className="text-[11px] text-[var(--stock-muted-text)] bg-background rounded px-2 py-1 border">
           📐 1 {variant.unitType.toLowerCase()} = {formatBaseUnits(cfg.baseQuantity, cfg.baseUnit)} · Mode: {MODE_LABEL[cfg.sellingMode]}
         </p>
       )}

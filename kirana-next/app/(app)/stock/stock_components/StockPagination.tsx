@@ -12,11 +12,11 @@ export function StockPagination({ className, compact = false }: { className?: st
   return (
     <div className={cn("flex items-center justify-between", className)}>
       {!compact ? (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-[var(--stock-muted-text)]">
           Showing {paginatedProducts.length} of {visibleProducts.length} items (Page {totalPages === 0 ? 0 : currentPage} of {totalPages})
         </p>
       ) : (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-[var(--stock-muted-text)]">
           Page {totalPages === 0 ? 0 : currentPage} of {totalPages}
         </p>
       )}

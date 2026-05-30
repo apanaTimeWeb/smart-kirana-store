@@ -185,14 +185,14 @@ export function StockProductCreator() {
     <Dialog open={isAddOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-2xl max-h-[95vh] flex flex-col p-0 gap-0 overflow-hidden">
         {/* Header */}
-        <DialogHeader className="bg-card px-6 py-4 border-b shrink-0">
+        <DialogHeader className="bg-[var(--stock-card-bg)] px-6 py-4 border-b shrink-0">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--stock-primary-bg)] text-[var(--stock-primary-text)] shadow-sm">
               <Zap className="h-4.5 w-4.5" />
             </div>
             <div>
               <DialogTitle className="text-lg font-bold">Quick Add Product</DialogTitle>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="text-xs text-[var(--stock-muted-text)] mt-0.5">
                 5 fields · Unit auto-wires everything · Live preview before save
               </p>
             </div>
@@ -205,9 +205,9 @@ export function StockProductCreator() {
             {/* ── Field 1: Product Name ─────────────────────────────────── */}
             <div className="space-y-2">
               <label className="text-sm font-semibold flex items-center gap-1.5">
-                <Tag className="h-3.5 w-3.5 text-muted-foreground" />
+                <Tag className="h-3.5 w-3.5 text-[var(--stock-muted-text)]" />
                 Product Name
-                <span className="text-destructive">*</span>
+                <span className="text-[var(--stock-destructive-text)]">*</span>
               </label>
               <Input
                 autoFocus
@@ -218,18 +218,18 @@ export function StockProductCreator() {
                 onKeyDown={(e) => e.key === "Enter" && isValid && handleSubmit()}
               />
               {name.trim().length > 0 && name.trim().length < 2 && (
-                <p className="text-xs text-destructive">Name too short</p>
+                <p className="text-xs text-[var(--stock-destructive-text)]">Name too short</p>
               )}
             </div>
 
             {/* ── Field 2: Unit (the most important field) ─────────────── */}
             <div className="space-y-2">
               <label className="text-sm font-semibold flex items-center gap-1.5">
-                <Scale className="h-3.5 w-3.5 text-muted-foreground" />
+                <Scale className="h-3.5 w-3.5 text-[var(--stock-muted-text)]" />
                 How is it measured / sold?
-                <span className="text-destructive">*</span>
+                <span className="text-[var(--stock-destructive-text)]">*</span>
               </label>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[var(--stock-muted-text)]">
                 ⚡ Select unit → selling mode, base unit, and conversions are auto-set. No manual math.
               </p>
 
@@ -262,11 +262,11 @@ export function StockProductCreator() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <label className="text-sm font-semibold flex items-center gap-1.5">
-                  <IndianRupee className="h-3.5 w-3.5 text-muted-foreground" />
+                  <IndianRupee className="h-3.5 w-3.5 text-[var(--stock-muted-text)]" />
                   Buy Price (₹)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium">₹</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--stock-muted-text)] text-sm font-medium">₹</span>
                   <Input
                     type="number"
                     min={0}
@@ -276,17 +276,17 @@ export function StockProductCreator() {
                     className="h-12 pl-7 text-base font-semibold text-[var(--stock-purchase-rate)]"
                   />
                 </div>
-                <p className="text-[11px] text-muted-foreground">Cost you pay to supplier</p>
+                <p className="text-[11px] text-[var(--stock-muted-text)]">Cost you pay to supplier</p>
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-semibold flex items-center gap-1.5">
-                  <IndianRupee className="h-3.5 w-3.5 text-muted-foreground" />
+                  <IndianRupee className="h-3.5 w-3.5 text-[var(--stock-muted-text)]" />
                   Sell Price (₹)
-                  <span className="text-destructive">*</span>
+                  <span className="text-[var(--stock-destructive-text)]">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium">₹</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--stock-muted-text)] text-sm font-medium">₹</span>
                   <Input
                     type="number"
                     min={0}
@@ -296,7 +296,7 @@ export function StockProductCreator() {
                     className="h-12 pl-7 text-base font-semibold text-[var(--stock-selling-price)]"
                   />
                 </div>
-                <p className="text-[11px] text-muted-foreground">Price customer pays</p>
+                <p className="text-[11px] text-[var(--stock-muted-text)]">Price customer pays</p>
               </div>
             </div>
 
@@ -313,13 +313,13 @@ export function StockProductCreator() {
             {/* ── Additional Details Section ──────────────────────────────────────── */}
             <div className="space-y-5">
               {/* Variant name override */}
-              <div className="rounded-xl border bg-card p-4 space-y-4">
+              <div className="rounded-xl border bg-[var(--stock-card-bg)] p-4 space-y-4">
                 <h4 className="text-sm font-semibold flex items-center gap-2">
-                  <Package className="h-4 w-4 text-muted-foreground" />
+                  <Package className="h-4 w-4 text-[var(--stock-muted-text)]" />
                   Variant Name
                 </h4>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                  <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
                     Name (auto-suggested: "{cfg?.variantNameSuggestion ?? unitType}")
                   </label>
                   <Input
@@ -328,21 +328,21 @@ export function StockProductCreator() {
                     placeholder={cfg?.variantNameSuggestion ?? unitType}
                     className="h-9 text-sm"
                   />
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-[11px] text-[var(--stock-muted-text)]">
                     This is the size/pack name shown in the product table and billing screen.
                   </p>
                 </div>
               </div>
 
               {/* Product identity */}
-              <div className="rounded-xl border bg-card p-4 space-y-4">
+              <div className="rounded-xl border bg-[var(--stock-card-bg)] p-4 space-y-4">
                 <h4 className="text-sm font-semibold flex items-center gap-2">
-                  <Info className="h-4 w-4 text-muted-foreground" />
+                  <Info className="h-4 w-4 text-[var(--stock-muted-text)]" />
                   Product Identity
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Category</label>
+                    <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">Category</label>
                     <Input
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
@@ -351,7 +351,7 @@ export function StockProductCreator() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Brand</label>
+                    <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">Brand</label>
                     <Input
                       value={brand}
                       onChange={(e) => setBrand(e.target.value)}
@@ -360,7 +360,7 @@ export function StockProductCreator() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                    <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
                       Search Keywords (comma-separated)
                     </label>
                     <Input
@@ -371,7 +371,7 @@ export function StockProductCreator() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                    <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
                       Shortcut Key (for fast billing search)
                     </label>
                     <Input
@@ -385,14 +385,14 @@ export function StockProductCreator() {
               </div>
 
               {/* Stock & Pricing extras */}
-              <div className="rounded-xl border bg-card p-4 space-y-4">
+              <div className="rounded-xl border bg-[var(--stock-card-bg)] p-4 space-y-4">
                 <h4 className="text-sm font-semibold flex items-center gap-2">
-                  <Package className="h-4 w-4 text-muted-foreground" />
+                  <Package className="h-4 w-4 text-[var(--stock-muted-text)]" />
                   Stock & Pricing Extras
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                    <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
                       MRP ₹ (printed on pack)
                     </label>
                     <Input
@@ -405,7 +405,7 @@ export function StockProductCreator() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                    <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
                       Opening Stock (units)
                     </label>
                     <Input
@@ -417,13 +417,13 @@ export function StockProductCreator() {
                       className="h-9 text-sm"
                     />
                     {initialStock !== "" && cfg && (
-                      <p className="text-[11px] text-muted-foreground">
+                      <p className="text-[11px] text-[var(--stock-muted-text)]">
                         = {formatBaseUnits(Number(initialStock) * cfg.baseQuantity, cfg.baseUnit)} stored
                       </p>
                     )}
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                    <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)]">
                       Low Stock Alert (units)
                     </label>
                     <Input
@@ -434,7 +434,7 @@ export function StockProductCreator() {
                       placeholder={String(defaultLowStockAlert)}
                       className="h-9 text-sm"
                     />
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="text-[11px] text-[var(--stock-muted-text)]">
                       Default: {defaultLowStockAlert} units. Alert shows when stock drops below this.
                     </p>
                   </div>
@@ -443,7 +443,7 @@ export function StockProductCreator() {
                 {/* Expiry + Quick Select */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground flex items-center gap-1">
+                    <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--stock-muted-text)] flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       Expiry Date
                     </label>
@@ -455,7 +455,7 @@ export function StockProductCreator() {
                     />
                   </div>
                   <div className="flex items-end pb-1">
-                    <label className="flex items-start gap-3 cursor-pointer hover:bg-muted/40 p-3 rounded-lg border border-transparent hover:border-border transition-all w-full">
+                    <label className="flex items-start gap-3 cursor-pointer hover:bg-[var(--stock-muted-bg-40)] p-3 rounded-lg border border-transparent hover:border-border transition-all w-full">
                       <Checkbox
                         checked={quickSelect}
                         onCheckedChange={(v) => setQuickSelect(Boolean(v))}
@@ -463,10 +463,10 @@ export function StockProductCreator() {
                       />
                       <div className="space-y-0.5">
                         <p className="text-sm font-medium flex items-center gap-1.5">
-                          <Star className="h-3.5 w-3.5 text-warning" />
+                          <Star className="h-3.5 w-3.5 text-[var(--stock-warning-text)]" />
                           Fast Billing Me Dikhaye
                         </p>
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="text-[11px] text-[var(--stock-muted-text)]">
                           Billing screen ke quick-select panel me show hoga
                         </p>
                       </div>
@@ -479,9 +479,9 @@ export function StockProductCreator() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h4 className="text-sm font-semibold flex items-center gap-2">
-                    <Plus className="h-4 w-4 text-muted-foreground" />
+                    <Plus className="h-4 w-4 text-[var(--stock-muted-text)]" />
                     Extra Variants / Packs
-                    <span className="text-[11px] font-normal text-muted-foreground">
+                    <span className="text-[11px] font-normal text-[var(--stock-muted-text)]">
                       (Same product, different sizes)
                     </span>
                   </h4>
@@ -498,7 +498,7 @@ export function StockProductCreator() {
                 </div>
 
                 {extraVariants.length === 0 && (
-                  <p className="text-xs text-muted-foreground bg-muted/30 rounded-lg px-4 py-3 border border-dashed">
+                  <p className="text-xs text-[var(--stock-muted-text)] bg-[var(--stock-muted-bg-30)] rounded-lg px-4 py-3 border border-dashed">
                     e.g. Add "500g Packet" and "1kg Packet" as extra packs for the same product.
                     They will share stock if they use the same base unit.
                   </p>
@@ -519,7 +519,7 @@ export function StockProductCreator() {
         </div>
 
         {/* ── Footer ─────────────────────────────────────────────────────── */}
-        <div className="border-t bg-card px-5 py-4 shrink-0">
+        <div className="border-t bg-[var(--stock-card-bg)] px-5 py-4 shrink-0">
           {/* Validation errors */}
           {!isValid && (name.trim() !== "" || sellPrice !== "") && (
             <div className="mb-3 flex items-start gap-2 rounded-lg bg-[var(--stock-stock-out-bg)] border border-[var(--stock-stock-out-border)] px-3 py-2">
@@ -533,7 +533,7 @@ export function StockProductCreator() {
           )}
 
           <div className="flex items-center justify-between gap-3">
-            <div className="text-xs text-muted-foreground hidden md:block">
+            <div className="text-xs text-[var(--stock-muted-text)] hidden md:block">
               {extraVariants.length > 0
                 ? `1 primary + ${extraVariants.length} extra variant${extraVariants.length > 1 ? "s" : ""}`
                 : "1 variant will be created"}

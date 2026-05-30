@@ -12,25 +12,25 @@ export function StockMobileCard({ product }: { product: Product }) {
   const { setEditingProduct, remove } = useStock();
 
   return (
-    <div className="rounded-lg border bg-card p-3">
+    <div className="rounded-lg border bg-[var(--stock-card-bg)] p-3">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="truncate font-semibold">{product.productName}</p>
-          <p className="text-sm text-muted-foreground">{product.variantName}</p>
+          <p className="text-sm text-[var(--stock-muted-text)]">{product.variantName}</p>
         </div>
         <StockBadge product={product} />
       </div>
       <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
         <div>
-          <span className="text-muted-foreground">Stock</span>
+          <span className="text-[var(--stock-muted-text)]">Stock</span>
           <p className="font-semibold">{product.currentStock} {product.unit}</p>
         </div>
         <div>
-          <span className="text-muted-foreground">Sell</span>
+          <span className="text-[var(--stock-muted-text)]">Sell</span>
           <p className="font-semibold">Rs {product.sellingPrice}</p>
         </div>
         <div>
-          <span className="text-muted-foreground">Mode</span>
+          <span className="text-[var(--stock-muted-text)]">Mode</span>
           <p className="font-semibold">{MODE_LABEL[product.sellingMode]}</p>
         </div>
       </div>
