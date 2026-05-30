@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { HistoryBill } from "../shared/HistoryTypes";
+import { HistoryBill } from "../history_shared/HistoryTypes";
 import { AppSettings } from "@/lib/api/types";
 
 export function printHistoryReceipt(

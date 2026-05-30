@@ -2,9 +2,10 @@
 
 import React, { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { useHistoryContext } from "../../context/HistoryContext";
-import { HistoryBill } from "../../shared/HistoryTypes";
+import { useHistoryContext } from "../../history_context/HistoryContext";
+import { HistoryBill } from "../../history_shared/HistoryTypes";
 import { HistorySearchFilter } from "../Common/HistorySearchFilter";
+import { HISTORY_MESSAGES } from "../../history_shared/HistorySharedConstants";
 import { HistoryBillCard } from "./HistoryBillCard";
 import { HistoryBillListEmptyState } from "./HistoryBillListEmptyState";
 import { HistoryBillDetailsDialog } from "../BillDetailsDialog/HistoryBillDetailsDialog";
@@ -55,7 +56,7 @@ export function HistoryBillListContainer() {
   return (
     <div className="space-y-4">
       <HistorySearchFilter
-        placeholder="Search by Bill # or Customer Name..."
+        placeholder={HISTORY_MESSAGES.SEARCH_BILLS_PLACEHOLDER}
         value={searchQuery}
         onChange={setSearchQuery}
       />

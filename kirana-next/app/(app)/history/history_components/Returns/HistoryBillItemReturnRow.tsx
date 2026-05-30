@@ -3,8 +3,8 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { RotateCcw } from "lucide-react";
-import { HistoryReturnQtys } from "../../shared/HistoryTypes";
-import { HISTORY_DEFAULT_UNIT } from "../../shared/HistorySharedConstants";
+import { HistoryReturnQtys } from "../../history_shared/HistoryTypes";
+import { HISTORY_DEFAULT_UNIT } from "../../history_shared/HistorySharedConstants";
 
 /**
  * Shape of a single bill line item as returned by the API.

@@ -4,8 +4,8 @@ import React from "react";
 import { ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
-import { HistoryBill } from "../../shared/HistoryTypes";
-import { HISTORY_PAYMENT_MODE_STYLES } from "../../shared/HistorySharedConstants";
+import { HistoryBill } from "../../history_shared/HistoryTypes";
+import { HISTORY_PAYMENT_MODE_STYLES } from "../../history_shared/HistorySharedConstants";
 
 interface HistoryBillCardProps {
   /** The bill data to display in this card row */

@@ -14,7 +14,7 @@ app/(app)/history/
 ├── history.css                               ← ALL color tokens for this module (single source of truth for theming)
 ├── history_features.md                       ← THIS FILE — AI context & architecture map
 │
-├── components/
+├── history_components/
 │   ├── BillList/
 │   │   ├── HistoryBillListContainer.tsx      ← Orchestrator: reads context, manages searchQuery, renders correct state
 │   │   ├── HistoryBillCard.tsx               ← Single tappable bill row card (bill #, date, customer, amount, badge)
@@ -35,14 +35,14 @@ app/(app)/history/
 │   └── Common/
 │       └── HistorySearchFilter.tsx           ← Reusable search input (used in list + inside dialog)
 │
-├── context/
+├── history_context/
 │   └── HistoryContext.tsx                    ← Brain: bills API call, selectedBill, dialog open state (Memoized)
 │
-├── shared/
+├── history_shared/
 │   ├── HistoryTypes.ts                       ← Shared types for the module
 │   └── HistorySharedConstants.ts             ← Central data: hardcoded UI strings, payment mode styles, labels
 │
-└── utils/
+└── history_utils/
     ├── HistoryPrintUtils.ts                  ← Pure function: generates thermal print HTML in a new window
     └── HistoryWhatsAppUtils.ts               ← Pure function: builds monospace invoice text + opens wa.me link
 ```
@@ -181,9 +181,9 @@ When a return is processed (`POST /bills/:id/return`):
 
 ## 📌 Quick Handover Summary
 
-- **Brain**: `context/HistoryContext.tsx` — all API calls and shared dialog state. Zero prop drilling.
-- **Data**: `shared/HistorySharedConstants.ts` — all hardcoded texts. One place to swap API data tomorrow.
+- **Brain**: `history_context/HistoryContext.tsx` — all API calls and shared dialog state. Zero prop drilling.
+- **Data**: `history_shared/HistorySharedConstants.ts` — all hardcoded texts. One place to swap API data tomorrow.
 - **Theming**: `history.css` — all CSS variables. Copy this folder to any project and theme from here only.
-- **Bill list**: `components/BillList/HistoryBillListContainer` → renders `HistoryBillCard` × N.
-- **Return flow**: `components/BillDetailsDialog/HistoryBillDetailsDialog` → composes sub-components.
-- **Post-return**: `components/Returns/HistoryBillReturnSuccessScreen` → `HistoryPrintUtils` / `HistoryWhatsAppUtils`.
+- **Bill list**: `history_components/BillList/HistoryBillListContainer` → renders `HistoryBillCard` × N.
+- **Return flow**: `history_components/BillDetailsDialog/HistoryBillDetailsDialog` → composes sub-components.
+- **Post-return**: `history_components/Returns/HistoryBillReturnSuccessScreen` → `HistoryPrintUtils` / `HistoryWhatsAppUtils`.

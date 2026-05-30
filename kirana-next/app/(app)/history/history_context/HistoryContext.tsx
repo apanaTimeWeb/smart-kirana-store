@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useMemo } from "react";
 import { useListBills, useGetSettings } from "@/lib/api";
-import { HistoryBill } from "../shared/HistoryTypes";
+import { HistoryBill } from "../history_shared/HistoryTypes";
 import { AppSettings } from "@/lib/api/types";
 
 interface HistoryContextType {
