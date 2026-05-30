@@ -1,8 +1,10 @@
+"use client";
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface StatCardProps {
+interface ReportsStatCardProps {
   label: string;
   sublabel: string;
   value: string;
@@ -14,7 +16,7 @@ interface StatCardProps {
   isLoading?: boolean;
 }
 
-export function StatCard({
+export function ReportsStatCard({
   label,
   sublabel,
   value,
@@ -24,16 +26,16 @@ export function StatCard({
   bgClass,
   borderClass,
   isLoading,
-}: StatCardProps) {
+}: ReportsStatCardProps) {
   return (
     <Card className={`border ${borderClass} ${bgClass}`}>
       <CardContent className="p-5">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--reports-muted-text)]">
               {label}
             </p>
-            <p className="text-[10px] text-muted-foreground">{sublabel}</p>
+            <p className="text-[10px] text-[var(--reports-muted-text)]">{sublabel}</p>
           </div>
           <Icon className={`h-4 w-4 ${colorClass}`} />
         </div>
@@ -44,7 +46,7 @@ export function StatCard({
             {value}
           </div>
         )}
-        {note && <p className="mt-1 text-xs text-muted-foreground">{note}</p>}
+        {note && <p className="mt-1 text-xs text-[var(--reports-muted-text)]">{note}</p>}
       </CardContent>
     </Card>
   );

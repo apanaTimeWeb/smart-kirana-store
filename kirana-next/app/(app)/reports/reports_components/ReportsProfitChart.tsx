@@ -12,18 +12,22 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { ReportsConstants } from "./ReportsConstants";
+import type { ReportsProfitData } from "./ReportsTypes";
 
-interface ProfitChartProps {
+interface ReportsProfitChartProps {
   isLoading: boolean;
-  data?: { date: string; profit: number }[];
+  data?: ReportsProfitData[];
   moneyFormatter: (value: number) => string;
 }
 
-export function ProfitChart({ isLoading, data, moneyFormatter }: ProfitChartProps) {
+export function ReportsProfitChart({ isLoading, data, moneyFormatter }: ReportsProfitChartProps) {
   return (
-    <Card>
+    <Card className="bg-[var(--reports-card-bg)] border-[var(--reports-border)]">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">Profit Trend</CardTitle>
+        <CardTitle className="text-base text-[var(--reports-foreground)]">
+          {ReportsConstants.LABELS.PROFIT_TREND}
+        </CardTitle>
       </CardHeader>
       <CardContent className="h-[220px]">
         {isLoading ? (
@@ -37,26 +41,27 @@ export function ProfitChart({ isLoading, data, moneyFormatter }: ProfitChartProp
                   <stop offset="95%" stopColor="var(--reports-profit-chart-grad)" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--reports-border)" />
               <XAxis
                 dataKey="date"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                tick={{ fill: "var(--reports-muted-text)", fontSize: 10 }}
                 tickFormatter={(value) => String(value).slice(5)}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                tick={{ fill: "var(--reports-muted-text)", fontSize: 10 }}
                 tickFormatter={(value) => moneyFormatter(Number(value))}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "hsl(var(--card))",
+                  backgroundColor: "var(--reports-card-bg)",
                   borderRadius: "8px",
-                  border: "1px solid hsl(var(--border))",
+                  border: "1px solid var(--reports-border)",
                   fontSize: 12,
+                  color: "var(--reports-foreground)",
                 }}
                 formatter={(value) => [moneyFormatter(Number(value)), "Profit"]}
               />
@@ -71,8 +76,8 @@ export function ProfitChart({ isLoading, data, moneyFormatter }: ProfitChartProp
             </AreaChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-            Is period mein koi profit data nahi.
+          <div className="flex h-full items-center justify-center text-sm text-[var(--reports-muted-text)]">
+            {ReportsConstants.TEXTS.NO_PROFIT}
           </div>
         )}
       </CardContent>
