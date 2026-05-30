@@ -1,4 +1,5 @@
 import { BaseUnit, SellingMode, UnitType } from "@/lib/api";
+import { Boxes, ShoppingBag, PackagePlus, Warehouse } from "lucide-react";
 
 export const UNITS: UnitType[] = [
   "GRAM", "KG", "ML", "LITRE", "PIECE", "POUCH", "BOTTLE", "PACKET",
@@ -67,3 +68,15 @@ export const STOCK_FILTER_OPTIONS = [
   { id: "quick", label: "Quick" },
   { id: "expiring", label: "Expiring" },
 ] as const;
+
+// ── Stat card definitions (extracted from StockStatsGrid for backend-readiness) ──
+export const STOCK_STAT_ITEMS = [
+  { key: "total" as const, label: "Variants", icon: Boxes },
+  { key: "khula" as const, label: "Khula Items", icon: ShoppingBag },
+  { key: "quick" as const, label: "Quick Billing", icon: PackagePlus },
+  { key: "low" as const, label: "Low/Out", icon: Warehouse },
+];
+
+// ── Default values (single source of truth for creator/edit forms) ──
+export const STOCK_DEFAULT_CATEGORY = "General";
+export const STOCK_DEFAULT_LOW_STOCK_ALERT = 5;

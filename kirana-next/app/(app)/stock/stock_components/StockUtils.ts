@@ -69,36 +69,7 @@ export function variantDraft(overrides: Partial<VariantDraft> = {}): VariantDraf
   };
 }
 
-export function emptyDraft(): ProductDraft {
-  return {
-    name: "",
-    category: "General",
-    brand: "",
-    keywords: "",
-    shortcut: "",
-    sellingTypes: { khula: true, fixed: false, multiple: false },
-    variants: [variantDraft({ variantName: "Khula", sellingMode: "khula", unitType: "KG", quickSelect: true })],
-  };
-}
 
-export function buildTemplate(types: Record<SellingTypeKey, boolean>) {
-  const rows: VariantDraft[] = [];
-  if (types.khula) {
-    rows.push(variantDraft({ variantName: "Khula", sellingMode: "khula", unitType: "KG", quickSelect: true }));
-  }
-  if (types.fixed) {
-    rows.push(variantDraft({ variantName: "1kg Packet", sellingMode: "fixed", unitType: "PACKET", baseUnit: "gram", baseQuantity: 1000 }));
-  }
-  if (types.multiple) {
-    rows.push(
-      variantDraft({ variantName: "2kg Packet", sellingMode: "variant", unitType: "PACKET", baseUnit: "gram", baseQuantity: 2000 }),
-      variantDraft({ variantName: "5kg Packet", sellingMode: "variant", unitType: "PACKET", baseUnit: "gram", baseQuantity: 5000, quickSelect: true }),
-      variantDraft({ variantName: "10kg Bora", sellingMode: "wholesale", unitType: "BORA", baseUnit: "gram", baseQuantity: 10000 }),
-      variantDraft({ variantName: "50kg Bora", sellingMode: "wholesale", unitType: "BORA", baseUnit: "gram", baseQuantity: 50000 })
-    );
-  }
-  return rows.length ? rows : [variantDraft()];
-}
 
 export function toInput(draft: ProductDraft): ProductInput {
   return {

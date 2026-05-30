@@ -1,128 +1,99 @@
 "use client";
 
+// StockPurchaseDialog.tsx
+// ─────────────────────────────────────────────────────────────────────────────
+// "Purchase Entry" dialog — records incoming stock.
+// This file owns the minimal local form state (variantId, quantity,
+// purchasePrice, supplierId, expiryDate) and composes isolated sub-components.
+//
+// NOTE: Purchase dialog state is small enough (5 fields) that it does NOT
+// need a dedicated Context. All state lives here and is passed as props to
+// the sub-components, which is one clean level of prop passing.
+// ─────────────────────────────────────────────────────────────────────────────
+
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useListSuppliers } from "@/lib/api";
-import { formatBaseUnits, numberValue } from "./StockUtils";
 import { useStock } from "./StockContext";
+import { StockPurchaseDialogProductSelector } from "./StockPurchaseDialogProductSelector";
+import { StockPurchaseDialogQuantityRateFields } from "./StockPurchaseDialogQuantityRateFields";
+import { StockPurchaseDialogSupplierExpiryFields } from "./StockPurchaseDialogSupplierExpiryFields";
+import { StockPurchaseDialogStockPreview } from "./StockPurchaseDialogStockPreview";
 
 export function StockPurchaseDialog() {
   const { isPurchaseOpen, setIsPurchaseOpen, allProducts, purchase, isPurchasing } = useStock();
 
+  // Local form state — 5 fields, no context needed
   const [variantId, setVariantId] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [purchasePrice, setPurchasePrice] = useState("");
   const [supplierId, setSupplierId] = useState<string>("none");
   const [expiryDate, setExpiryDate] = useState("");
 
-  const { data: suppliers = [] } = useListSuppliers();
+  const selectedProduct = allProducts.find((p) => p.id.toString() === variantId);
 
-  const selected = allProducts.find((product) => product.id.toString() === variantId);
-  const addedBase = selected ? selected.baseQuantity * quantity : 0;
-
-  const submit = () => {
-    if (!selected) return;
-    purchase(
-      selected.id,
-      quantity,
-      purchasePrice ? Number(purchasePrice) : undefined,
-      supplierId !== "none" ? Number(supplierId) : undefined,
-      expiryDate || undefined
-    );
+  const resetForm = () => {
+    setVariantId("");
     setQuantity(1);
     setPurchasePrice("");
     setSupplierId("none");
     setExpiryDate("");
   };
 
+  const handleOpenChange = (open: boolean) => {
+    if (!open) resetForm();
+    setIsPurchaseOpen(open);
+  };
+
+  const handleSubmit = () => {
+    if (!selectedProduct) return;
+    purchase(
+      selectedProduct.id,
+      quantity,
+      purchasePrice ? Number(purchasePrice) : undefined,
+      supplierId !== "none" ? Number(supplierId) : undefined,
+      expiryDate || undefined
+    );
+    resetForm();
+  };
+
   return (
-    <Dialog open={isPurchaseOpen} onOpenChange={setIsPurchaseOpen}>
+    <Dialog open={isPurchaseOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-xl">
         <DialogHeader>
           <DialogTitle>Purchase Entry</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4">
-          <div className="grid gap-2">
-            <label className="text-sm font-medium">Product variant</label>
-            <Select value={variantId} onValueChange={setVariantId}>
-              <SelectTrigger><SelectValue placeholder="Select Product" /></SelectTrigger>
-              <SelectContent>
-                {allProducts.map((product) => (
-                  <SelectItem key={product.id} value={product.id.toString()}>
-                    {product.productName} - {product.variantName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <StockPurchaseDialogProductSelector
+            variantId={variantId}
+            onVariantChange={setVariantId}
+          />
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Qty</label>
-              <Input
-                type="number"
-                min="0"
-                value={quantity}
-                onChange={(e) => setQuantity(numberValue(e.target.value, 0))}
-              />
-            </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">New purchase rate</label>
-              <Input
-                type="number"
-                min="0"
-                value={purchasePrice}
-                onChange={(e) => setPurchasePrice(e.target.value)}
-                placeholder="optional"
-              />
-            </div>
-          </div>
+          <StockPurchaseDialogQuantityRateFields
+            quantity={quantity}
+            purchasePrice={purchasePrice}
+            onQuantityChange={setQuantity}
+            onPurchasePriceChange={setPurchasePrice}
+          />
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Supplier (Khata)</label>
-              <Select value={supplierId} onValueChange={setSupplierId}>
-                <SelectTrigger><SelectValue placeholder="Select Supplier" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">No Supplier (Cash)</SelectItem>
-                  {suppliers.map((sup) => (
-                    <SelectItem key={sup.id} value={sup.id.toString()}>
-                      {sup.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Expiry Date (Batch)</label>
-              <Input
-                type="date"
-                value={expiryDate}
-                onChange={(e) => setExpiryDate(e.target.value)}
-                placeholder="optional"
-              />
-            </div>
-          </div>
+          <StockPurchaseDialogSupplierExpiryFields
+            supplierId={supplierId}
+            expiryDate={expiryDate}
+            onSupplierChange={setSupplierId}
+            onExpiryDateChange={setExpiryDate}
+          />
 
-          {selected && (
-            <div className="rounded-lg border bg-[var(--stock-purchase-preview-bg)] p-4">
-              <p className="text-sm font-semibold">{quantity} x {selected.variantName}</p>
-              <p className="mt-1 text-2xl font-extrabold text-[var(--stock-purchase-preview-text)]">
-                + {formatBaseUnits(addedBase, selected.baseUnit)}
-              </p>
-              <p className="text-xs text-[var(--stock-muted-text)]">
-                Stock base me add hoga. Current: {selected.currentStock} {selected.unit}
-              </p>
-            </div>
+          {selectedProduct && (
+            <StockPurchaseDialogStockPreview
+              selectedProduct={selectedProduct}
+              quantity={quantity}
+            />
           )}
 
           <Button
-            onClick={submit}
-            disabled={!selected || quantity <= 0 || isPurchasing}
+            onClick={handleSubmit}
+            disabled={!selectedProduct || quantity <= 0 || isPurchasing}
             className="h-11 font-bold"
           >
             {isPurchasing ? "Saving..." : "Stock Add Karein"}
