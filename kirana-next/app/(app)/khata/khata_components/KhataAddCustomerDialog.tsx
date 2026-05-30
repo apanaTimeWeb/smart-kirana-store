@@ -7,37 +7,32 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  useCreateCustomer,
-  getListCustomersQueryKey,
-} from "@/lib/api";
+import { useCreateCustomer, getListCustomersQueryKey } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { customerSchema, type CustomerFormValues } from "./types";
+import { useKhata } from "./KhataContext";
+import { KhataConstants } from "./KhataConstants";
+import { KhataCustomerSchema, type KhataCustomerFormValues } from "./KhataTypes";
 
-interface AddCustomerDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-export function AddCustomerDialog({ open, onOpenChange }: AddCustomerDialogProps) {
+export function KhataAddCustomerDialog() {
+  const { isAddCustomerOpen, setIsAddCustomerOpen } = useKhata();
   const createCustomer = useCreateCustomer();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const form = useForm<CustomerFormValues>({
-    resolver: zodResolver(customerSchema),
+  const form = useForm<KhataCustomerFormValues>({
+    resolver: zodResolver(KhataCustomerSchema),
     defaultValues: { name: "", phone: "", address: "" },
   });
 
-  const onSubmit = (values: CustomerFormValues) => {
+  const onSubmit = (values: KhataCustomerFormValues) => {
     createCustomer.mutate(
       { data: values },
       {
         onSuccess: () => {
-          toast({ title: "Customer add hua" });
+          toast({ title: KhataConstants.MESSAGES.CUSTOMER_ADDED });
           queryClient.invalidateQueries({ queryKey: getListCustomersQueryKey() });
-          onOpenChange(false);
+          setIsAddCustomerOpen(false);
           form.reset();
         },
       }
@@ -45,7 +40,7 @@ export function AddCustomerDialog({ open, onOpenChange }: AddCustomerDialogProps
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isAddCustomerOpen} onOpenChange={setIsAddCustomerOpen}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle>Naya Customer Add Karein</DialogTitle>
@@ -59,7 +54,7 @@ export function AddCustomerDialog({ open, onOpenChange }: AddCustomerDialogProps
                 <FormItem>
                   <FormLabel>Naam</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} className="bg-[var(--khata-background)]" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -72,7 +67,7 @@ export function AddCustomerDialog({ open, onOpenChange }: AddCustomerDialogProps
                 <FormItem>
                   <FormLabel>Phone Number</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} className="bg-[var(--khata-background)]" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -85,14 +80,14 @@ export function AddCustomerDialog({ open, onOpenChange }: AddCustomerDialogProps
                 <FormItem>
                   <FormLabel>Address (Optional)</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} className="bg-[var(--khata-background)]" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" className="w-full" disabled={createCustomer.isPending}>
-              {createCustomer.isPending ? "Saving..." : "Add Customer"}
+              {createCustomer.isPending ? KhataConstants.LABELS.SAVING : KhataConstants.LABELS.ADD_CUSTOMER}
             </Button>
           </form>
         </Form>

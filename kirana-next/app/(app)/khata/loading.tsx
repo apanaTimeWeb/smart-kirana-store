@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import "./khata.css";
 
 export default function CustomersLoading() {
   return (
@@ -10,9 +11,9 @@ export default function CustomersLoading() {
           <Skeleton className="h-10 w-32" />
         </div>
       </div>
-      <div className="rounded-xl border overflow-hidden">
+      <div className="rounded-xl border border-[var(--khata-border)] bg-[var(--khata-card-bg)] overflow-hidden">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="flex items-center justify-between px-5 py-4 border-b">
+          <div key={i} className="flex items-center justify-between px-5 py-4 border-b border-[var(--khata-border)]">
             <div className="flex items-center gap-3">
               <Skeleton className="h-10 w-10 rounded-full" />
               <div className="space-y-1.5">

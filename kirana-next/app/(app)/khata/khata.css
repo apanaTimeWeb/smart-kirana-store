@@ -8,6 +8,17 @@
 @layer components {
 
   :root {
+    /* ── Global Structure ─────────────────────────────────────── */
+    --khata-card-bg:                hsl(var(--card));
+    --khata-background:             hsl(var(--background));
+    --khata-border:                 hsl(var(--border));
+    --khata-muted-bg:               hsl(var(--muted));
+    --khata-muted-hover-bg:         hsl(var(--muted) / 0.6);
+    --khata-muted-text:             hsl(var(--muted-foreground));
+    --khata-foreground:             hsl(var(--foreground));
+    --khata-customer-avatar-bg:     hsl(var(--primary) / 0.1);
+    --khata-customer-avatar-text:   hsl(var(--primary));
+
     /* ── Customer Header Card ─────────────────────────────────── */
     --khata-header-bg-from:         hsl(38 90% 97%);              /* from-amber-50 */
     --khata-header-bg-to:           hsl(24 90% 96%);              /* to-orange-50 */
@@ -55,6 +66,16 @@
   }
 
   .dark {
+    --khata-card-bg:                hsl(var(--card));
+    --khata-background:             hsl(var(--background));
+    --khata-border:                 hsl(var(--border));
+    --khata-muted-bg:               hsl(var(--muted));
+    --khata-muted-hover-bg:         hsl(var(--muted) / 0.6);
+    --khata-muted-text:             hsl(var(--muted-foreground));
+    --khata-foreground:             hsl(var(--foreground));
+    --khata-customer-avatar-bg:     hsl(var(--primary) / 0.1);
+    --khata-customer-avatar-text:   hsl(var(--primary));
+
     --khata-header-bg-from:         hsl(38 90% 15%);
     --khata-header-bg-to:           hsl(24 90% 10%);
     --khata-header-border:          hsl(38 90% 25%);

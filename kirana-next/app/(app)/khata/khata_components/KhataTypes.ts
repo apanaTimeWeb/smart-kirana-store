@@ -3,13 +3,13 @@ import { type BillItem } from "@/lib/api";
 
 // ─── Zod Schemas ───────────────────────────────────────────────────────────────
 
-export const customerSchema = z.object({
+export const KhataCustomerSchema = z.object({
   name: z.string().min(1, "Name required"),
   phone: z.string().min(10, "Phone required"),
   address: z.string().optional(),
 });
 
-export const txSchema = z.object({
+export const KhataTransactionSchema = z.object({
   type: z.enum(["credit", "payment"] as const),
   amount: z.coerce.number().min(0.01, "Amount must be > 0"),
   description: z.string().min(1, "Description required"),
@@ -17,12 +17,12 @@ export const txSchema = z.object({
 
 // ─── Inferred Types ────────────────────────────────────────────────────────────
 
-export type CustomerFormValues = z.infer<typeof customerSchema>;
-export type TxFormValues = z.infer<typeof txSchema>;
+export type KhataCustomerFormValues = z.infer<typeof KhataCustomerSchema>;
+export type KhataTransactionFormValues = z.infer<typeof KhataTransactionSchema>;
 
 // ─── Ledger Row (transaction + running balance) ────────────────────────────────
 
-export type LedgerRow = {
+export type KhataLedgerRow = {
   id: number;
   type: "credit" | "payment";
   amount: number;

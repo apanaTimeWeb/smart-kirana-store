@@ -1,8 +1,13 @@
 "use client";
 
 import "./khata.css";
-import { CustomerList } from "./khata_components/CustomerList";
+import { KhataProvider } from "./khata_components/KhataContext";
+import { KhataCustomerListContainer } from "./khata_components/KhataCustomerListContainer";
 
 export default function Customers() {
-  return <CustomerList />;
+  return (
+    <KhataProvider>
+      <KhataCustomerListContainer />
+    </KhataProvider>
+  );
 }
