@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { useHistoryContext } from "./HistoryContext";
-import { HistoryReturnQtys } from "./HistoryTypes";
-import { HistorySearchFilter } from "./HistorySearchFilter";
+import { useHistoryContext } from "../../context/HistoryContext";
+import { HistoryReturnQtys } from "../../shared/HistoryTypes";
+import { HistorySearchFilter } from "../Common/HistorySearchFilter";
 import { HistoryReturnInfoBanner } from "./HistoryReturnInfoBanner";
 import { HistoryBillItemReturnRow } from "./HistoryBillItemReturnRow";
 import { HistoryReturnRefundSummary } from "./HistoryReturnRefundSummary";

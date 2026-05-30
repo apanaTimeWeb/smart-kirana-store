@@ -3,8 +3,8 @@
 import React from "react";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { format } from "date-fns";
-import { HISTORY_PAYMENT_MODE_STYLES } from "./HistoryTypes";
-import { useHistoryContext } from "./HistoryContext";
+import { HISTORY_PAYMENT_MODE_STYLES } from "../../shared/HistorySharedConstants";
+import { useHistoryContext } from "../../context/HistoryContext";
 
 /**
  * HistoryBillDetailsHeader

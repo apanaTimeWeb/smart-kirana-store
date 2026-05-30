@@ -4,14 +4,14 @@ import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useReturnBillItems } from "@/lib/api/bills";
 import { useToast } from "@/hooks/use-toast";
-import { useHistoryContext } from "./HistoryContext";
-import { printHistoryReceipt } from "./HistoryPrintUtils";
-import { sendHistoryWhatsAppBill } from "./HistoryWhatsAppUtils";
+import { useHistoryContext } from "../../context/HistoryContext";
+import { printHistoryReceipt } from "../../utils/HistoryPrintUtils";
+import { sendHistoryWhatsAppBill } from "../../utils/HistoryWhatsAppUtils";
 import { HistoryBillDetailsHeader } from "./HistoryBillDetailsHeader";
-import { HistoryBillItemsReturnList } from "./HistoryBillItemsReturnList";
+import { HistoryBillItemsReturnList } from "../Returns/HistoryBillItemsReturnList";
 import { HistoryBillDialogFooterActions } from "./HistoryBillDialogFooterActions";
-import { HistoryBillReturnSuccessScreen } from "./HistoryBillReturnSuccessScreen";
-import type { HistoryBill, HistoryReturnQtys } from "./HistoryTypes";
+import { HistoryBillReturnSuccessScreen } from "../Returns/HistoryBillReturnSuccessScreen";
+import type { HistoryBill, HistoryReturnQtys } from "../../shared/HistoryTypes";
 
 /**
  * HistoryBillDetailsDialog — Slim Shell

@@ -2,12 +2,12 @@
 
 import React, { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { useHistoryContext } from "./HistoryContext";
-import { HistoryBill } from "./HistoryTypes";
-import { HistorySearchFilter } from "./HistorySearchFilter";
+import { useHistoryContext } from "../../context/HistoryContext";
+import { HistoryBill } from "../../shared/HistoryTypes";
+import { HistorySearchFilter } from "../Common/HistorySearchFilter";
 import { HistoryBillCard } from "./HistoryBillCard";
 import { HistoryBillListEmptyState } from "./HistoryBillListEmptyState";
-import { HistoryBillDetailsDialog } from "./HistoryBillDetailsDialog";
+import { HistoryBillDetailsDialog } from "../BillDetailsDialog/HistoryBillDetailsDialog";
 
 /**
  * HistoryBillListContainer

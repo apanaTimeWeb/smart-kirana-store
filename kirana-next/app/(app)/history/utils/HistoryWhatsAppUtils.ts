@@ -1,11 +1,11 @@
 import { format } from "date-fns";
-import { HistoryBill } from "./HistoryTypes";
-import { StoreSettings } from "@/lib/api/types";
+import { HistoryBill } from "../shared/HistoryTypes";
+import { AppSettings } from "@/lib/api/types";
 
 export function sendHistoryWhatsAppBill(
   currentBill: HistoryBill,
   phoneNumber: string,
-  settings: StoreSettings | undefined
+  settings: AppSettings | undefined
 ) {
   let subtotal = 0;
   let totalReturns = 0;

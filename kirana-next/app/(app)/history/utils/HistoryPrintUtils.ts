@@ -1,11 +1,11 @@
 import { format } from "date-fns";
-import { HistoryBill } from "./HistoryTypes";
-import { StoreSettings } from "@/lib/api/types";
+import { HistoryBill } from "../shared/HistoryTypes";
+import { AppSettings } from "@/lib/api/types";
 
 export function printHistoryReceipt(
   currentBill: HistoryBill,
   currency: string,
-  settings: StoreSettings | undefined
+  settings: AppSettings | undefined
 ) {
   const win = window.open("", "_blank", "width=400,height=600");
   if (!win) return;

@@ -1,5 +1,5 @@
-import { HistoryBillListContainer } from "./history_components/HistoryBillListContainer";
-import { HistoryProvider } from "./history_components/HistoryContext";
+import { HistoryBillListContainer } from "./components/BillList/HistoryBillListContainer";
+import { HistoryProvider } from "./context/HistoryContext";
 import "./history.css";
 
 

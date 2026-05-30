@@ -1,14 +1,14 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useMemo } from "react";
 import { useListBills, useGetSettings } from "@/lib/api";
-import { HistoryBill } from "./HistoryTypes";
-import { StoreSettings } from "@/lib/api/types";
+import { HistoryBill } from "../shared/HistoryTypes";
+import { AppSettings } from "@/lib/api/types";
 
 interface HistoryContextType {
   bills: HistoryBill[] | undefined;
   isLoadingBills: boolean;
-  settings: StoreSettings | undefined;
+  settings: AppSettings | undefined;
   currency: string;
   selectedBill: HistoryBill | null;
   setSelectedBill: (bill: HistoryBill | null) => void;
@@ -33,20 +33,20 @@ export function HistoryProvider({ children }: { children: React.ReactNode }) {
     setIsDialogOpen(true);
   };
 
+  const contextValue = useMemo(() => ({
+    bills,
+    isLoadingBills,
+    settings,
+    currency,
+    selectedBill,
+    setSelectedBill,
+    isDialogOpen,
+    setIsDialogOpen,
+    openBillDetails
+  }), [bills, isLoadingBills, settings, currency, selectedBill, isDialogOpen]);
+
   return (
-    <HistoryContext.Provider 
-      value={{ 
-        bills, 
-        isLoadingBills, 
-        settings, 
-        currency,
-        selectedBill,
-        setSelectedBill,
-        isDialogOpen,
-        setIsDialogOpen,
-        openBillDetails
-      }}
-    >
+    <HistoryContext.Provider value={contextValue}>
       {children}
     </HistoryContext.Provider>
   );
