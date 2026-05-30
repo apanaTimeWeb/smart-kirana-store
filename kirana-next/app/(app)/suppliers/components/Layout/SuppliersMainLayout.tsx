@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { SuppliersHeader } from "./SuppliersHeader";
-import { SuppliersSearchBar } from "./SuppliersSearchBar";
-import { SuppliersListTable } from "./SuppliersListTable";
-import { SuppliersAddDialog } from "./SuppliersAddDialog";
-import { SuppliersLedgerDialog } from "./SuppliersLedgerDialog";
+import { SuppliersHeader } from "../List/SuppliersHeader";
+import { SuppliersSearchBar } from "../List/SuppliersSearchBar";
+import { SuppliersListTable } from "../List/SuppliersListTable";
+import { SuppliersAddDialog } from "../List/SuppliersAddDialog";
+import { SuppliersLedgerDialog } from "../Ledger/SuppliersLedgerDialog";
 
 export function SuppliersMainLayout() {
   return (

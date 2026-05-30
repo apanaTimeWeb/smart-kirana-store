@@ -3,7 +3,7 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { useSuppliers } from "./SuppliersContext";
+import { useSuppliers } from "../../context/SuppliersContext";
 
 export function SuppliersSearchBar() {
   const { search, setSearch } = useSuppliers();

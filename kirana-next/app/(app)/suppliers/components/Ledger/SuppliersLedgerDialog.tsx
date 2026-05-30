@@ -25,7 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useSuppliers } from "./SuppliersContext";
+import { useSuppliers } from "../../context/SuppliersContext";
 import { SuppliersLedgerHeader } from "./SuppliersLedgerHeader";
 import { SuppliersLedgerActions } from "./SuppliersLedgerActions";
 import { SuppliersLedgerTable } from "./SuppliersLedgerTable";

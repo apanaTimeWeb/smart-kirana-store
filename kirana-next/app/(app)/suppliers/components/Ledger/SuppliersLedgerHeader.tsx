@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useSuppliers } from "./SuppliersContext";
+import { useSuppliers } from "../../context/SuppliersContext";
 
 export function SuppliersLedgerHeader() {
   const { ledgerDetail } = useSuppliers();

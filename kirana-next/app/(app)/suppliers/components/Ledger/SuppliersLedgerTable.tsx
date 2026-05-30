@@ -15,8 +15,8 @@
 
 import React, { useMemo } from "react";
 import { BookOpen } from "lucide-react";
-import { type LedgerRow } from "./SuppliersTypes";
-import { useSuppliers } from "./SuppliersContext";
+import { type LedgerRow } from "../../types/SuppliersTypes";
+import { useSuppliers } from "../../context/SuppliersContext";
 import { SuppliersLedgerTableRow } from "./SuppliersLedgerTableRow";
 
 export function SuppliersLedgerTable() {

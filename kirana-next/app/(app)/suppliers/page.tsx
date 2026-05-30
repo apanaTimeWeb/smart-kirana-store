@@ -1,8 +1,8 @@
 "use client";
 
 import "./suppliers.css";
-import { SuppliersProvider } from "./suppliers_components/SuppliersContext";
-import { SuppliersMainLayout } from "./suppliers_components/SuppliersMainLayout";
+import { SuppliersProvider } from "./context/SuppliersContext";
+import { SuppliersMainLayout } from "./components/Layout/SuppliersMainLayout";
 
 export default function Suppliers() {
   return (

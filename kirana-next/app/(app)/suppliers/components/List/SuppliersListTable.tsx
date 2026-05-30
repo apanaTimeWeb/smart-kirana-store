@@ -15,7 +15,7 @@
 
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSuppliers } from "./SuppliersContext";
+import { useSuppliers } from "../../context/SuppliersContext";
 import { SuppliersListTableRow } from "./SuppliersListTableRow";
 
 export function SuppliersListTable() {

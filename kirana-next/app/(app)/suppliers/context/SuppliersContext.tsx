@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   SUPPLIER_TOASTS,
   buildDeleteConfirmMessage,
-} from "./SuppliersConstants";
+} from "../constants/SuppliersSharedConstants";
 
 interface SuppliersContextType {
   // Search state

@@ -17,7 +17,7 @@ import React from "react";
 import { format } from "date-fns";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { type LedgerRow } from "./SuppliersTypes";
+import { type LedgerRow } from "../../types/SuppliersTypes";
 
 interface SuppliersLedgerTableRowProps {
   tx: LedgerRow;

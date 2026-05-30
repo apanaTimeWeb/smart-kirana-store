@@ -12,7 +12,7 @@
  */
 
 import { format } from "date-fns";
-import { SUPPLIER_SHOP_NAME_FALLBACK } from "./SuppliersConstants";
+import { SUPPLIER_SHOP_NAME_FALLBACK } from "../constants/SuppliersSharedConstants";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 

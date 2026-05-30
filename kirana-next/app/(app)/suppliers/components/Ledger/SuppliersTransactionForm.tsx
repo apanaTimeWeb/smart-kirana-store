@@ -14,14 +14,14 @@ import {
   getListSuppliersQueryKey,
   getGetDashboardSummaryQueryKey,
 } from "@/lib/api";
-import { useSuppliers } from "./SuppliersContext";
-import { txSchema, type TxFormValues } from "./SuppliersTypes";
+import { useSuppliers } from "../../context/SuppliersContext";
+import { txSchema, type TxFormValues } from "../../types/SuppliersTypes";
 import {
   TX_MODE_LABELS,
   TX_FORM_TITLES,
   TX_DESCRIPTION_LABELS,
   SUPPLIER_TOASTS,
-} from "./SuppliersConstants";
+} from "../../constants/SuppliersSharedConstants";
 
 export function SuppliersTransactionForm() {
   const { ledgerId, transactionMode, setTransactionMode, addTxMutation } = useSuppliers();
