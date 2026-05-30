@@ -1,38 +1,26 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { UnitSelector } from "./UnitSelector";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Product, ProductVariantInput, BaseUnit, SellingMode, UnitType } from "@/lib/api";
-import { VariantDraft } from "./types";
+import { ProductVariantInput, UnitType } from "@/lib/api";
+import { VariantDraft } from "./StockTypes";
 import {
-  BASE_UNITS,
-  MODE_LABEL,
-  UNITS,
   defaultBaseQuantity,
   defaultBaseUnit,
   numberValue,
-  UNIT_CONFIG,
-  UNIT_GROUPS,
   formatBaseUnits
-} from "./utils";
+} from "./StockUtils";
+import { UNIT_CONFIG, MODE_LABEL } from "./StockConstants";
 import { Package, Scale, IndianRupee, Calendar, Star, CircleCheck, AlertTriangle, Box } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { StockUnitSelector } from "./StockUnitSelector";
+import { useStock } from "./StockContext";
 
-export function EditVariantDialog({
-  product,
-  onClose,
-  onSubmit,
-  isPending,
-}: {
-  product: Product | null;
-  onClose: () => void;
-  onSubmit: (id: number, input: Partial<ProductVariantInput>) => void;
-  isPending: boolean;
-}) {
+export function StockEditVariantDialog() {
+  const { editingProduct: product, setEditingProduct, update, isUpdating } = useStock();
   const [draft, setDraft] = useState<VariantDraft | null>(null);
 
   useEffect(() => {
@@ -97,7 +85,7 @@ export function EditVariantDialog({
   const isValid = errors.length === 0;
 
   return (
-    <Dialog open={Boolean(product)} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={Boolean(product)} onOpenChange={(open) => !open && setEditingProduct(null)}>
       <DialogContent className="max-w-2xl max-h-[95vh] flex flex-col p-0 gap-0 overflow-hidden">
         {/* Header */}
         <DialogHeader className="bg-card px-6 py-4 border-b shrink-0">
@@ -116,7 +104,6 @@ export function EditVariantDialog({
 
         {/* Scrollable Body */}
         <div className="flex-1 overflow-y-auto p-5 space-y-6">
-
           {/* ROW 1: Variant Name & Expiry Date */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -156,7 +143,7 @@ export function EditVariantDialog({
               <Scale className="h-3.5 w-3.5 text-muted-foreground" />
               How is it measured / sold?
             </label>
-            <UnitSelector
+            <StockUnitSelector
               value={draft.unitType}
               onChange={handleUnitChange}
               triggerClassName="h-12 text-sm font-medium px-3"
@@ -337,15 +324,15 @@ export function EditVariantDialog({
           )}
           
           <div className="flex items-center justify-end gap-3">
-            <Button type="button" variant="ghost" onClick={onClose} className="w-24">
+            <Button type="button" variant="ghost" onClick={() => setEditingProduct(null)} className="w-24">
               Cancel
             </Button>
             <Button 
-              onClick={() => onSubmit(product.id, draft)} 
-              disabled={isPending || !isValid} 
+              onClick={() => update(product.id, draft)} 
+              disabled={isUpdating || !isValid} 
               className="w-32 font-bold"
             >
-              {isPending ? "Saving..." : "Save Changes"}
+              {isUpdating ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </div>

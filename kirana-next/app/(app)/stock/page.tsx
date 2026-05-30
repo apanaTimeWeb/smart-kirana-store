@@ -1,8 +1,13 @@
 "use client";
 
 import "./stock.css";
-import { ProductList } from "./stock_components/ProductList";
+import { StockProvider } from "./stock_components/StockContext";
+import { StockMainLayout } from "./stock_components/StockMainLayout";
 
 export default function Products() {
-  return <ProductList />;
+  return (
+    <StockProvider>
+      <StockMainLayout />
+    </StockProvider>
+  );
 }

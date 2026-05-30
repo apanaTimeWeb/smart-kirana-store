@@ -5,22 +5,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Product, useListSuppliers } from "@/lib/api";
-import { formatBaseUnits, numberValue } from "./utils";
+import { useListSuppliers } from "@/lib/api";
+import { formatBaseUnits, numberValue } from "./StockUtils";
+import { useStock } from "./StockContext";
 
-export function PurchaseDialog({
-  open,
-  onOpenChange,
-  products,
-  onSubmit,
-  isPending,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  products: Product[];
-  onSubmit: (variantId: number, quantity: number, purchasePrice?: number, supplierId?: number, expiryDate?: string) => void;
-  isPending: boolean;
-}) {
+export function StockPurchaseDialog() {
+  const { isPurchaseOpen, setIsPurchaseOpen, allProducts, purchase, isPurchasing } = useStock();
+
   const [variantId, setVariantId] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [purchasePrice, setPurchasePrice] = useState("");
@@ -29,12 +20,12 @@ export function PurchaseDialog({
 
   const { data: suppliers = [] } = useListSuppliers();
 
-  const selected = products.find((product) => product.id.toString() === variantId);
+  const selected = allProducts.find((product) => product.id.toString() === variantId);
   const addedBase = selected ? selected.baseQuantity * quantity : 0;
 
   const submit = () => {
     if (!selected) return;
-    onSubmit(
+    purchase(
       selected.id,
       quantity,
       purchasePrice ? Number(purchasePrice) : undefined,
@@ -48,7 +39,7 @@ export function PurchaseDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isPurchaseOpen} onOpenChange={setIsPurchaseOpen}>
       <DialogContent className="max-w-xl">
         <DialogHeader>
           <DialogTitle>Purchase Entry</DialogTitle>
@@ -58,9 +49,9 @@ export function PurchaseDialog({
           <div className="grid gap-2">
             <label className="text-sm font-medium">Product variant</label>
             <Select value={variantId} onValueChange={setVariantId}>
-              <SelectTrigger><SelectValue placeholder="Chini 50kg Bora" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Select Product" /></SelectTrigger>
               <SelectContent>
-                {products.map((product) => (
+                {allProducts.map((product) => (
                   <SelectItem key={product.id} value={product.id.toString()}>
                     {product.productName} - {product.variantName}
                   </SelectItem>
@@ -131,10 +122,10 @@ export function PurchaseDialog({
 
           <Button
             onClick={submit}
-            disabled={!selected || quantity <= 0 || isPending}
+            disabled={!selected || quantity <= 0 || isPurchasing}
             className="h-11 font-bold"
           >
-            {isPending ? "Saving..." : "Stock Add Karein"}
+            {isPurchasing ? "Saving..." : "Stock Add Karein"}
           </Button>
         </div>
       </DialogContent>

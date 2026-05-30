@@ -1,12 +1,14 @@
+"use client";
+
 import React from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { UNIT_CONFIG, UNIT_GROUPS } from "./utils";
+import { UNIT_CONFIG, UNIT_GROUPS } from "./StockConstants";
 
-export function UnitSelector({
+export function StockUnitSelector({
   value,
   onChange,
   triggerClassName = "h-12 text-sm font-medium px-3",

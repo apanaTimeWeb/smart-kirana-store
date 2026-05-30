@@ -123,3 +123,14 @@
   }
 
 }
+
+    /* General UI Colors */
+    --stock-card-bg:                 hsl(var(--card));
+    --stock-muted-bg:                hsl(var(--muted));
+    --stock-muted-text:              hsl(var(--muted-foreground));
+    --stock-primary-bg:              hsl(var(--primary));
+    --stock-primary-text:            hsl(var(--primary-foreground));
+    --stock-destructive-text:        hsl(var(--destructive));
+    --stock-border:                  hsl(var(--border));
+    --stock-warning-text:            hsl(38 92% 50%);
+
