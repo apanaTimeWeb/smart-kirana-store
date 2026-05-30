@@ -14,6 +14,10 @@ import {
 } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import {
+  SUPPLIER_TOASTS,
+  buildDeleteConfirmMessage,
+} from "./SuppliersConstants";
 
 interface SuppliersContextType {
   // Search state
@@ -67,17 +71,18 @@ export function SuppliersProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
 
   const deleteSupplier = (id: number, name: string) => {
-    if (!confirm(`"${name}" delete karna chahte hain?`)) return;
+    if (!confirm(buildDeleteConfirmMessage(name))) return;
     deleteMutation.mutate(
       { id },
       {
         onSuccess: () => {
-          toast({ title: "Supplier delete ho gaya" });
+          toast({ title: SUPPLIER_TOASTS.deleteSuccess });
           queryClient.invalidateQueries({ queryKey: getListSuppliersQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
           queryClient.invalidateQueries({ queryKey: ["reports"] });
         },
-        onError: () => toast({ title: "Supplier delete nahi hua", variant: "destructive" }),
+        onError: () =>
+          toast({ title: SUPPLIER_TOASTS.deleteError, variant: "destructive" }),
       }
     );
   };

@@ -1,82 +1,55 @@
 "use client";
 
+/**
+ * SuppliersReminderDialog.tsx
+ *
+ * Dialog that shows a WhatsApp reminder message preview for a supplier and provides
+ * two dispatch options: "Text Only" (WhatsApp only) or "Bill + Text" (print + WhatsApp).
+ *
+ * RESPONSIBILITIES (exactly one):
+ * → Render the reminder preview dialog and handle its two dispatch actions.
+ *
+ * PRINT LOGIC:   Delegated to SuppliersPrintUtils.ts (not here).
+ * MESSAGE TEXT:  Built by buildSupplierReminderMessage() in SuppliersConstants.ts.
+ * WHATSAPP URL:  Built by buildWhatsAppUrl() in SuppliersConstants.ts.
+ */
+
 import React, { useMemo } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useSuppliers } from "./SuppliersContext";
-import { format } from "date-fns";
-import { SUPPLIER_SHOP_NAME_FALLBACK } from "./SuppliersConstants";
+import { printSupplierThermalBill } from "./SuppliersPrintUtils";
+import {
+  SUPPLIER_SHOP_NAME_FALLBACK,
+  buildSupplierReminderMessage,
+  buildWhatsAppUrl,
+} from "./SuppliersConstants";
 
 export function SuppliersReminderDialog() {
-  const { isReminderOpen, setIsReminderOpen, ledgerDetail, shopSettings } = useSuppliers();
+  const { isReminderOpen, setIsReminderOpen, ledgerDetail, shopSettings } =
+    useSuppliers();
 
-  const shopName = shopSettings?.shopName?.trim() || SUPPLIER_SHOP_NAME_FALLBACK;
+  const shopName =
+    shopSettings?.shopName?.trim() || SUPPLIER_SHOP_NAME_FALLBACK;
 
+  // Build the reminder message once whenever the ledger or shop name changes
   const reminderMessage = useMemo(() => {
     if (!ledgerDetail) return "";
-    return `Namaste ${ledgerDetail.name} Ji,\n\nAapka balance ₹${ledgerDetail.totalDue.toFixed(2)} pending hai.\n\nKripya jaldi payment kar dein.\n\nThank you\n${shopName}`;
+    return buildSupplierReminderMessage(
+      ledgerDetail.name,
+      ledgerDetail.totalDue,
+      shopName
+    );
   }, [ledgerDetail, shopName]);
 
   const openWhatsApp = () => {
     if (!ledgerDetail) return;
-    const phone = ledgerDetail.phone.replace(/\D/g, "");
-    window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(reminderMessage)}`, "_blank");
-  };
-
-  const printThermalBill = () => {
-    if (!ledgerDetail) return;
-    const win = window.open("", "_blank", "width=400,height=600");
-    if (!win) return;
-
-    let balance = 0;
-    const ledgerRows = ledgerDetail.transactions?.map((tx: any) => {
-      balance += tx.type === "credit" ? tx.amount : -tx.amount;
-      return { ...tx, balance };
-    }) || [];
-
-    const rows = ledgerRows
-      .map(
-        (tx: any) => `
-      <tr>
-        <td style="padding:3px 0;">${format(new Date(tx.createdAt), "dd/MM")}</td>
-        <td style="padding:3px 0;">${tx.description}</td>
-        <td style="padding:3px 0; text-align:right;">${tx.type === "credit" ? "+" : "-"}₹${tx.amount}</td>
-        <td style="padding:3px 0; text-align:right;">₹${tx.balance}</td>
-      </tr>
-    `
-      )
-      .join("");
-
-    win.document.write(`
-      <html><head><title>Supplier Bill</title>
-      <style>
-        body { font-family: monospace; font-size: 13px; width: 300px; margin: 0 auto; padding: 10px; }
-        .center { text-align: center; }
-        .bold { font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 4px 0; }
-        hr { border: none; border-top: 1px dashed #000; margin: 8px 0; }
-      </style>
-      </head><body>
-        <div class="center bold">
-          <h2>${shopName}</h2>
-          <p>Supplier Ledger</p>
-          ${shopSettings?.shopAddress ? `<p>${shopSettings.shopAddress}</p>` : ""}
-          ${shopSettings?.shopPhone ? `<p>Phone: ${shopSettings.shopPhone}</p>` : ""}
-        </div>
-        <hr/>
-        <p><strong>Supplier:</strong> ${ledgerDetail.name}</p>
-        <p><strong>Phone:</strong> ${ledgerDetail.phone}</p>
-        <hr/>
-        <table><thead><tr><th>Date</th><th>Particulars</th><th style="text-align:right">Amt</th><th style="text-align:right">Bal</th></tr></thead><tbody>${rows}</tbody></table>
-        <hr/>
-        <div class="bold" style="display:flex;justify-content:space-between;font-size:15px;"><span>Total Due :</span><span>₹${ledgerDetail.totalDue.toFixed(2)}</span></div>
-        <hr/>
-        <div class="center" style="margin-top:15px;font-size:12px;">Thank You!</div>
-      </body></html>
-    `);
-    win.document.close();
-    setTimeout(() => win.print(), 600);
+    window.open(buildWhatsAppUrl(ledgerDetail.phone, reminderMessage), "_blank");
   };
 
   const onTextOnly = () => {
@@ -85,7 +58,9 @@ export function SuppliersReminderDialog() {
   };
 
   const onBillAndText = () => {
-    printThermalBill();
+    if (ledgerDetail) {
+      printSupplierThermalBill(ledgerDetail, shopSettings);
+    }
     setTimeout(() => {
       openWhatsApp();
       setIsReminderOpen(false);
@@ -99,9 +74,12 @@ export function SuppliersReminderDialog() {
           <DialogTitle>WhatsApp Reminder</DialogTitle>
         </DialogHeader>
         <div className="py-6 space-y-4">
-          <div className="bg-[var(--supplier-reminder-msg-bg)] border-[var(--supplier-reminder-msg-border)] border rounded-xl p-4 text-sm whitespace-pre-line text-[var(--supplier-primary-text)]">
+          {/* Reminder message preview */}
+          <div className="bg-[var(--supplier-reminder-msg-bg)] border-[var(--supplier-reminder-msg-border)] border rounded-xl p-4 text-sm whitespace-pre-line text-[var(--supplier-muted-text)]">
             {reminderMessage}
           </div>
+
+          {/* Action buttons */}
           <div className="grid grid-cols-3 gap-3">
             <Button
               onClick={onTextOnly}
@@ -119,7 +97,7 @@ export function SuppliersReminderDialog() {
             <Button
               onClick={() => setIsReminderOpen(false)}
               variant="destructive"
-              className="h-11 bg-[var(--supplier-destructive-bg)] text-[var(--supplier-destructive-text)]"
+              className="h-11"
             >
               Cancel
             </Button>

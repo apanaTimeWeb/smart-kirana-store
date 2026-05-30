@@ -1,72 +1,37 @@
 "use client";
 
-import React, { useMemo } from "react";
+/**
+ * SuppliersLedgerActions.tsx
+ *
+ * Renders the action button panel inside the Supplier Ledger Dialog.
+ * Buttons: "Payment Mila", "Udhaar Diya", "Reminder", "Thermal Print"
+ *
+ * RESPONSIBILITIES (exactly one):
+ * → Render the 4 action buttons and handle their click dispatch.
+ *
+ * PRINT LOGIC: Delegated to SuppliersPrintUtils.ts (not here).
+ * WHATSAPP URL: Built by buildWhatsAppUrl() in SuppliersConstants.ts (not here).
+ */
+
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { IndianRupee, CreditCard, MessageCircle, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { useSuppliers } from "./SuppliersContext";
-import { SUPPLIER_SHOP_NAME_FALLBACK } from "./SuppliersConstants";
+import { printSupplierThermalBill } from "./SuppliersPrintUtils";
 
 export function SuppliersLedgerActions() {
-  const { ledgerDetail, shopSettings, transactionMode, setTransactionMode, setIsReminderOpen } = useSuppliers();
+  const {
+    ledgerDetail,
+    shopSettings,
+    transactionMode,
+    setTransactionMode,
+    setIsReminderOpen,
+  } = useSuppliers();
 
-  const printThermalBill = () => {
+  const handlePrint = () => {
     if (!ledgerDetail) return;
-    const win = window.open("", "_blank", "width=400,height=600");
-    if (!win) return;
-
-    let balance = 0;
-    const ledgerRows = ledgerDetail.transactions?.map((tx: any) => {
-      balance += tx.type === "credit" ? tx.amount : -tx.amount;
-      return { ...tx, balance };
-    }) || [];
-
-    const shopName = shopSettings?.shopName?.trim() || SUPPLIER_SHOP_NAME_FALLBACK;
-
-    const rows = ledgerRows
-      .map(
-        (tx: any) => `
-      <tr>
-        <td style="padding:3px 0;">${format(new Date(tx.createdAt), "dd/MM")}</td>
-        <td style="padding:3px 0;">${tx.description}</td>
-        <td style="padding:3px 0; text-align:right;">${tx.type === "credit" ? "+" : "-"}₹${tx.amount}</td>
-        <td style="padding:3px 0; text-align:right;">₹${tx.balance}</td>
-      </tr>
-    `
-      )
-      .join("");
-
-    win.document.write(`
-      <html><head><title>Supplier Bill</title>
-      <style>
-        body { font-family: monospace; font-size: 13px; width: 300px; margin: 0 auto; padding: 10px; }
-        .center { text-align: center; }
-        .bold { font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 4px 0; }
-        hr { border: none; border-top: 1px dashed #000; margin: 8px 0; }
-      </style>
-      </head><body>
-        <div class="center bold">
-          <h2>${shopName}</h2>
-          <p>Supplier Ledger</p>
-          ${shopSettings?.shopAddress ? `<p>${shopSettings.shopAddress}</p>` : ""}
-          ${shopSettings?.shopPhone ? `<p>Phone: ${shopSettings.shopPhone}</p>` : ""}
-        </div>
-        <hr/>
-        <p><strong>Supplier:</strong> ${ledgerDetail.name}</p>
-        <p><strong>Phone:</strong> ${ledgerDetail.phone}</p>
-        <hr/>
-        <table><thead><tr><th>Date</th><th>Particulars</th><th style="text-align:right">Amt</th><th style="text-align:right">Bal</th></tr></thead><tbody>${rows}</tbody></table>
-        <hr/>
-        <div class="bold" style="display:flex;justify-content:space-between;font-size:15px;"><span>Total Due :</span><span>₹${ledgerDetail.totalDue.toFixed(2)}</span></div>
-        <hr/>
-        <div class="center" style="margin-top:15px;font-size:12px;">Thank You!</div>
-      </body></html>
-    `);
-    win.document.close();
-    setTimeout(() => win.print(), 600);
+    printSupplierThermalBill(ledgerDetail, shopSettings);
   };
 
   return (
@@ -106,7 +71,12 @@ export function SuppliersLedgerActions() {
           <MessageCircle className="mr-1.5 h-4 w-4" /> Reminder
         </Button>
 
-        <Button size="sm" variant="outline" onClick={printThermalBill} className="border-[var(--supplier-border)]">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={handlePrint}
+          className="border-[var(--supplier-border)]"
+        >
           <Printer className="mr-1.5 h-4 w-4" /> Thermal Print
         </Button>
       </div>

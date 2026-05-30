@@ -16,7 +16,12 @@ import {
 } from "@/lib/api";
 import { useSuppliers } from "./SuppliersContext";
 import { txSchema, type TxFormValues } from "./SuppliersTypes";
-import { TX_MODE_LABELS } from "./SuppliersConstants";
+import {
+  TX_MODE_LABELS,
+  TX_FORM_TITLES,
+  TX_DESCRIPTION_LABELS,
+  SUPPLIER_TOASTS,
+} from "./SuppliersConstants";
 
 export function SuppliersTransactionForm() {
   const { ledgerId, transactionMode, setTransactionMode, addTxMutation } = useSuppliers();
@@ -36,7 +41,12 @@ export function SuppliersTransactionForm() {
       { id: ledgerId, data },
       {
         onSuccess: () => {
-          toast({ title: data.type === "payment" ? "Payment recorded" : "Udhaar added" });
+          toast({
+            title:
+              data.type === "payment"
+                ? SUPPLIER_TOASTS.txPaymentSuccess
+                : SUPPLIER_TOASTS.txCreditSuccess,
+          });
           queryClient.invalidateQueries({ queryKey: getGetSupplierQueryKey(ledgerId) });
           queryClient.invalidateQueries({ queryKey: getListSuppliersQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
@@ -52,7 +62,7 @@ export function SuppliersTransactionForm() {
     <div className="rounded-xl border border-[var(--supplier-border)] p-6 mb-6 bg-[var(--supplier-form-panel-bg)] shadow-sm">
       <div className="flex justify-between items-center mb-5">
         <p className="font-semibold text-lg">
-          {transactionMode === "payment" ? "Payment Entry" : "Udhaar Entry"}
+          {TX_FORM_TITLES[transactionMode]}
         </p>
         <button onClick={() => setTransactionMode(null)}>
           <X className="h-5 w-5 text-[var(--supplier-muted-text)]" />
@@ -82,7 +92,7 @@ export function SuppliersTransactionForm() {
             name="description"
             render={({ field }) => (
               <FormItem className="md:col-span-8">
-                <FormLabel>{transactionMode === "payment" ? "Note" : "Item / Reason"}</FormLabel>
+                <FormLabel>{TX_DESCRIPTION_LABELS[transactionMode]}</FormLabel>
                 <FormControl>
                   <Input {...field} className="h-11" />
                 </FormControl>
