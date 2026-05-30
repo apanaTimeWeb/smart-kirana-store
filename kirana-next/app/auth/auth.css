@@ -1,0 +1,43 @@
+/*
+ * auth.css — Auth Module Color Tokens
+ *
+ * All colors for the Auth module (Login & Signup) live here.
+ * Usage in JSX: className="bg-[var(--auth-logo-bg)]"
+ */
+
+@layer components {
+
+  :root {
+    /* ── Generic UI Colors ────────────────────────────────────────── */
+    --auth-card-bg:                     hsl(var(--card));
+    --auth-muted-bg:                    hsl(var(--muted));
+    --auth-muted-text:                  hsl(var(--muted-foreground));
+    --auth-primary-bg:                  hsl(var(--primary));
+    --auth-primary-text:                hsl(var(--primary-foreground));
+    --auth-primary-color:               hsl(var(--primary));
+    --auth-border:                      hsl(var(--border));
+    --auth-foreground:                  hsl(var(--foreground));
+
+    /* ── Logo & Branding ──────────────────────────────────────────── */
+    --auth-logo-bg:                     hsl(var(--primary));
+    --auth-logo-text:                   hsl(var(--primary-foreground));
+
+    /* ── Form Elements ────────────────────────────────────────────── */
+    --auth-link-text:                   hsl(var(--primary));
+    --auth-back-hover:                  hsl(var(--primary));
+
+    /* ── Demo Hint Banner ─────────────────────────────────────────── */
+    --auth-demo-bg:                     hsl(174 25% 95%);             /* teal-50 */
+    --auth-demo-border:                 hsl(174 25% 82%);             /* teal-200 */
+    --auth-demo-icon:                   hsl(var(--primary));
+    --auth-demo-title:                  hsl(var(--primary));
+  }
+
+  .dark {
+    --auth-demo-bg:                     hsl(174 25% 15%);
+    --auth-demo-border:                 hsl(174 25% 25%);
+    --auth-demo-icon:                   hsl(174 50% 60%);
+    --auth-demo-title:                  hsl(174 50% 60%);
+  }
+
+}
