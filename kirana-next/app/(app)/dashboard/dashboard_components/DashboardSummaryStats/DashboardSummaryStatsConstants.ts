@@ -1,5 +1,5 @@
 import { IndianRupee, TrendingUp, BookOpen, AlertTriangle, Clock } from "lucide-react";
-import { DashboardSummaryData } from "../../types/DashboardTypes";
+import { DashboardSummaryData } from "../../dashboard_types/DashboardTypes";
 
 export const DASHBOARD_STAT_CARDS_CONFIG = [
   {

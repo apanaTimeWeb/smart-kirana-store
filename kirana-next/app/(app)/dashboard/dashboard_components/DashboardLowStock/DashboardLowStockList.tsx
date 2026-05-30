@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PackageOpen } from "lucide-react";
-import { useDashboardContext } from "../../context/DashboardContext";
-import { DASHBOARD_CONSTANTS } from "../../constants/DashboardSharedConstants";
+import { useDashboardContext } from "../../dashboard_context/DashboardContext";
+import { DASHBOARD_CONSTANTS } from "../../dashboard_constants/DashboardSharedConstants";
 import { DashboardSearchFilter } from "../DashboardShared/DashboardSearchFilter";
 import { DashboardPagination } from "../DashboardShared/DashboardPagination";
 

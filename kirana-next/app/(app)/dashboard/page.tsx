@@ -1,8 +1,8 @@
 "use client";
 
 import "./dashboard.css";
-import { DashboardProvider } from "./context/DashboardContext";
-import { DashboardPageContent } from "./components/DashboardLayout/DashboardPageContent";
+import { DashboardProvider } from "./dashboard_context/DashboardContext";
+import { DashboardPageContent } from "./dashboard_components/DashboardLayout/DashboardPageContent";
 
 /**
  * Dashboard — Route Entry Point

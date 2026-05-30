@@ -3,7 +3,7 @@
 import React from "react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
-import { useDashboardContext } from "../../context/DashboardContext";
+import { useDashboardContext } from "../../dashboard_context/DashboardContext";
 import { DashboardStatCard } from "../DashboardSummaryStats/DashboardStatCard";
 import { DashboardRecentBillsList } from "../DashboardRecentBills/DashboardRecentBillsList";
 import { DashboardLowStockList } from "../DashboardLowStock/DashboardLowStockList";

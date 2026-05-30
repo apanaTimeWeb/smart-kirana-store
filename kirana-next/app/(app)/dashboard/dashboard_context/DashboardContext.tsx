@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useMemo } from "react";
 import { useGetDashboardSummary } from "@/lib/api";
-import { DashboardSummaryData } from "../types/DashboardTypes";
+import { DashboardSummaryData } from "../dashboard_types/DashboardTypes";
 
 interface DashboardContextType {
   summary: DashboardSummaryData | undefined;

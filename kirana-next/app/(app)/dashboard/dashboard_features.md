@@ -14,14 +14,14 @@ app/(app)/dashboard/
 ├── dashboard.css                        ← ALL color tokens for this module (single source of truth for theming)
 ├── dashboard_features.md                ← THIS FILE — AI context & architecture map
 │
-├── context/
+├── dashboard_context/
 │   └── DashboardContext.tsx             ← Data layer: fetches summary, exposes via memoized Context
-├── types/
+├── dashboard_types/
 │   └── DashboardTypes.ts                ← TypeScript types for the dashboard
-├── constants/
+├── dashboard_constants/
 │   └── DashboardSharedConstants.ts      ← Central data: statically defined UI arrays and shared configurations
 │
-└── components/
+└── dashboard_components/
     ├── DashboardLayout/
     │   └── DashboardPageContent.tsx     ← Full dashboard UI: Maps config array to stat cards and places lists
     ├── DashboardSummaryStats/
