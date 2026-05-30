@@ -13,8 +13,8 @@ import { AUTH_PLACEHOLDERS } from "./AuthConstants";
 export function AuthLoginForm() {
   const { login, isLoginLoading } = useAuth();
   const [show, setShow] = useState(false);
-  const [phone, setPhone] = useState(AUTH_PLACEHOLDERS.login.phone);
-  const [password, setPassword] = useState(AUTH_PLACEHOLDERS.login.password);
+  const [phone, setPhone] = useState<string>(AUTH_PLACEHOLDERS.login.phone);
+  const [password, setPassword] = useState<string>(AUTH_PLACEHOLDERS.login.password);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { SETTINGS_MOCK_ACTIVE_SESSIONS } from "../constants/SettingsSharedConstants";
-import type { SettingsActiveSession } from "./SettingsTypes";
+import type { SettingsActiveSession } from "../types/SettingsTypes";
 
 /**
  * SettingsActiveSessionsDataHook

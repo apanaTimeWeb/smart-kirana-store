@@ -60,7 +60,7 @@ export function SuppliersProvider({ children }: { children: React.ReactNode }) {
   const [transactionMode, setTransactionMode] = useState<"payment" | "credit" | null>(null);
 
   const { data: suppliers = [], isLoading: isLoadingSuppliers } = useListSuppliers({ search: search || undefined });
-  const { data: ledgerDetail, isLoading: isLoadingLedger } = useGetSupplier(ledgerId ?? 0, { enabled: !!ledgerId });
+  const { data: ledgerDetail, isLoading: isLoadingLedger } = useGetSupplier(ledgerId ?? 0, { query: { enabled: !!ledgerId } });
   const { data: shopSettings } = useGetSettings();
   
   const deleteMutation = useDeleteSupplier();

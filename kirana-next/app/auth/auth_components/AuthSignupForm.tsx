@@ -13,10 +13,10 @@ import { AUTH_PLACEHOLDERS } from "./AuthConstants";
 export function AuthSignupForm() {
   const { signup, isSignupLoading } = useAuth();
   const [show, setShow] = useState(false);
-  const [shopName, setShopName] = useState(AUTH_PLACEHOLDERS.signup.shopName);
-  const [ownerName, setOwnerName] = useState(AUTH_PLACEHOLDERS.signup.ownerName);
-  const [phone, setPhone] = useState(AUTH_PLACEHOLDERS.signup.phone);
-  const [password, setPassword] = useState(AUTH_PLACEHOLDERS.signup.password);
+  const [shopName, setShopName] = useState<string>(AUTH_PLACEHOLDERS.signup.shopName);
+  const [ownerName, setOwnerName] = useState<string>(AUTH_PLACEHOLDERS.signup.ownerName);
+  const [phone, setPhone] = useState<string>(AUTH_PLACEHOLDERS.signup.phone);
+  const [password, setPassword] = useState<string>(AUTH_PLACEHOLDERS.signup.password);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
