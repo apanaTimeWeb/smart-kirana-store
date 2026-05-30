@@ -31,6 +31,7 @@ function useStockEditVariantDialogInternal() {
     setDraft({
       rowId: product.id.toString(),
       id: product.id,
+      productName: product.productName,
       variantName: product.variantName,
       unitType: product.unitType,
       baseUnit: product.baseUnit,
@@ -103,7 +104,7 @@ function useStockEditVariantDialogInternal() {
 
   const errors: string[] = [];
   if (draft) {
-    if (!draft.variantName.trim()) errors.push("Saman ka naam zaroori hai");
+    if (!draft.productName?.trim()) errors.push("Saman ka naam zaroori hai");
     if (sellPrice <= 0) errors.push("Bikri (Sell) rate 0 se zyada hona chahiye");
     if (draft.stockInBaseUnit < 0) errors.push("Current stock minus mein nahi ho sakta");
     

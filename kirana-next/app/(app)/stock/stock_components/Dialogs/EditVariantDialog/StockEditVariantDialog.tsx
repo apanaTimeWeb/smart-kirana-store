@@ -148,8 +148,8 @@ function StockEditVariantDialogInner() {
     if (isValid) submitChanges();
   };
 
-  const name = draft.variantName;
-  const setName = (val: string) => patchDraft({ variantName: val });
+  const name = draft.productName ?? "";
+  const setName = (val: string) => patchDraft({ productName: val });
 
   const unitType = draft.unitType;
   const setBuyPrice = (val: number | "") => patchDraft({ purchasePrice: val === "" ? 0 : val });
