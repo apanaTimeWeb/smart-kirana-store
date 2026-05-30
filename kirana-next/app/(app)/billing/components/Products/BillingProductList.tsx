@@ -4,7 +4,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BillingProductCard } from "./BillingProductCard";
-import { useBilling } from "./BillingContext";
+import { useBilling } from "../../context/BillingContext";
 
 export function BillingProductList() {
   const {

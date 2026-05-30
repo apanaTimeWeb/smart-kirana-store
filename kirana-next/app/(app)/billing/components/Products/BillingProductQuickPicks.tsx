@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useBilling } from "./BillingContext";
+import { useBilling } from "../../context/BillingContext";
 
 export function BillingProductQuickPicks() {
   const { quickProducts, handleProductTap } = useBilling();

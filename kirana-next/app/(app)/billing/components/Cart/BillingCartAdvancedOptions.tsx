@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type { BillInputPaymentMode } from "@/lib/api";
-import { GST_RATES, PAYMENT_MODES } from "./BillingTypes";
-import { useBilling } from "./BillingContext";
+import { GST_RATES, PAYMENT_MODES } from "../../constants/BillingSharedConstants";
+import { useBilling } from "../../context/BillingContext";
 
 interface BillingCartAdvancedOptionsProps {
   showOptions: boolean;

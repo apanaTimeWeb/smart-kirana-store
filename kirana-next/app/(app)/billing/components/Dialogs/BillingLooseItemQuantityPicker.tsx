@@ -4,9 +4,9 @@ import React, { useEffect, useState, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useBilling } from "./BillingContext";
-import { PRESETS_GRAM, PRESETS_ML, PRESETS_PCS } from "./BillingTypes";
-import { formatBaseUnits, priceForBaseQuantity } from "./BillingUtils";
+import { useBilling } from "../../context/BillingContext";
+import { PRESETS_GRAM, PRESETS_ML, PRESETS_PCS } from "../../constants/BillingSharedConstants";
+import { formatBaseUnits, priceForBaseQuantity } from "../../utils/BillingSharedUtils";
 
 export function BillingLooseItemQuantityPicker() {
   const { khulaProduct: product, setKhulaProduct, addKhula } = useBilling();

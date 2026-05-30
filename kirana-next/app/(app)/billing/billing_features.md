@@ -6,6 +6,8 @@
 
 ## 📁 Directory Structure
 
+This module follows a strictly **Micro-Modularized, Feature-Based Architecture** designed for AI-friendliness and enterprise scale.
+
 ```
 app/(app)/billing/
 ├── page.tsx                          ← Main entry: layout + BillingProvider wrapper
@@ -14,43 +16,50 @@ app/(app)/billing/
 ├── billing.css                       ← ALL color tokens for this module (single source of truth for theming)
 ├── billing_features.md               ← THIS FILE — AI context & architecture map
 │
-└── billing_components/
-    │
-    │── ── LOGIC & STATE ─────────────────────────────────────────────────
-    ├── BillingContext.tsx             ← Brain: all state, API calls, derived values, cart logic
-    ├── BillingTypes.ts               ← Central data: all types + hardcoded constants (PAYMENT_MODES, GST_RATES, etc.)
-    ├── BillingUtils.ts               ← Pure utility functions: formatting, price calc, preset helpers
-    ├── BillingWhatsAppUtils.ts       ← WhatsApp message builder + thermal print trigger
-    │
-    │── ── PRODUCT PANEL (left side) ─────────────────────────────────────
-    ├── BillingProductMainGrid.tsx    ← Container: composes search + quick picks + filters + list
-    ├── BillingProductSearchBar.tsx   ← Search input with Enter-to-add-first-product shortcut
-    ├── BillingProductQuickPicks.tsx  ← Horizontal scroll strip of quickSelect=true products
-    ├── BillingProductFilters.tsx     ← Filter chip row (All, Khula, Fixed, Variant, Bora, Low, In Stock)
-    ├── BillingProductList.tsx        ← Product grid with skeleton loaders & empty state
-    ├── BillingProductCard.tsx        ← Individual product card (in-cart ring, stock status, remove button)
-    │
-    │── ── CART PANEL (right side) ───────────────────────────────────────
-    ├── BillingCartMainPanel.tsx      ← Container: composes header + item list + footer
-    ├── BillingCartHeader.tsx         ← Cart title, item count badge, customer selector slot
-    ├── BillingCartEmptyState.tsx     ← Empty cart illustration & prompt
-    ├── BillingCartItemList.tsx       ← Scrollable list of cart item rows
-    ├── BillingCartItemRow.tsx        ← One cart item: name, qty +/-, price, remove
-    ├── BillingCartAdvancedOptions.tsx ← Subtotal, discount, GST toggle+rate, payment mode, WhatsApp phone
-    ├── BillingCartFooter.tsx         ← Collapsible billing options + total + "Bill Karo" checkout button
-    │
-    │── ── DIALOGS & MOBILE ──────────────────────────────────────────────
-    ├── BillingCustomerSelector.tsx   ← Combobox popover: search & select customer, add new inline
-    ├── BillingLooseItemQuantityPicker.tsx ← Khula item dialog: preset qty chips + custom input
-    ├── BillingWhatsAppInvoiceDialog.tsx   ← Post-checkout dialog: enter phone, send WhatsApp bill
-    └── BillingMobileResponsiveLayout.tsx  ← Mobile tabbed UI switching between Products and Cart views
+├── components/
+│   ├── Cart/                         ← Everything related to the right-side cart panel
+│   │   ├── BillingCartMainPanel.tsx
+│   │   ├── BillingCartHeader.tsx
+│   │   ├── BillingCartEmptyState.tsx
+│   │   ├── BillingCartItemList.tsx
+│   │   ├── BillingCartItemRow.tsx
+│   │   ├── BillingCartAdvancedOptions.tsx
+│   │   └── BillingCartFooter.tsx
+│   │
+│   ├── Products/                     ← Everything related to the left-side product grid
+│   │   ├── BillingProductMainGrid.tsx
+│   │   ├── BillingProductSearchBar.tsx
+│   │   ├── BillingProductQuickPicks.tsx
+│   │   ├── BillingProductFilters.tsx
+│   │   ├── BillingProductList.tsx
+│   │   └── BillingProductCard.tsx
+│   │
+│   ├── Customer/                     ← Customer selection logic
+│   │   └── BillingCustomerSelector.tsx
+│   │
+│   ├── Dialogs/                      ← All modal windows
+│   │   ├── BillingLooseItemQuantityPicker.tsx
+│   │   └── BillingWhatsAppInvoiceDialog.tsx
+│   │
+│   └── Layout/                       ← Global responsive layout wrappers
+│       └── BillingMobileResponsiveLayout.tsx
+│
+├── context/
+│   └── BillingContext.tsx            ← Brain: all state, API mutations, cart logic. Return value is heavily memoized.
+│
+├── constants/
+│   └── BillingSharedConstants.ts     ← Central data: types + hardcoded UI options (PAYMENT_MODES, GST_RATES, etc.)
+│
+└── utils/
+    ├── BillingSharedUtils.ts         ← Pure UI formatters, calculation helpers
+    └── BillingWhatsAppUtils.ts       ← WhatsApp integration & thermal print helpers
 ```
 
 ---
 
-## 🧠 State Management: `BillingContext.tsx`
+## 🧠 State Management: `context/BillingContext.tsx`
 
-**One file rules all state.** Every component pulls data from `useBilling()` — zero prop drilling.
+**One file rules all state.** Every component pulls data from `useBilling()` — zero prop drilling. The return object is strictly memoized to prevent massive re-render chains across the micro-folders.
 
 ### What lives in context:
 | State | Type | Purpose |
@@ -75,13 +84,13 @@ app/(app)/billing/
 - `quickProducts` (memoized top-8 quickSelect items)
 
 ### Persistence:
-Cart state is auto-saved to `localStorage` under key `"billing_draft_state"`. On page load, it restores: cart, discount, paymentMode, selectedCustomerId, quickPhone, enableGST, gstRate.
+Cart state is auto-saved to `localStorage` under key `"billing_draft_state"`. On page load, it restores automatically.
 
 ---
 
-## 📦 Centralized Data: `BillingTypes.ts`
+## 📦 Centralized Data: `constants/BillingSharedConstants.ts`
 
-**Single source of truth for all hardcoded data.** When the backend replaces these with API calls tomorrow, only this one file changes.
+**Single source of truth for all hardcoded data.** When the backend replaces these with API calls tomorrow, only this one file changes. All TS types are derived from these literal arrays.
 
 | Export | Type | Purpose |
 |---|---|---|
@@ -145,41 +154,23 @@ All colors are defined as CSS variables here. To port this module to another pro
 
 ---
 
-## ⚠️ Known Gotchas (Fixed)
-
-> These issues were found during the enterprise audit and have been resolved. Documented here to prevent regression.
-
-1. **`BillingMobileResponsiveLayout.tsx` — `"use client"` was missing.**
-   This file calls `useBilling()` (a React Context hook) and renders `<button>` elements. In Next.js App Router, all files are Server Components by default. Without `"use client"`, the hook call would throw a Runtime Error. **Fixed: `"use client"` added as first line.**
-
-2. **`--billing-primary-border` CSS variable was undefined.**
-   Three components (`BillingProductCard`, `BillingProductFilters`, `BillingProductQuickPicks`) referenced `var(--billing-primary-border)` for hover states, but the variable was never declared in `billing.css`. This caused hover borders to silently render as nothing. **Fixed: variable declared in both `:root` and `.dark` in `billing.css`.**
-
-3. **`error.tsx` used hardcoded Tailwind colors (`bg-red-100`, `text-red-600`, `text-gray-500`).**
-   These violated theme independence — the error UI couldn't be themed from `billing.css`. **Fixed: replaced with `--billing-error-icon-bg`, `--billing-error-icon-text`, `--billing-error-body-text` CSS variables.**
-
-4. **`BillingWhatsAppInvoiceDialog.tsx` used `text-green-500` for the MessageCircle icon.**
-   The variable `--billing-whatsapp-icon` was already defined for this exact purpose. **Fixed: replaced with `text-[var(--billing-whatsapp-icon)]`.**
-
----
-
 ## 🚀 Future Enhancements
 
 | Feature | Where to touch | Notes |
 |---|---|---|
-| **Backend API for constants** | `BillingTypes.ts` only | Replace hardcoded arrays with API calls; zero UI changes needed |
-| **Barcode Scanner** | `BillingProductSearchBar.tsx` | Add `keydown` listener for scanner input (fast typing) |
-| **Offline Mode** | `BillingContext.tsx` | Replace API calls with IndexedDB; add sync-queue on reconnect |
-| **Dynamic Offers (BOGO)** | `BillingContext.tsx` → `handleCheckout` / `addFixed` | Inject discount logic before cart total calculation |
-| **Multi-printer support** | `BillingWhatsAppUtils.ts` | Add printer profile selection before `printThermalBill()` |
-| **Split payment** | `BillingCartAdvancedOptions.tsx` + `BillingContext.tsx` | Add partial cash + UPI fields; extend `BillData` type |
+| **Backend API for constants** | `constants/BillingSharedConstants.ts` only | Replace hardcoded arrays with API calls; zero UI changes needed |
+| **Barcode Scanner** | `components/Products/BillingProductSearchBar.tsx` | Add `keydown` listener for scanner input (fast typing) |
+| **Offline Mode** | `context/BillingContext.tsx` | Replace API calls with IndexedDB; add sync-queue on reconnect |
+| **Dynamic Offers (BOGO)** | `context/BillingContext.tsx` → `handleCheckout` / `addFixed` | Inject discount logic before cart total calculation |
+| **Multi-printer support** | `utils/BillingWhatsAppUtils.ts` | Add printer profile selection before `printThermalBill()` |
+| **Split payment** | `components/Cart/BillingCartAdvancedOptions.tsx` + `context/BillingContext.tsx` | Add partial cash + UPI fields; extend `BillData` type |
 
 ---
 
 ## 📌 Quick Handover Summary
 
-- **Two-panel layout**: Left = `BillingProductMainGrid`, Right = `BillingCartMainPanel`. On mobile: tabs via `BillingMobileResponsiveLayout`.
-- **Brain**: `BillingContext.tsx` — all state, cart logic, API mutations, localStorage persistence. No prop drilling anywhere.
-- **Data**: `BillingTypes.ts` — all constants. One place to swap in API data tomorrow.
+- **Micro-Modular Layout**: Components split into specific domain folders (`components/Cart/`, `components/Products/`, etc.).
+- **Brain**: `context/BillingContext.tsx` — heavily memoized state controller. No prop drilling anywhere.
+- **Data**: `constants/BillingSharedConstants.ts` — all constants. One place to swap in API data tomorrow.
 - **Theming**: `billing.css` — all CSS variables. Copy this folder to any project and theme from here only.
-- **Post-checkout flow**: WhatsApp message → `BillingWhatsAppUtils.ts::buildWhatsAppMessage`. Thermal print → `BillingWhatsAppUtils.ts::printThermalBill`.
+- **Post-checkout flow**: WhatsApp message → `utils/BillingWhatsAppUtils.ts`. Thermal print → `utils/BillingWhatsAppUtils.ts`.

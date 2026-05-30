@@ -1,6 +1,6 @@
 import type { Product } from "@/lib/api";
-import type { CartItem } from "./BillingTypes";
-import { PRESETS_GRAM, PRESETS_ML, PRESETS_PCS } from "./BillingTypes";
+import type { CartItem } from "../constants/BillingSharedConstants";
+import { PRESETS_GRAM, PRESETS_ML, PRESETS_PCS } from "../constants/BillingSharedConstants";
 
 // ─── Stock / Unit Formatting ───────────────────────────────────────────────────
 

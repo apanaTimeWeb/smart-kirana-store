@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MessageCircle, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { buildWhatsAppMessage, printThermalBill } from "./BillingWhatsAppUtils";
-import { useBilling } from "./BillingContext";
+import { buildWhatsAppMessage, printThermalBill } from "../../utils/BillingWhatsAppUtils";
+import { useBilling } from "../../context/BillingContext";
 
 export function BillingWhatsAppInvoiceDialog() {
   const { whatsappBillData: billData, setWhatsappBillData, shopName, settings } = useBilling();

@@ -3,7 +3,7 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { useBilling } from "./BillingContext";
+import { useBilling } from "../../context/BillingContext";
 
 export function BillingProductSearchBar() {
   const { search, setSearch, products, handleProductTap } = useBilling();

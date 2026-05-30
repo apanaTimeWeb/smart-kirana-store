@@ -2,12 +2,12 @@
 
 import "./billing.css";
 import React from "react";
-import { BillingProvider, useBilling } from "./billing_components/BillingContext";
-import { BillingProductMainGrid } from "./billing_components/BillingProductMainGrid";
-import { BillingCartMainPanel } from "./billing_components/BillingCartMainPanel";
-import { BillingMobileResponsiveLayout } from "./billing_components/BillingMobileResponsiveLayout";
-import { BillingLooseItemQuantityPicker } from "./billing_components/BillingLooseItemQuantityPicker";
-import { BillingWhatsAppInvoiceDialog } from "./billing_components/BillingWhatsAppInvoiceDialog";
+import { BillingProvider, useBilling } from "./context/BillingContext";
+import { BillingProductMainGrid } from "./components/Products/BillingProductMainGrid";
+import { BillingCartMainPanel } from "./components/Cart/BillingCartMainPanel";
+import { BillingMobileResponsiveLayout } from "./components/Layout/BillingMobileResponsiveLayout";
+import { BillingLooseItemQuantityPicker } from "./components/Dialogs/BillingLooseItemQuantityPicker";
+import { BillingWhatsAppInvoiceDialog } from "./components/Dialogs/BillingWhatsAppInvoiceDialog";
 
 function BillingContent() {
   const billing = useBilling();
