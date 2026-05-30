@@ -14,3 +14,13 @@ export const signupSchema = z.object({
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type SignupFormValues = z.infer<typeof signupSchema>;
+
+/**
+ * AuthUser — shape of the authenticated user kept in AuthContext.
+ * Tomorrow, replace this with the actual API response shape.
+ */
+export interface AuthUser {
+  phone: string;
+  name?: string;
+  shop?: string;
+}

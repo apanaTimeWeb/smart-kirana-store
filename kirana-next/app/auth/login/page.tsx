@@ -1,6 +1,5 @@
-"use client";
-
-import "../auth.css";
+// Server Component — no hooks used here directly.
+// AuthProvider and its children handle all client-side logic.
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { AuthProvider } from "../auth_components/AuthContext";
@@ -11,20 +10,21 @@ import { AuthDemoHint } from "../auth_components/AuthDemoHint";
 export default function LoginPage() {
   return (
     <AuthProvider>
-      <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--auth-muted-bg)]">
-        <div className="w-full max-w-md">
-          <Link
-            href="/"
-            className="inline-flex items-center text-sm font-medium text-[var(--auth-muted-text)] hover:text-[var(--auth-back-hover)] mb-6 transition-colors"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Home pe wapas
-          </Link>
+      <div className="w-full max-w-md">
+        <Link
+          href="/"
+          className="inline-flex items-center text-sm font-medium mb-6 transition-colors"
+          style={{ color: "var(--auth-muted-text)" }}
+          onMouseOver={(e) => (e.currentTarget.style.color = "var(--auth-back-hover)")}
+          onMouseOut={(e) => (e.currentTarget.style.color = "var(--auth-muted-text)")}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Home pe wapas
+        </Link>
 
-          <AuthLoginHeader />
-          <AuthLoginForm />
-          <AuthDemoHint />
-        </div>
+        <AuthLoginHeader />
+        <AuthLoginForm />
+        <AuthDemoHint />
       </div>
     </AuthProvider>
   );
