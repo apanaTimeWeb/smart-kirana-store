@@ -7,21 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  useCreateSupplier,
-  getListSuppliersQueryKey,
-} from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { supplierSchema, type SupplierFormValues } from "./types";
+import { getListSuppliersQueryKey } from "@/lib/api";
+import { useSuppliers } from "./SuppliersContext";
+import { supplierSchema, type SupplierFormValues } from "./SuppliersTypes";
 
-interface AddSupplierDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-export function AddSupplierDialog({ open, onOpenChange }: AddSupplierDialogProps) {
-  const createSupplier = useCreateSupplier();
+export function SuppliersAddDialog() {
+  const { isAddOpen, setIsAddOpen, createSupplierMutation } = useSuppliers();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -31,13 +24,13 @@ export function AddSupplierDialog({ open, onOpenChange }: AddSupplierDialogProps
   });
 
   const onSubmit = (values: SupplierFormValues) => {
-    createSupplier.mutate(
+    createSupplierMutation.mutate(
       { data: values },
       {
         onSuccess: () => {
           toast({ title: "Supplier add hua" });
           queryClient.invalidateQueries({ queryKey: getListSuppliersQueryKey() });
-          onOpenChange(false);
+          setIsAddOpen(false);
           form.reset();
         },
       }
@@ -45,7 +38,7 @@ export function AddSupplierDialog({ open, onOpenChange }: AddSupplierDialogProps
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle>Naya Supplier Add Karein</DialogTitle>
@@ -91,8 +84,8 @@ export function AddSupplierDialog({ open, onOpenChange }: AddSupplierDialogProps
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={createSupplier.isPending}>
-              {createSupplier.isPending ? "Saving..." : "Add Supplier"}
+            <Button type="submit" className="w-full bg-[var(--supplier-primary-bg)] text-[var(--supplier-primary-text)]" disabled={createSupplierMutation.isPending}>
+              {createSupplierMutation.isPending ? "Saving..." : "Add Supplier"}
             </Button>
           </form>
         </Form>

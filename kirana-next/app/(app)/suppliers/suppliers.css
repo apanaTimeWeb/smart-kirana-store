@@ -8,6 +8,19 @@
 @layer components {
 
   :root {
+    /* -- Generic UI Colors ------------------------------------------ */
+    --supplier-card-bg:                 hsl(var(--card));
+    --supplier-muted-bg:                hsl(var(--muted));
+    --supplier-muted-bg-30:             hsl(var(--muted) / 0.3);
+    --supplier-muted-bg-50:             hsl(var(--muted) / 0.5);
+    --supplier-muted-bg-60:             hsl(var(--muted) / 0.6);
+    --supplier-muted-text:              hsl(var(--muted-foreground));
+    --supplier-primary-bg:              hsl(var(--primary));
+    --supplier-primary-bg-10:           hsl(var(--primary) / 0.1);
+    --supplier-primary-text:            hsl(var(--primary-foreground));
+    --supplier-primary-color:           hsl(var(--primary));
+    --supplier-destructive-text:        hsl(var(--destructive));
+    --supplier-border:                  hsl(var(--border));
     /* ── Supplier Header Card ─────────────────────────────────── */
     --supplier-header-bg-from:         hsl(38 90% 97%);              /* from-amber-50 */
     --supplier-header-bg-to:           hsl(24 90% 96%);              /* to-orange-50 */

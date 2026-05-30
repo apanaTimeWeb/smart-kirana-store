@@ -7,58 +7,55 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 import {
-  useAddSupplierTransaction,
   getGetSupplierQueryKey,
   getListSuppliersQueryKey,
   getGetDashboardSummaryQueryKey,
 } from "@/lib/api";
-import { useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
-import { txSchema, type TxFormValues } from "./types";
+import { useSuppliers } from "./SuppliersContext";
+import { txSchema, type TxFormValues } from "./SuppliersTypes";
+import { TX_MODE_LABELS } from "./SuppliersConstants";
 
-interface TransactionFormProps {
-  supplierId: number;
-  mode: "payment" | "credit";
-  onClose: () => void;
-}
-
-export function TransactionForm({ supplierId, mode, onClose }: TransactionFormProps) {
-  const addTx = useAddSupplierTransaction();
+export function SuppliersTransactionForm() {
+  const { ledgerId, transactionMode, setTransactionMode, addTxMutation } = useSuppliers();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const form = useForm<TxFormValues>({
     resolver: zodResolver(txSchema),
-    defaultValues: { type: mode, amount: 0, description: "" },
+    defaultValues: { type: transactionMode || "payment", amount: 0, description: "" },
   });
 
+  if (!transactionMode || !ledgerId) return null;
+
   const onSubmit = (values: TxFormValues) => {
-    const data = { ...values, type: mode };
-    addTx.mutate(
-      { id: supplierId, data },
+    const data = { ...values, type: transactionMode };
+    addTxMutation.mutate(
+      { id: ledgerId, data },
       {
         onSuccess: () => {
           toast({ title: data.type === "payment" ? "Payment recorded" : "Udhaar added" });
-          queryClient.invalidateQueries({ queryKey: getGetSupplierQueryKey(supplierId) });
+          queryClient.invalidateQueries({ queryKey: getGetSupplierQueryKey(ledgerId) });
           queryClient.invalidateQueries({ queryKey: getListSuppliersQueryKey() });
           queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
           queryClient.invalidateQueries({ queryKey: ["reports"] });
           form.reset({ type: data.type, amount: 0, description: "" });
-          onClose();
+          setTransactionMode(null);
         },
       }
     );
   };
 
   return (
-    <div className="rounded-xl border p-6 mb-6 bg-[var(--supplier-form-panel-bg)] shadow-sm">
+    <div className="rounded-xl border border-[var(--supplier-border)] p-6 mb-6 bg-[var(--supplier-form-panel-bg)] shadow-sm">
       <div className="flex justify-between items-center mb-5">
         <p className="font-semibold text-lg">
-          {mode === "payment" ? "Payment Entry" : "Udhaar Entry"}
+          {transactionMode === "payment" ? "Payment Entry" : "Udhaar Entry"}
         </p>
-        <button onClick={onClose}>
-          <X className="h-5 w-5" />
+        <button onClick={() => setTransactionMode(null)}>
+          <X className="h-5 w-5 text-[var(--supplier-muted-text)]" />
         </button>
       </div>
 
@@ -85,7 +82,7 @@ export function TransactionForm({ supplierId, mode, onClose }: TransactionFormPr
             name="description"
             render={({ field }) => (
               <FormItem className="md:col-span-8">
-                <FormLabel>{mode === "payment" ? "Note" : "Item / Reason"}</FormLabel>
+                <FormLabel>{transactionMode === "payment" ? "Note" : "Item / Reason"}</FormLabel>
                 <FormControl>
                   <Input {...field} className="h-11" />
                 </FormControl>
@@ -93,8 +90,8 @@ export function TransactionForm({ supplierId, mode, onClose }: TransactionFormPr
               </FormItem>
             )}
           />
-          <Button type="submit" className="md:col-span-12 h-11" disabled={addTx.isPending}>
-            {addTx.isPending ? "Saving..." : "Save Entry"}
+          <Button type="submit" className="md:col-span-12 h-11 bg-[var(--supplier-primary-bg)] text-[var(--supplier-primary-text)]" disabled={addTxMutation.isPending}>
+            {addTxMutation.isPending ? "Saving..." : "Save Entry"}
           </Button>
         </form>
       </Form>
