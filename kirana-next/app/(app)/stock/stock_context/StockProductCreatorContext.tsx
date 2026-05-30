@@ -2,149 +2,135 @@
 
 // StockProductCreatorContext.tsx
 // ─────────────────────────────────────────────────────────────────────────────
-// Isolated React Context for the "Naya Product" creator dialog's local form state.
-// This is SEPARATE from StockContext (module-level state).
-//
-// WHY a second context?
-//   The creator dialog is broken into 8+ micro-components (name field, unit field,
-//   price fields, etc.). Without a context, we'd need to prop-drill 15+ state
-//   values through every component layer. This context provides perfect isolation:
-//   each field component reads ONLY the values it needs.
-//
-// TOMORROW: If the form needs server-side defaults, replace the useState
-//   initialisers here. Zero UI component changes needed.
+// Refactored for Simple "2-Click" Mobile-First UI (Based on Final Plan)
 // ─────────────────────────────────────────────────────────────────────────────
 
 import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { UnitType } from "@/lib/api";
 import { VariantDraft } from "../stock_types/StockTypes";
 import { UNIT_CONFIG, STOCK_DEFAULT_CATEGORY, STOCK_DEFAULT_LOW_STOCK_ALERT } from "../stock_constants/StockSharedConstants";
-import { defaultPresetsFor, uid, variantDraft } from "../stock_utils/StockUtils";
+import { defaultPresetsFor, uid } from "../stock_utils/StockUtils";
 import { useStock } from "./StockContext";
-import { toInput } from "../stock_utils/StockUtils";
-
-// ── Internal hook that owns all creator form state ───────────────────────────
 
 function useStockProductCreatorInternal() {
   const { isAddOpen, setIsAddOpen, create, isCreating } = useStock();
 
-  // Core quick fields
+  // Core required fields
   const [name, setName] = useState("");
-  const [unitType, setUnitType] = useState<string>("KG");
+  const [unitType, setUnitType] = useState<string>("PACKET"); // Default to Packet
+  const [bulkConversionRate, setBulkConversionRate] = useState<number | "">(""); // For Bora/Bulk
   const [buyPrice, setBuyPrice] = useState<number | "">("");
   const [sellPrice, setSellPrice] = useState<number | "">("");
-
-  // Advanced fields
-  const [category, setCategory] = useState(STOCK_DEFAULT_CATEGORY);
-  const [brand, setBrand] = useState("");
-  const [keywords, setKeywords] = useState("");
-  const [shortcut, setShortcut] = useState("");
-  const [mrp, setMrp] = useState<number | "">("");
   const [initialStock, setInitialStock] = useState<number | "">("");
-  const [lowStockAlert, setLowStockAlert] = useState<number | "">("");
   const [expiryDate, setExpiryDate] = useState("");
-  const [quickSelect, setQuickSelect] = useState(false);
-  const [extraVariants, setExtraVariants] = useState<VariantDraft[]>([]);
-  const [variantNameOverride, setVariantNameOverride] = useState<string | null>(null);
 
-  // Derived from unitType
-  const cfg = UNIT_CONFIG[unitType];
-  const variantName = variantNameOverride ?? cfg?.variantNameSuggestion ?? unitType;
+  // Optional fields
+  const [barcode, setBarcode] = useState("");
+  const [location, setLocation] = useState("");
+  const [lowStockAlert, setLowStockAlert] = useState<number | "">(STOCK_DEFAULT_LOW_STOCK_ALERT);
+
+  // Hardcoded/Hidden advanced fields for API compatibility
+  const category = STOCK_DEFAULT_CATEGORY;
+  const quickSelect = false;
 
   const handleUnitChange = (newUnit: string) => {
     setUnitType(newUnit);
-    setVariantNameOverride(null); // reset so suggestion auto-updates
-    setLowStockAlert("");
+    if (newUnit !== "BORA" && newUnit !== "BOX" && newUnit !== "CARTON") {
+      setBulkConversionRate("");
+    }
   };
 
-  const defaultLowStockAlert = STOCK_DEFAULT_LOW_STOCK_ALERT;
+  const cfg = UNIT_CONFIG[unitType];
+
+  // Calculate actual base quantity
+  // If bulk (e.g. Bora), use the user's conversion rate (assuming they enter KG for weight, Piece for piece)
+  const actualBaseQuantity = useMemo(() => {
+    if (!cfg) return 1;
+    if (cfg.group === "wholesale" && bulkConversionRate !== "") {
+      // If base unit is gram (e.g. Bora), user enters KG -> multiply by 1000
+      if (cfg.baseUnit === "gram") return Number(bulkConversionRate) * 1000;
+      // If base unit is ml, user enters Litre -> multiply by 1000
+      if (cfg.baseUnit === "ml") return Number(bulkConversionRate) * 1000;
+      // If base unit is piece, user enters Pieces -> multiply by 1
+      return Number(bulkConversionRate);
+    }
+    return cfg.baseQuantity;
+  }, [cfg, bulkConversionRate]);
 
   // Computed base unit values
-  const lowStockInBase = useMemo(() => {
-    const threshold = lowStockAlert !== "" ? Number(lowStockAlert) : defaultLowStockAlert;
-    return threshold * (cfg?.baseQuantity ?? 1);
-  }, [lowStockAlert, defaultLowStockAlert, cfg]);
-
   const stockInBase = useMemo(() => {
     const qty = initialStock !== "" ? Number(initialStock) : 0;
-    return qty * (cfg?.baseQuantity ?? 1);
-  }, [initialStock, cfg]);
+    return qty * actualBaseQuantity;
+  }, [initialStock, actualBaseQuantity]);
+
+  const lowStockInBase = (lowStockAlert !== "" ? Number(lowStockAlert) : STOCK_DEFAULT_LOW_STOCK_ALERT) * actualBaseQuantity;
 
   // Validation
   const errors = useMemo(() => {
     const errs: string[] = [];
-    if (!name.trim()) errs.push("Product name required");
-    if (sellPrice === "" || Number(sellPrice) <= 0) errs.push("Sell price must be > 0");
+    if (!name.trim()) errs.push("Product name is required");
+    if (sellPrice === "" || Number(sellPrice) <= 0) errs.push("Sell price must be greater than 0");
+    if (initialStock === "" || Number(initialStock) < 0) errs.push("Current stock is required");
+    if (!expiryDate) errs.push("Expiry date is required for alerts");
+    
+    if (cfg?.group === "wholesale" && (bulkConversionRate === "" || Number(bulkConversionRate) <= 0)) {
+      errs.push("Conversion rate (e.g., 1 Bora = ? KG) is required for bulk items");
+    }
+    
     return errs;
-  }, [name, sellPrice]);
+  }, [name, sellPrice, initialStock, expiryDate, cfg, bulkConversionRate]);
 
   const isValid = errors.length === 0;
 
-  // Extra variant handlers
-  const addExtraVariant = () => {
-    const newV = variantDraft({ variantName: "New Pack", sellingMode: "fixed", unitType: "PACKET" });
-    setExtraVariants((prev) => [...prev, newV]);
-  };
-
-  const updateExtraVariant = (rowId: string, patch: Partial<VariantDraft>) => {
-    setExtraVariants((prev) => prev.map((v) => (v.rowId === rowId ? { ...v, ...patch } : v)));
-  };
-
-  const removeExtraVariant = (rowId: string) => {
-    setExtraVariants((prev) => prev.filter((v) => v.rowId !== rowId));
-  };
-
-  // Reset all fields to blank
+  // Reset all fields
   const reset = useCallback(() => {
     setName("");
-    setUnitType("KG");
+    setBarcode("");
+    setUnitType("PACKET");
+    setBulkConversionRate("");
     setBuyPrice("");
     setSellPrice("");
-    setCategory(STOCK_DEFAULT_CATEGORY);
-    setBrand("");
-    setKeywords("");
-    setShortcut("");
-    setMrp("");
     setInitialStock("");
-    setLowStockAlert("");
     setExpiryDate("");
-    setQuickSelect(false);
-    setExtraVariants([]);
-    setVariantNameOverride(null);
+    setLocation("");
+    setLowStockAlert(STOCK_DEFAULT_LOW_STOCK_ALERT);
   }, []);
 
   // Submit
   const handleSubmit = () => {
     if (!isValid || !cfg) return;
+
     const primaryVariant: VariantDraft = {
       rowId: uid(),
-      variantName: variantName.trim() || cfg.variantNameSuggestion,
+      variantName: unitType, // Simply use unit type as variant name
       unitType: unitType as UnitType,
       baseUnit: cfg.baseUnit,
-      baseQuantity: cfg.baseQuantity,
+      baseQuantity: actualBaseQuantity,
       sellingMode: cfg.sellingMode,
-      mrp: mrp !== "" ? Number(mrp) : 0,
+      mrp: Number(sellPrice), // Default MRP to Sell Price in simple UI
       purchasePrice: buyPrice !== "" ? Number(buyPrice) : 0,
       sellingPrice: Number(sellPrice),
       quickSelect,
-      expiryDate: expiryDate || "",
+      expiryDate: expiryDate,
       stockInBaseUnit: stockInBase,
       lowStockThresholdInBaseUnit: lowStockInBase,
       presetBaseQuantities: defaultPresetsFor(cfg.baseUnit),
     };
+
     create({
       name: name.trim(),
-      category: category.trim() || STOCK_DEFAULT_CATEGORY,
-      brand: brand.trim(),
-      keywords: keywords.trim(),
-      shortcut: shortcut.trim(),
+      category: category,
+      brand: "", // Unused in simple UI
+      keywords: location.trim(), // Storing location in keywords for now to avoid changing the DB schema
+      shortcut: barcode.trim(), // Storing barcode in shortcut for now to avoid changing the DB schema
       sellingTypes: {
         khula: cfg.sellingMode === "khula",
         fixed: cfg.sellingMode === "fixed" || cfg.sellingMode === "variant",
         multiple: cfg.sellingMode === "wholesale",
       },
-      variants: [primaryVariant, ...extraVariants],
+      variants: [primaryVariant],
     });
+    
     reset();
   };
 
@@ -154,39 +140,21 @@ function useStockProductCreatorInternal() {
   };
 
   return {
-    // Dialog state
     isAddOpen,
     handleOpenChange,
     isCreating,
-    // Form fields
     name, setName,
-    unitType,
-    handleUnitChange,
+    barcode, setBarcode,
+    unitType, handleUnitChange,
+    bulkConversionRate, setBulkConversionRate,
     buyPrice, setBuyPrice,
     sellPrice, setSellPrice,
-    category, setCategory,
-    brand, setBrand,
-    keywords, setKeywords,
-    shortcut, setShortcut,
-    mrp, setMrp,
     initialStock, setInitialStock,
-    lowStockAlert, setLowStockAlert,
     expiryDate, setExpiryDate,
-    quickSelect, setQuickSelect,
-    variantNameOverride, setVariantNameOverride,
-    // Derived
-    cfg,
-    variantName,
-    defaultLowStockAlert,
-    stockInBase,
+    location, setLocation,
+    lowStockAlert, setLowStockAlert,
     errors,
     isValid,
-    // Extra variants
-    extraVariants,
-    addExtraVariant,
-    updateExtraVariant,
-    removeExtraVariant,
-    // Actions
     handleSubmit,
     reset,
   };
