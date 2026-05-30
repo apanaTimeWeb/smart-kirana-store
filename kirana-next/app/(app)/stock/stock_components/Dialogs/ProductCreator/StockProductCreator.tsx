@@ -112,6 +112,12 @@ function StockProductCreatorInner() {
   } = useStockProductCreator();
 
   const [showOptional, setShowOptional] = useState(false);
+  const [hasAttempted, setHasAttempted] = useState(false);
+
+  const handleSave = () => {
+    setHasAttempted(true);
+    if (isValid) handleSubmit();
+  };
 
   const margin = buyPrice !== "" && sellPrice !== "" && Number(sellPrice) > 0
     ? (((Number(sellPrice) - Number(buyPrice)) / Number(sellPrice)) * 100).toFixed(1)
@@ -401,9 +407,9 @@ function StockProductCreatorInner() {
 
         {/* ── Sticky Footer ── */}
         <div className="shrink-0 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 sm:px-6 py-4 space-y-3">
-          {/* Validation errors */}
-          {!isValid && errors.length > 0 && (
-            <div className="rounded-xl border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40 px-3.5 py-2.5 space-y-1">
+          {/* Validation errors — only after first attempt */}
+          {hasAttempted && !isValid && errors.length > 0 && (
+            <div className="rounded-xl border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40 px-3.5 py-2.5 space-y-1 animate-in fade-in slide-in-from-bottom-1 duration-200">
               {errors.map((err, i) => (
                 <div key={i} className="flex items-center gap-2 text-xs font-medium text-rose-600 dark:text-rose-400">
                   <div className="h-1.5 w-1.5 rounded-full bg-rose-400 shrink-0" />
@@ -416,12 +422,10 @@ function StockProductCreatorInner() {
           <Button
             className={cn(
               "w-full h-12 rounded-2xl text-base font-bold shadow-lg transition-all duration-200",
-              isValid
-                ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-indigo-200 dark:shadow-indigo-900/50 text-white active:scale-[0.98]"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 shadow-none cursor-not-allowed"
+              "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-indigo-200 dark:shadow-indigo-900/50 text-white active:scale-[0.98]"
             )}
-            disabled={!isValid || isCreating}
-            onClick={handleSubmit}
+            disabled={isCreating}
+            onClick={handleSave}
           >
             {isCreating ? (
               <span className="flex items-center gap-2">
