@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { SETTINGS_MOCK_ACTIVE_SESSIONS } from "../constants/SettingsSharedConstants";
-import type { SettingsActiveSession } from "../types/SettingsTypes";
+import { SETTINGS_MOCK_ACTIVE_SESSIONS } from "../settings_constants/SettingsSharedConstants";
+import type { SettingsActiveSession } from "../settings_types/SettingsTypes";
 
 /**
  * SettingsActiveSessionsDataHook

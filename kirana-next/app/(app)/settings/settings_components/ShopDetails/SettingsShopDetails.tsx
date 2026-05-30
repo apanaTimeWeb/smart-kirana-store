@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Store } from "lucide-react";
-import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
+import { SettingsSharedConstants } from "../../settings_constants/SettingsSharedConstants";
 import { SettingsShopNameInput } from "./SettingsShopNameInput";
 import { SettingsShopOwnerNameInput } from "./SettingsShopOwnerNameInput";
 import { SettingsShopAddressInput } from "./SettingsShopAddressInput";

@@ -3,8 +3,8 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Shield } from "lucide-react";
-import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
-import { useSettingsActiveSessions } from "../../hooks/SettingsActiveSessionsDataHook";
+import { SettingsSharedConstants } from "../../settings_constants/SettingsSharedConstants";
+import { useSettingsActiveSessions } from "../../settings_hooks/SettingsActiveSessionsDataHook";
 import { SettingsActiveSessionCard } from "./SettingsActiveSessionCard";
 
 /**

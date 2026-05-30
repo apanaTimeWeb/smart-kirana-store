@@ -1,6 +1,6 @@
 import React from "react";
 import { Monitor, Smartphone, Tablet, Shield } from "lucide-react";
-import type { DeviceType } from "../../types/SettingsTypes";
+import type { DeviceType } from "../../settings_types/SettingsTypes";
 
 /**
  * SettingsActiveSessionDeviceIconResolver

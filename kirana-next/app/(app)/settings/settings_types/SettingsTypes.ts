@@ -1,4 +1,4 @@
-import { SETTINGS_DEVICE_TYPES } from "../constants/SettingsSharedConstants";
+import { SETTINGS_DEVICE_TYPES } from "../settings_constants/SettingsSharedConstants";
 
 // DeviceType is derived from the SETTINGS_DEVICE_TYPES array.
 // Do NOT add values here manually — add them to SettingsSharedConstants.ts instead.

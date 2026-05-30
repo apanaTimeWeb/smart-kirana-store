@@ -1,4 +1,4 @@
-import type { SettingsForm } from "../types/SettingsTypes";
+import type { SettingsForm } from "../settings_types/SettingsTypes";
 
 // ─── Device Types ────────────────────────────────────────────────────────────
 // Const array → TypeScript union type is derived FROM this (see SettingsTypes.ts)

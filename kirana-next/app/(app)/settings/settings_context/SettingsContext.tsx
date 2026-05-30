@@ -4,8 +4,8 @@ import React, { createContext, useContext, useState, ReactNode, useEffect, useMe
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetSettings, useUpdateSettings, getSettingsQueryKey } from "@/lib/api";
-import { SettingsSharedConstants } from "../constants/SettingsSharedConstants";
-import type { SettingsForm } from "../types/SettingsTypes";
+import { SettingsSharedConstants } from "../settings_constants/SettingsSharedConstants";
+import type { SettingsForm } from "../settings_types/SettingsTypes";
 
 interface SettingsContextType {
   form: SettingsForm;

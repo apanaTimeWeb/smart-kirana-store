@@ -3,8 +3,8 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Save, Loader2 } from "lucide-react";
-import { useSettings } from "../../context/SettingsContext";
-import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
+import { useSettings } from "../../settings_context/SettingsContext";
+import { SettingsSharedConstants } from "../../settings_constants/SettingsSharedConstants";
 
 export function SettingsSaveAction() {
   const { isDirty, isSaving, saveSettings } = useSettings();

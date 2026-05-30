@@ -1,5 +1,5 @@
 import React from "react";
-import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
+import { SettingsSharedConstants } from "../../settings_constants/SettingsSharedConstants";
 
 /**
  * SettingsDashboardLoadingFallback

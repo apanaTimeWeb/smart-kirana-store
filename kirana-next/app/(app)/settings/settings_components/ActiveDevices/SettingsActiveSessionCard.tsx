@@ -5,9 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
+import { SettingsSharedConstants } from "../../settings_constants/SettingsSharedConstants";
 import { SettingsActiveSessionDeviceIconResolver } from "./SettingsActiveSessionDeviceIconResolver";
-import type { SettingsActiveSession } from "../../types/SettingsTypes";
+import type { SettingsActiveSession } from "../../settings_types/SettingsTypes";
 
 interface SettingsActiveSessionCardProps {
   session: SettingsActiveSession;

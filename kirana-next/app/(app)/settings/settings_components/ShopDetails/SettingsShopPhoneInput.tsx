@@ -3,8 +3,8 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSettings } from "../../context/SettingsContext";
-import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
+import { useSettings } from "../../settings_context/SettingsContext";
+import { SettingsSharedConstants } from "../../settings_constants/SettingsSharedConstants";
 
 /**
  * SettingsShopPhoneInput

@@ -16,19 +16,19 @@ app/(app)/settings/
 ├── error.tsx                         ← Next.js native error boundary
 ├── settings.css                      ← 🎨 SINGLE SOURCE OF TRUTH for all colors/tokens
 │
-├── types/
+├── settings_types/
 │   └── SettingsTypes.ts              ← TypeScript types
 │
-├── constants/
+├── settings_constants/
 │   └── SettingsSharedConstants.ts    ← ALL hardcoded data: texts, defaults, device types, mock sessions
 │
-├── context/
+├── settings_context/
 │   └── SettingsContext.tsx           ← Module-scoped React Context; holds form state + save logic
 │
-├── hooks/
+├── settings_hooks/
 │   └── SettingsActiveSessionsDataHook.ts ← 🔁 BACKEND SWAP POINT: mock → real API here
 │
-└── components/
+└── settings_components/
     │
     ├── Dashboard/
     │   ├── SettingsDashboardContainer.tsx

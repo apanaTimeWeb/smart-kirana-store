@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Separator } from "@/components/ui/separator";
-import { useSettings } from "../../context/SettingsContext";
+import { useSettings } from "../../settings_context/SettingsContext";
 import { SettingsHeader } from "./SettingsHeader";
 import { SettingsShopDetails } from "../ShopDetails/SettingsShopDetails";
 import { SettingsGSTConfig } from "../Configurations/SettingsGSTConfig";

@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { FileText } from "lucide-react";
-import { useSettings } from "../../context/SettingsContext";
-import { SettingsSharedConstants } from "../../constants/SettingsSharedConstants";
+import { useSettings } from "../../settings_context/SettingsContext";
+import { SettingsSharedConstants } from "../../settings_constants/SettingsSharedConstants";
 
 export function SettingsGSTConfig() {
   const { form, updateForm } = useSettings();
