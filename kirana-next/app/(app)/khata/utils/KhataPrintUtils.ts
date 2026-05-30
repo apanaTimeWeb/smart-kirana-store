@@ -8,8 +8,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { format } from "date-fns";
-import { type CustomerDetail, type AppSettings, KhataLedgerRow } from "./KhataTypes";
-import { KhataConstants } from "./KhataConstants";
+import { type CustomerDetail, type AppSettings, KhataLedgerRow } from "@/app/(app)/khata/types/KhataTypes";
+import { KhataConstants } from "@/app/(app)/khata/constants/KhataConstants";
 
 // ─── generateReminderMessage ───────────────────────────────────────────────────
 // Builds a monospace-formatted WhatsApp message string for the customer ledger.

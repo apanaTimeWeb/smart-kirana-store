@@ -19,15 +19,15 @@ import {
 } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { type Customer } from "./KhataTypes";
-import { useKhata } from "./KhataContext";
-import { KhataConstants } from "./KhataConstants";
-import { KhataCustomerListHeader } from "./KhataCustomerListHeader";
-import { KhataCustomerListItem } from "./KhataCustomerListItem";
-import { KhataCustomerListSkeleton } from "./KhataCustomerListSkeleton";
-import { KhataCustomerListEmptyState } from "./KhataCustomerListEmptyState";
-import { KhataAddCustomerDialog } from "./KhataAddCustomerDialog";
-import { KhataLedgerDialog } from "./KhataLedgerDialog";
+import { type Customer } from "@/app/(app)/khata/types/KhataTypes";
+import { useKhata } from "@/app/(app)/khata/context/KhataContext";
+import { KhataConstants } from "@/app/(app)/khata/constants/KhataConstants";
+import { KhataCustomerListHeader } from "@/app/(app)/khata/components/CustomerList/KhataCustomerListHeader";
+import { KhataCustomerListItem } from "@/app/(app)/khata/components/CustomerList/KhataCustomerListItem";
+import { KhataCustomerListSkeleton } from "@/app/(app)/khata/components/CustomerList/KhataCustomerListSkeleton";
+import { KhataCustomerListEmptyState } from "@/app/(app)/khata/components/CustomerList/KhataCustomerListEmptyState";
+import { KhataAddCustomerDialog } from "@/app/(app)/khata/components/Forms/KhataAddCustomerDialog";
+import { KhataLedgerDialog } from "@/app/(app)/khata/components/Ledger/KhataLedgerDialog";
 
 export function KhataCustomerListContainer() {
   const { customerSearch } = useKhata();

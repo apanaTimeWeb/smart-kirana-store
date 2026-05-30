@@ -15,10 +15,10 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { IndianRupee, CreditCard, MessageCircle, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { type CustomerDetail, KhataLedgerRow } from "./KhataTypes";
-import { useKhata } from "./KhataContext";
-import { KhataConstants } from "./KhataConstants";
-import { printThermalBill } from "./KhataPrintUtils";
+import { type CustomerDetail, KhataLedgerRow } from "@/app/(app)/khata/types/KhataTypes";
+import { useKhata } from "@/app/(app)/khata/context/KhataContext";
+import { KhataConstants } from "@/app/(app)/khata/constants/KhataConstants";
+import { printThermalBill } from "@/app/(app)/khata/utils/KhataPrintUtils";
 import { useGetSettings } from "@/lib/api";
 
 interface KhataLedgerActionsProps {

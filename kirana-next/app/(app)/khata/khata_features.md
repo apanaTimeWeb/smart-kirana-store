@@ -14,35 +14,37 @@ app/(app)/khata/
 ├── khata.css                                   ← ALL color tokens for this module (single source of truth for theming)
 ├── khata_features.md                           ← THIS FILE — AI context & architecture map
 │
-└── khata_components/
-    │
-    │── ── LOGIC & STATE ─────────────────────────────────────────────────────
-    ├── KhataContext.tsx                        ← Brain: all module-level UI state (search, dialogs, transaction mode)
-    ├── KhataTypes.ts                           ← Central types: Zod schemas + re-exports of Customer, CustomerDetail, AppSettings
-    ├── KhataConstants.ts                       ← Central data: ALL hardcoded UI strings and config (Single Source of Truth)
-    ├── KhataPrintUtils.ts                      ← Pure functions: WhatsApp message builder + thermal print HTML generator
-    │
-    │── ── CUSTOMER LIST ─────────────────────────────────────────────────────
-    ├── KhataCustomerListContainer.tsx          ← Smart container: fetches customers, handles delete, composes sub-components
-    ├── KhataCustomerListHeader.tsx             ← Search bar + "Add Customer" button (page title row)
-    ├── KhataCustomerListItem.tsx               ← One customer row: avatar, name, phone, due amount, delete button
-    ├── KhataCustomerListSkeleton.tsx           ← Animated skeleton placeholders shown while customers are loading
-    ├── KhataCustomerListEmptyState.tsx         ← Empty state UI shown when customer list has zero records
-    │
-    │── ── LEDGER ────────────────────────────────────────────────────────────
-    ├── KhataLedgerDialog.tsx                   ← Dialog shell (open/close logic, sizing, title) for the customer ledger
-    ├── KhataLedgerContainer.tsx                ← Smart container: fetches customer detail, computes ledger rows + filter
-    ├── KhataLedgerHeader.tsx                   ← Customer info card with gradient background and total due display
-    ├── KhataLedgerActions.tsx                  ← 4 action buttons: Payment Mila, Udhaar Diya, Reminder, Thermal Print
-    ├── KhataLedgerSearch.tsx                   ← Search bar for filtering transactions inside the ledger
-    ├── KhataLedgerTable.tsx                    ← Transaction table: desktop/mobile headers + maps rows to KhataLedgerTableRow
-    ├── KhataLedgerTableRow.tsx                 ← One transaction row (desktop 4-col + mobile 3-col layouts)
-    ├── KhataLedgerTransactionItemsList.tsx     ← Items sub-list under a credit row (purchased bill items breakdown)
-    │
-    │── ── FORMS & DIALOGS ───────────────────────────────────────────────────
-    ├── KhataAddCustomerDialog.tsx              ← Dialog form: add a new customer (name, phone, address)
-    ├── KhataTransactionForm.tsx                ← Inline form: record a Payment or Udhaar transaction
-    └── KhataReminderDialog.tsx                 ← Dialog: preview + send WhatsApp reminder message to customer
+├── context/
+│   └── KhataContext.tsx                        ← Brain: all module-level UI state (search, dialogs, transaction mode)
+├── types/
+│   └── KhataTypes.ts                           ← Central types: Zod schemas + re-exports of Customer, CustomerDetail, AppSettings
+├── constants/
+│   └── KhataConstants.ts                       ← Central data: ALL hardcoded UI strings and config (Single Source of Truth)
+├── utils/
+│   └── KhataPrintUtils.ts                      ← Pure functions: WhatsApp message builder + thermal print HTML generator
+│
+├── components/
+│   ├── CustomerList/
+│   │   ├── KhataCustomerListContainer.tsx      ← Smart container: fetches customers, handles delete, composes sub-components
+│   │   ├── KhataCustomerListHeader.tsx         ← Search bar + "Add Customer" button (page title row)
+│   │   ├── KhataCustomerListItem.tsx           ← One customer row: avatar, name, phone, due amount, delete button
+│   │   ├── KhataCustomerListSkeleton.tsx       ← Animated skeleton placeholders shown while customers are loading
+│   │   └── KhataCustomerListEmptyState.tsx     ← Empty state UI shown when customer list has zero records
+│   │
+│   ├── Ledger/
+│   │   ├── KhataLedgerDialog.tsx               ← Dialog shell (open/close logic, sizing, title) for the customer ledger
+│   │   ├── KhataLedgerContainer.tsx            ← Smart container: fetches customer detail, computes ledger rows + filter
+│   │   ├── KhataLedgerHeader.tsx               ← Customer info card with gradient background and total due display
+│   │   ├── KhataLedgerActions.tsx              ← 4 action buttons: Payment Mila, Udhaar Diya, Reminder, Thermal Print
+│   │   ├── KhataLedgerSearch.tsx               ← Search bar for filtering transactions inside the ledger
+│   │   ├── KhataLedgerTable.tsx                ← Transaction table: desktop/mobile headers + maps rows to KhataLedgerTableRow
+│   │   ├── KhataLedgerTableRow.tsx             ← One transaction row (desktop 4-col + mobile 3-col layouts)
+│   │   └── KhataLedgerTransactionItemsList.tsx ← Items sub-list under a credit row (purchased bill items breakdown)
+│   │
+│   └── Forms/
+│       ├── KhataAddCustomerDialog.tsx          ← Dialog form: add a new customer (name, phone, address)
+│       ├── KhataTransactionForm.tsx            ← Inline form: record a Payment or Udhaar transaction
+│       └── KhataReminderDialog.tsx             ← Dialog: preview + send WhatsApp reminder message to customer
 ```
 
 ---

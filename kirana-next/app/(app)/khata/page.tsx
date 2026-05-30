@@ -9,8 +9,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import "./khata.css";
-import { KhataProvider } from "./khata_components/KhataContext";
-import { KhataCustomerListContainer } from "./khata_components/KhataCustomerListContainer";
+import { KhataProvider } from "@/app/(app)/khata/context/KhataContext";
+import { KhataCustomerListContainer } from "@/app/(app)/khata/components/CustomerList/KhataCustomerListContainer";
 
 export default function KhataPage() {
   return (

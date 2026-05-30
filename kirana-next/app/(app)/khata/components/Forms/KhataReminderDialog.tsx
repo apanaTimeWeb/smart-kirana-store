@@ -14,10 +14,10 @@
 import React, { useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { type CustomerDetail, KhataLedgerRow } from "./KhataTypes";
-import { useKhata } from "./KhataContext";
-import { generateReminderMessage } from "./KhataPrintUtils";
-import { KhataConstants } from "./KhataConstants";
+import { type CustomerDetail, KhataLedgerRow } from "@/app/(app)/khata/types/KhataTypes";
+import { useKhata } from "@/app/(app)/khata/context/KhataContext";
+import { generateReminderMessage } from "@/app/(app)/khata/utils/KhataPrintUtils";
+import { KhataConstants } from "@/app/(app)/khata/constants/KhataConstants";
 import { useGetSettings } from "@/lib/api";
 
 interface KhataReminderDialogProps {

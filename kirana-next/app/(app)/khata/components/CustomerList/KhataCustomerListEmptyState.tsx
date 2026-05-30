@@ -10,7 +10,7 @@
 
 import React from "react";
 import { Users } from "lucide-react";
-import { KhataConstants } from "./KhataConstants";
+import { KhataConstants } from "@/app/(app)/khata/constants/KhataConstants";
 
 export function KhataCustomerListEmptyState() {
   return (

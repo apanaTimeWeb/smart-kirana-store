@@ -20,9 +20,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateCustomer, getListCustomersQueryKey } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { useKhata } from "./KhataContext";
-import { KhataConstants } from "./KhataConstants";
-import { KhataCustomerSchema, type KhataCustomerFormValues } from "./KhataTypes";
+import { useKhata } from "@/app/(app)/khata/context/KhataContext";
+import { KhataConstants } from "@/app/(app)/khata/constants/KhataConstants";
+import { KhataCustomerSchema, type KhataCustomerFormValues } from "@/app/(app)/khata/types/KhataTypes";
 
 export function KhataAddCustomerDialog() {
   const { isAddCustomerOpen, setIsAddCustomerOpen } = useKhata();

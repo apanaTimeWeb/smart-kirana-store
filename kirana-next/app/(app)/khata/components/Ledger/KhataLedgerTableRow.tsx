@@ -15,8 +15,8 @@ import React from "react";
 import { format } from "date-fns";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { KhataLedgerRow } from "./KhataTypes";
-import { KhataLedgerTransactionItemsList } from "./KhataLedgerTransactionItemsList";
+import { KhataLedgerRow } from "@/app/(app)/khata/types/KhataTypes";
+import { KhataLedgerTransactionItemsList } from "@/app/(app)/khata/components/Ledger/KhataLedgerTransactionItemsList";
 
 interface KhataLedgerTableRowProps {
   tx: KhataLedgerRow;

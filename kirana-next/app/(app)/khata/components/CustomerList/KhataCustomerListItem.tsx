@@ -12,9 +12,9 @@
 
 import React from "react";
 import { Trash2, ChevronRight } from "lucide-react";
-import { type Customer } from "./KhataTypes";
-import { useKhata } from "./KhataContext";
-import { KhataConstants } from "./KhataConstants";
+import { type Customer } from "@/app/(app)/khata/types/KhataTypes";
+import { useKhata } from "@/app/(app)/khata/context/KhataContext";
+import { KhataConstants } from "@/app/(app)/khata/constants/KhataConstants";
 
 interface KhataCustomerListItemProps {
   /** The full Customer object from the API / KhataTypes. */

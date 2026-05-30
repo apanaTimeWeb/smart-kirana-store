@@ -2,14 +2,14 @@
 
 import React, { useMemo } from "react";
 import { useGetCustomer } from "@/lib/api";
-import { useKhata } from "./KhataContext";
-import { KhataLedgerHeader } from "./KhataLedgerHeader";
-import { KhataLedgerActions } from "./KhataLedgerActions";
-import { KhataLedgerSearch } from "./KhataLedgerSearch";
-import { KhataLedgerTable } from "./KhataLedgerTable";
-import { KhataTransactionForm } from "./KhataTransactionForm";
-import { KhataReminderDialog } from "./KhataReminderDialog";
-import { KhataLedgerRow } from "./KhataTypes";
+import { useKhata } from "@/app/(app)/khata/context/KhataContext";
+import { KhataLedgerHeader } from "@/app/(app)/khata/components/Ledger/KhataLedgerHeader";
+import { KhataLedgerActions } from "@/app/(app)/khata/components/Ledger/KhataLedgerActions";
+import { KhataLedgerSearch } from "@/app/(app)/khata/components/Ledger/KhataLedgerSearch";
+import { KhataLedgerTable } from "@/app/(app)/khata/components/Ledger/KhataLedgerTable";
+import { KhataTransactionForm } from "@/app/(app)/khata/components/Forms/KhataTransactionForm";
+import { KhataReminderDialog } from "@/app/(app)/khata/components/Forms/KhataReminderDialog";
+import { KhataLedgerRow } from "@/app/(app)/khata/types/KhataTypes";
 
 interface KhataLedgerContainerProps {
   customerId: number;

@@ -12,9 +12,9 @@
 
 import React from "react";
 import { BookOpen } from "lucide-react";
-import { KhataLedgerRow as LedgerRowType } from "./KhataTypes";
-import { KhataConstants } from "./KhataConstants";
-import { KhataLedgerTableRow } from "./KhataLedgerTableRow";
+import { KhataLedgerRow as LedgerRowType } from "@/app/(app)/khata/types/KhataTypes";
+import { KhataConstants } from "@/app/(app)/khata/constants/KhataConstants";
+import { KhataLedgerTableRow } from "@/app/(app)/khata/components/Ledger/KhataLedgerTableRow";
 
 interface KhataLedgerTableProps {
   rows: LedgerRowType[];
