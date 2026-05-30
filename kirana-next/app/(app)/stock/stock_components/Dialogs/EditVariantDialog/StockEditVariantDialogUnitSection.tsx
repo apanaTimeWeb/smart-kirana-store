@@ -8,9 +8,9 @@
 import React from "react";
 import { Scale, CircleCheck } from "lucide-react";
 import { StockUnitSelector } from "../../Shared/StockUnitSelector";
-import { formatBaseUnits } from "../../Shared/StockUtils";
-import { MODE_LABEL } from "../../Shared/StockSharedConstants";
-import { useStockEditVariantDialog } from "../../Contexts/StockEditVariantDialogContext";
+import { formatBaseUnits } from "../../../stock_utils/StockUtils";
+import { MODE_LABEL } from "../../../stock_constants/StockSharedConstants";
+import { useStockEditVariantDialog } from "../../../stock_context/StockEditVariantDialogContext";
 
 export function StockEditVariantDialogUnitSection() {
   const { draft, cfg, handleUnitChange } = useStockEditVariantDialog();

@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
 import { Product } from "@/lib/api";
 import { StockBadge } from "../Shared/StockBadge";
-import { useStock } from "../Contexts/StockContext";
-import { MODE_LABEL } from "../Shared/StockSharedConstants";
+import { useStock } from "../../stock_context/StockContext";
+import { MODE_LABEL } from "../../stock_constants/StockSharedConstants";
 
 export function StockMobileCard({ product }: { product: Product }) {
   const { setEditingProduct, remove } = useStock();

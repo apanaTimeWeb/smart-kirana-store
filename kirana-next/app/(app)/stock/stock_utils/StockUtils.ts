@@ -1,5 +1,5 @@
 import { BaseUnit, ProductInput, UnitType } from "@/lib/api";
-import { ProductDraft, SellingTypeKey, VariantDraft } from "./StockTypes";
+import { ProductDraft, SellingTypeKey, VariantDraft } from "../stock_types/StockTypes";
 
 export function uid() {
   return Math.random().toString(36).slice(2, 10);

@@ -14,7 +14,7 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Package } from "lucide-react";
-import { StockEditVariantDialogProvider, useStockEditVariantDialog } from "../../Contexts/StockEditVariantDialogContext";
+import { StockEditVariantDialogProvider, useStockEditVariantDialog } from "../../../stock_context/StockEditVariantDialogContext";
 import { StockEditVariantDialogNameExpiryRow } from "./StockEditVariantDialogNameExpiryRow";
 import { StockEditVariantDialogUnitSection } from "./StockEditVariantDialogUnitSection";
 import { StockEditVariantDialogPriceMarginSection } from "./StockEditVariantDialogPriceMarginSection";

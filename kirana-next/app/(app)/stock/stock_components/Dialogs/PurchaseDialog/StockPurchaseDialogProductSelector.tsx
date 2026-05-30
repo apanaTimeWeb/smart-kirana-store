@@ -6,7 +6,7 @@
 
 import React from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useStock } from "../../Contexts/StockContext";
+import { useStock } from "../../../stock_context/StockContext";
 
 interface StockPurchaseDialogProductSelectorProps {
   variantId: string;

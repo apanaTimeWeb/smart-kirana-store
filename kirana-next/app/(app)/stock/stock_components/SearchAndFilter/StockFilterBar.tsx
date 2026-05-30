@@ -2,9 +2,9 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { useStock } from "../Contexts/StockContext";
-import { STOCK_FILTER_OPTIONS } from "../Shared/StockSharedConstants";
-import { ProductFilter } from "../Shared/StockTypes";
+import { useStock } from "../../stock_context/StockContext";
+import { STOCK_FILTER_OPTIONS } from "../../stock_constants/StockSharedConstants";
+import { ProductFilter } from "../../stock_types/StockTypes";
 
 export function StockFilterBar() {
   const { filter, handleFilterChange } = useStock();

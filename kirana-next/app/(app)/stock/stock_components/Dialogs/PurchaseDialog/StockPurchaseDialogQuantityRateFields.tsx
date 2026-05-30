@@ -5,7 +5,7 @@
 
 import React from "react";
 import { Input } from "@/components/ui/input";
-import { numberValue } from "../../Shared/StockUtils";
+import { numberValue } from "../../../stock_utils/StockUtils";
 
 interface StockPurchaseDialogQuantityRateFieldsProps {
   quantity: number;

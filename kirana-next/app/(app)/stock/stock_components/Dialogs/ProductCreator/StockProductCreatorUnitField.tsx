@@ -7,9 +7,9 @@
 import React from "react";
 import { Scale, CircleCheck } from "lucide-react";
 import { StockUnitSelector } from "../../Shared/StockUnitSelector";
-import { formatBaseUnits } from "../../Shared/StockUtils";
-import { MODE_LABEL } from "../../Shared/StockSharedConstants";
-import { useStockProductCreator } from "../../Contexts/StockProductCreatorContext";
+import { formatBaseUnits } from "../../../stock_utils/StockUtils";
+import { MODE_LABEL } from "../../../stock_constants/StockSharedConstants";
+import { useStockProductCreator } from "../../../stock_context/StockProductCreatorContext";
 
 export function StockProductCreatorUnitField() {
   const { unitType, handleUnitChange, cfg } = useStockProductCreator();

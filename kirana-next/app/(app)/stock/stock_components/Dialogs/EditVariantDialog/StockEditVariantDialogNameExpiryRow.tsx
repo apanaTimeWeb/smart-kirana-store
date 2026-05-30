@@ -8,7 +8,7 @@
 import React from "react";
 import { Package, Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useStockEditVariantDialog } from "../../Contexts/StockEditVariantDialogContext";
+import { useStockEditVariantDialog } from "../../../stock_context/StockEditVariantDialogContext";
 
 export function StockEditVariantDialogNameExpiryRow() {
   const { draft, patchDraft } = useStockEditVariantDialog();

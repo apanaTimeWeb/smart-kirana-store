@@ -3,7 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useStock } from "../Contexts/StockContext";
+import { useStock } from "../../stock_context/StockContext";
 import { cn } from "@/lib/utils";
 
 export function StockPagination({ className, compact = false }: { className?: string, compact?: boolean }) {

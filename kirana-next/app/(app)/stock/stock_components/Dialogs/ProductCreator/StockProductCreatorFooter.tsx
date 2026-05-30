@@ -9,7 +9,7 @@
 import React from "react";
 import { AlertTriangle, CircleCheck, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useStockProductCreator } from "../../Contexts/StockProductCreatorContext";
+import { useStockProductCreator } from "../../../stock_context/StockProductCreatorContext";
 
 export function StockProductCreatorFooter() {
   const {

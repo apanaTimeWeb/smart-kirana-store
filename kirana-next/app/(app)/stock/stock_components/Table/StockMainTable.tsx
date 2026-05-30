@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useStock } from "../Contexts/StockContext";
+import { useStock } from "../../stock_context/StockContext";
 import { StockTableRow } from "./StockTableRow";
 import { StockPagination } from "./StockPagination";
 

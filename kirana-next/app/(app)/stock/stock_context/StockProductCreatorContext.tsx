@@ -17,11 +17,11 @@
 
 import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { UnitType } from "@/lib/api";
-import { VariantDraft } from "../Shared/StockTypes";
-import { UNIT_CONFIG, STOCK_DEFAULT_CATEGORY, STOCK_DEFAULT_LOW_STOCK_ALERT } from "../Shared/StockSharedConstants";
-import { defaultPresetsFor, uid, variantDraft } from "../Shared/StockUtils";
+import { VariantDraft } from "../stock_types/StockTypes";
+import { UNIT_CONFIG, STOCK_DEFAULT_CATEGORY, STOCK_DEFAULT_LOW_STOCK_ALERT } from "../stock_constants/StockSharedConstants";
+import { defaultPresetsFor, uid, variantDraft } from "../stock_utils/StockUtils";
 import { useStock } from "./StockContext";
-import { toInput } from "../Shared/StockUtils";
+import { toInput } from "../stock_utils/StockUtils";
 
 // ── Internal hook that owns all creator form state ───────────────────────────
 

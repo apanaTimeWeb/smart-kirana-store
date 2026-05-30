@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
 import { Product } from "@/lib/api";
 import { StockBadge } from "../Shared/StockBadge";
-import { useStock } from "../Contexts/StockContext";
-import { MODE_CLASS, MODE_LABEL } from "../Shared/StockSharedConstants";
-import { formatBaseUnits } from "../Shared/StockUtils";
+import { useStock } from "../../stock_context/StockContext";
+import { MODE_CLASS, MODE_LABEL } from "../../stock_constants/StockSharedConstants";
+import { formatBaseUnits } from "../../stock_utils/StockUtils";
 
 export function StockTableRow({ product }: { product: Product }) {
   const { setEditingProduct, remove } = useStock();

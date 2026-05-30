@@ -9,8 +9,8 @@ import React from "react";
 import { Package, Calendar, Star } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { numberValue, formatBaseUnits } from "../../Shared/StockUtils";
-import { useStockProductCreator } from "../../Contexts/StockProductCreatorContext";
+import { numberValue, formatBaseUnits } from "../../../stock_utils/StockUtils";
+import { useStockProductCreator } from "../../../stock_context/StockProductCreatorContext";
 
 export function StockProductCreatorStockPricingSection() {
   const {

@@ -14,20 +14,20 @@ This module follows a strict **"One File, One Component"** rule for extreme AI-i
 
 The directory is micro-modularized into feature-based subfolders.
 
-### State Architecture (Contexts Folder)
+### State Architecture (stock_context Folder)
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
-│  Contexts/StockContext.tsx         (Module-level state) │
+│  stock_context/StockContext.tsx         (Module-level state) │
 │  • Product list (API)      • Search / Filter             │
 │  • Pagination              • Modal open/close toggles    │
 │  • CRUD mutations          • Stats                       │
 ├─────────────────────────────────────────────────────────┤
-│  Contexts/StockProductCreatorContext.tsx (Dialog-local)  │
+│  stock_context/StockProductCreatorContext.tsx (Dialog-local)  │
 │  • 15 form fields           • Validation + errors        │
 │  • Derived values (cfg)     • Submit + reset handlers    │
 ├─────────────────────────────────────────────────────────┤
-│  Contexts/StockEditVariantDialogContext.tsx (Dialog-local)│
+│  stock_context/StockEditVariantDialogContext.tsx (Dialog-local)│
 │  • Draft (VariantDraft)     • patchDraft handler         │
 │  • Unit change auto-wire    • isLoss / margin / errors   │
 └─────────────────────────────────────────────────────────┘
@@ -48,20 +48,27 @@ The directory is micro-modularized into feature-based subfolders.
 
 ---
 
-### 🟨 Shared Layer — Data, Types & Utilities (stock_components/Shared)
+### 🟨 Constants, Types & Utilities
+
+These have been extracted to their own module-prefixed folders at the root:
+
+| File | Location | Purpose |
+|---|---|---|
+| `StockSharedConstants.ts` | `stock_constants/` | All static data: `UNITS`, `BASE_UNITS`, `MODE_LABEL` etc. **Tomorrow's backend replaces these constants.** |
+| `StockTypes.ts` | `stock_types/` | All TypeScript types: `SellingTypeKey`, `ProductFilter` etc. |
+| `StockUtils.ts` | `stock_utils/` | **Pure utility functions only** (no business logic): `uid`, `numberValue`, `defaultBaseUnit` etc. |
+| `StockDraftTemplates.ts` | `stock_utils/` | **Business logic**: `emptyDraft()` and `buildTemplate()` for constructing default VariantDraft shapes. |
+
+### 🟨 Shared UI Components (`stock_components/Shared`)
 
 | File | Purpose |
 |---|---|
-| `StockSharedConstants.ts` | All static data: `UNITS`, `BASE_UNITS`, `MODE_LABEL`, `MODE_CLASS`, `UNIT_CONFIG`, `UNIT_GROUPS`, `STOCK_FILTER_OPTIONS`, `STOCK_STAT_ITEMS`, `STOCK_DEFAULT_CATEGORY`, `STOCK_DEFAULT_LOW_STOCK_ALERT`. **Tomorrow's backend replaces these constants.** |
-| `StockTypes.ts` | All TypeScript types: `SellingTypeKey`, `ProductFilter`, `VariantDraft`, `ProductDraft`, `StockStatItem`, `StockProductCreatorFormState`. |
-| `StockUtils.ts` | **Pure utility functions only** (no business logic): `uid`, `numberValue`, `defaultBaseUnit`, `defaultBaseQuantity`, `defaultPresetsFor`, `formatBaseUnits`, `variantDraft`, `toInput`. |
-| `StockDraftTemplates.ts` | **Business logic**: `emptyDraft()` and `buildTemplate()` for constructing default VariantDraft shapes. |
 | `StockBadge.tsx` | Stock status badge (OK / Low / Out) shown in table rows and mobile cards. |
 | `StockUnitSelector.tsx` | Reusable searchable unit dropdown (Popover + Command). Used by creator, edit dialog, and extra variant rows. |
 
 ---
 
-### 🟩 State Management (stock_components/Contexts)
+### 🟩 State Management (`stock_context/`)
 
 | File | Purpose |
 |---|---|
@@ -172,10 +179,10 @@ All hardcoded Tailwind utility colors (like `text-primary`, `bg-card`) have been
 
 | Feature | Where to change |
 |---|---|
-| Replace hardcoded filter options with API | `StockSharedConstants.ts` → `STOCK_FILTER_OPTIONS` |
-| Replace hardcoded stat cards with API | `StockSharedConstants.ts` → `STOCK_STAT_ITEMS` |
-| Replace default product templates with API | `StockDraftTemplates.ts` → `emptyDraft()` |
-| Replace unit config with API | `StockSharedConstants.ts` → `UNIT_CONFIG`, `UNIT_GROUPS` |
+| Replace hardcoded filter options with API | `stock_constants/StockSharedConstants.ts` → `STOCK_FILTER_OPTIONS` |
+| Replace hardcoded stat cards with API | `stock_constants/StockSharedConstants.ts` → `STOCK_STAT_ITEMS` |
+| Replace default product templates with API | `stock_utils/StockDraftTemplates.ts` → `emptyDraft()` |
+| Replace unit config with API | `stock_constants/StockSharedConstants.ts` → `UNIT_CONFIG`, `UNIT_GROUPS` |
 | Bulk CSV/Excel upload | New file: `StockBulkUploadDialog.tsx` + context |
 | Stock movement history view | New file: `StockMovementHistoryPanel.tsx` |
 | Master product info editing | New file: `StockEditMasterProductDialog.tsx` |

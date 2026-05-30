@@ -7,7 +7,7 @@
 import React from "react";
 import { Info, Package } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useStockProductCreator } from "../../Contexts/StockProductCreatorContext";
+import { useStockProductCreator } from "../../../stock_context/StockProductCreatorContext";
 
 export function StockProductCreatorIdentitySection() {
   const {

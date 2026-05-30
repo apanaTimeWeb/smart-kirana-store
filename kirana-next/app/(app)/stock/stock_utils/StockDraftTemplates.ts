@@ -8,7 +8,7 @@
 // return server-defined product templates. Only THIS file needs to change.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { SellingTypeKey, VariantDraft, ProductDraft } from "./StockTypes";
+import { SellingTypeKey, VariantDraft, ProductDraft } from "../stock_types/StockTypes";
 import { variantDraft } from "./StockUtils";
 
 /** Returns a blank ProductDraft with a single Khula variant — used as the

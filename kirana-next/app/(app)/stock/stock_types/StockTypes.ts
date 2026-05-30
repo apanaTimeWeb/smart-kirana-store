@@ -1,5 +1,5 @@
 import { ProductVariantInput } from "@/lib/api";
-import { STOCK_STAT_ITEMS } from "./StockSharedConstants";
+import { STOCK_STAT_ITEMS } from "../stock_constants/StockSharedConstants";
 
 export type SellingTypeKey = "khula" | "fixed" | "multiple";
 export type ProductFilter = "all" | "in" | "low" | "out" | "khula" | "wholesale" | "quick" | "expiring";

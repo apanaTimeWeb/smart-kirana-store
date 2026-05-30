@@ -14,7 +14,7 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useStock } from "../../Contexts/StockContext";
+import { useStock } from "../../../stock_context/StockContext";
 import { StockPurchaseDialogProductSelector } from "./StockPurchaseDialogProductSelector";
 import { StockPurchaseDialogQuantityRateFields } from "./StockPurchaseDialogQuantityRateFields";
 import { StockPurchaseDialogSupplierExpiryFields } from "./StockPurchaseDialogSupplierExpiryFields";

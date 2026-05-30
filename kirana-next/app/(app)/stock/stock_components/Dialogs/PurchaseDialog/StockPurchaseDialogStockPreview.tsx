@@ -7,7 +7,7 @@
 
 import React from "react";
 import { Product } from "@/lib/api";
-import { formatBaseUnits } from "../../Shared/StockUtils";
+import { formatBaseUnits } from "../../../stock_utils/StockUtils";
 
 interface StockPurchaseDialogStockPreviewProps {
   selectedProduct: Product;

@@ -8,8 +8,8 @@ import React from "react";
 import { IndianRupee, AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { numberValue } from "../../Shared/StockUtils";
-import { useStockEditVariantDialog } from "../../Contexts/StockEditVariantDialogContext";
+import { numberValue } from "../../../stock_utils/StockUtils";
+import { useStockEditVariantDialog } from "../../../stock_context/StockEditVariantDialogContext";
 
 export function StockEditVariantDialogPriceMarginSection() {
   const { draft, patchDraft, buyPrice, sellPrice, isLoss, margin } = useStockEditVariantDialog();

@@ -1,6 +1,6 @@
 
 import "./stock.css";
-import { StockProvider } from "./stock_components/Contexts/StockContext";
+import { StockProvider } from "./stock_context/StockContext";
 import { StockMainLayout } from "./stock_components/Layout/StockMainLayout";
 
 

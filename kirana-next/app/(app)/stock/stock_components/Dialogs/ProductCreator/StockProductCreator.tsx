@@ -14,7 +14,7 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Zap } from "lucide-react";
-import { StockProductCreatorProvider, useStockProductCreator } from "../../Contexts/StockProductCreatorContext";
+import { StockProductCreatorProvider, useStockProductCreator } from "../../../stock_context/StockProductCreatorContext";
 import { StockProductCreatorNameField } from "./StockProductCreatorNameField";
 import { StockProductCreatorUnitField } from "./StockProductCreatorUnitField";
 import { StockProductCreatorPriceFields } from "./StockProductCreatorPriceFields";

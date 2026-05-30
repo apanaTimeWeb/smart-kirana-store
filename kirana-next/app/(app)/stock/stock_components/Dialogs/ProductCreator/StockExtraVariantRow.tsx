@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2 } from "lucide-react";
 import { UnitType } from "@/lib/api";
-import { VariantDraft } from "../../Shared/StockTypes";
+import { VariantDraft } from "../../../stock_types/StockTypes";
 import { StockUnitSelector } from "../../Shared/StockUnitSelector";
-import { UNIT_CONFIG, MODE_LABEL } from "../../Shared/StockSharedConstants";
-import { formatBaseUnits, numberValue, defaultPresetsFor } from "../../Shared/StockUtils";
+import { UNIT_CONFIG, MODE_LABEL } from "../../../stock_constants/StockSharedConstants";
+import { formatBaseUnits, numberValue, defaultPresetsFor } from "../../../stock_utils/StockUtils";
 
 export function StockExtraVariantRow({
   variant,

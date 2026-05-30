@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useStock } from "../Contexts/StockContext";
+import { useStock } from "../../stock_context/StockContext";
 import { StockMobileCard } from "./StockMobileCard";
 import { StockPagination } from "../Table/StockPagination";
 

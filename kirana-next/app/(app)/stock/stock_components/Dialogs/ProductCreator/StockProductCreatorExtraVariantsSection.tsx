@@ -9,7 +9,7 @@ import React from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StockExtraVariantRow } from "./StockExtraVariantRow";
-import { useStockProductCreator } from "../../Contexts/StockProductCreatorContext";
+import { useStockProductCreator } from "../../../stock_context/StockProductCreatorContext";
 
 export function StockProductCreatorExtraVariantsSection() {
   const { extraVariants, addExtraVariant, updateExtraVariant, removeExtraVariant } = useStockProductCreator();

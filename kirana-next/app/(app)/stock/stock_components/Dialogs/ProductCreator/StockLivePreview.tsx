@@ -3,8 +3,8 @@
 import React from "react";
 import { CircleCheck, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { UNIT_CONFIG, MODE_LABEL } from "../../Shared/StockSharedConstants";
-import { formatBaseUnits } from "../../Shared/StockUtils";
+import { UNIT_CONFIG, MODE_LABEL } from "../../../stock_constants/StockSharedConstants";
+import { formatBaseUnits } from "../../../stock_utils/StockUtils";
 
 export function StockLivePreview({
   unitType,

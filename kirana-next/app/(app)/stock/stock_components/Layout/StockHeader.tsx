@@ -3,7 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Warehouse, PackagePlus } from "lucide-react";
-import { useStock } from "../Contexts/StockContext";
+import { useStock } from "../../stock_context/StockContext";
 
 export function StockHeader() {
   const { setIsPurchaseOpen, setIsAddOpen } = useStock();

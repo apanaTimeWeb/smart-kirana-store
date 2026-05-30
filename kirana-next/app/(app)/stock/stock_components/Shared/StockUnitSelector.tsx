@@ -6,7 +6,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { UNIT_CONFIG, UNIT_GROUPS } from "./StockSharedConstants";
+import { UNIT_CONFIG, UNIT_GROUPS } from "../../stock_constants/StockSharedConstants";
 
 export function StockUnitSelector({
   value,

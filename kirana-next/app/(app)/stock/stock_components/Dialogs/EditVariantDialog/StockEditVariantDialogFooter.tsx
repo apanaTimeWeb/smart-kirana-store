@@ -8,7 +8,7 @@
 import React from "react";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useStockEditVariantDialog } from "../../Contexts/StockEditVariantDialogContext";
+import { useStockEditVariantDialog } from "../../../stock_context/StockEditVariantDialogContext";
 
 export function StockEditVariantDialogFooter() {
   const { errors, isValid, isUpdating, handleSave, closeDialog } = useStockEditVariantDialog();

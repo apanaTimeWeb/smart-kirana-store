@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { useStock } from "../Contexts/StockContext";
-import { STOCK_STAT_ITEMS } from "../Shared/StockSharedConstants";
+import { useStock } from "../../stock_context/StockContext";
+import { STOCK_STAT_ITEMS } from "../../stock_constants/StockSharedConstants";
 
 // StockStatsGrid.tsx
 // Renders the 4 summary stat cards at the top of the Stock page.

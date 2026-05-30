@@ -6,8 +6,8 @@
 import React from "react";
 import { IndianRupee } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { numberValue } from "../../Shared/StockUtils";
-import { useStockProductCreator } from "../../Contexts/StockProductCreatorContext";
+import { numberValue } from "../../../stock_utils/StockUtils";
+import { useStockProductCreator } from "../../../stock_context/StockProductCreatorContext";
 
 export function StockProductCreatorPriceFields() {
   const { buyPrice, setBuyPrice, sellPrice, setSellPrice } = useStockProductCreator();

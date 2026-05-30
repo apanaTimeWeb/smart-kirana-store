@@ -7,7 +7,7 @@
 import React from "react";
 import { Tag } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useStockProductCreator } from "../../Contexts/StockProductCreatorContext";
+import { useStockProductCreator } from "../../../stock_context/StockProductCreatorContext";
 
 export function StockProductCreatorNameField() {
   const { name, setName, isValid, handleSubmit } = useStockProductCreator();

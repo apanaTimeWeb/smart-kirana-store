@@ -9,8 +9,8 @@ import React from "react";
 import { Box, Star } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { numberValue, formatBaseUnits } from "../../Shared/StockUtils";
-import { useStockEditVariantDialog } from "../../Contexts/StockEditVariantDialogContext";
+import { numberValue, formatBaseUnits } from "../../../stock_utils/StockUtils";
+import { useStockEditVariantDialog } from "../../../stock_context/StockEditVariantDialogContext";
 
 export function StockEditVariantDialogStockExtrasSection() {
   const { draft, patchDraft } = useStockEditVariantDialog();

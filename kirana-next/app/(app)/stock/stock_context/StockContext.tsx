@@ -14,8 +14,8 @@ import {
 } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { ProductFilter, ProductDraft } from "../Shared/StockTypes";
-import { toInput } from "../Shared/StockUtils";
+import { ProductFilter, ProductDraft } from "../stock_types/StockTypes";
+import { toInput } from "../stock_utils/StockUtils";
 
 function useStockStateInternal() {
   const [search, setSearch] = useState("");

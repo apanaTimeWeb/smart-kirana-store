@@ -16,9 +16,9 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { UnitType } from "@/lib/api";
-import { VariantDraft } from "../Shared/StockTypes";
-import { UNIT_CONFIG } from "../Shared/StockSharedConstants";
-import { defaultBaseUnit, defaultBaseQuantity } from "../Shared/StockUtils";
+import { VariantDraft } from "../stock_types/StockTypes";
+import { UNIT_CONFIG } from "../stock_constants/StockSharedConstants";
+import { defaultBaseUnit, defaultBaseQuantity } from "../stock_utils/StockUtils";
 import { useStock } from "./StockContext";
 
 function useStockEditVariantDialogInternal() {

@@ -3,7 +3,7 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { useStock } from "../Contexts/StockContext";
+import { useStock } from "../../stock_context/StockContext";
 
 export function StockSearchBar() {
   const { search, handleSearchChange } = useStock();
