@@ -4,27 +4,18 @@ import React from "react";
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, ShoppingCart } from "lucide-react";
-import { type Customer } from "@/lib/api";
 import { BillingCustomerSelector } from "./BillingCustomerSelector";
-import type { BillInputPaymentMode } from "@/lib/api";
+import { useBilling } from "./BillingContext";
 
-interface BillingCartHeaderProps {
-  billSuccess: boolean;
-  cartCount: number;
-  customers: Customer[];
-  selectedCustomerId: string;
-  setSelectedCustomerId: (id: string) => void;
-  paymentMode: BillInputPaymentMode | "";
-}
-
-export function BillingCartHeader({
-  billSuccess,
-  cartCount,
-  customers,
-  selectedCustomerId,
-  setSelectedCustomerId,
-  paymentMode,
-}: BillingCartHeaderProps) {
+export function BillingCartHeader() {
+  const {
+    billSuccess,
+    cartCount,
+    customers,
+    selectedCustomerId,
+    setSelectedCustomerId,
+    paymentMode,
+  } = useBilling();
   return (
     <CardHeader className="border-b px-3 py-3 md:px-4 relative z-10">
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 w-full">

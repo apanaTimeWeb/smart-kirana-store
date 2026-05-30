@@ -1,36 +1,28 @@
-"use client";
-
 import React from "react";
 import { cn } from "@/lib/utils";
+import { useBilling } from "./BillingContext";
 
 interface BillingMobileResponsiveLayoutProps {
-  mobileTab: "products" | "cart";
-  setMobileTab: (tab: "products" | "cart") => void;
-  cartCount: number;
-  finalAmount: number;
   productGrid: React.ReactNode;
   cartPanel: React.ReactNode;
 }
 
 export function BillingMobileResponsiveLayout({
-  mobileTab,
-  setMobileTab,
-  cartCount,
-  finalAmount,
   productGrid,
   cartPanel,
 }: BillingMobileResponsiveLayoutProps) {
+  const { mobileTab, setMobileTab, cartCount, finalAmount } = useBilling();
+
   return (
-    <div className="flex h-[calc(100dvh-3.5rem-4rem)] flex-col gap-3 md:hidden">
-      {/* Tab bar */}
-      <div className="flex shrink-0 gap-1 rounded-lg border border-[var(--billing-border)] bg-[var(--billing-tab-bar-bg)] p-1">
+    <div className="flex h-[calc(100dvh-2*1.5rem)] flex-col gap-4 md:hidden">
+      <div className="flex rounded-md border border-[var(--billing-border)] bg-[var(--billing-card-bg)] p-1">
         <button
           onClick={() => setMobileTab("products")}
           className={cn(
-            "flex-1 rounded-md py-2 text-sm font-bold",
+            "flex-1 rounded-sm py-1.5 text-sm font-medium transition-all",
             mobileTab === "products"
-              ? "bg-[var(--billing-tab-active-bg)] text-[var(--billing-tab-active-text)] shadow-sm"
-              : "text-[var(--billing-tab-inactive-text)] hover:bg-[var(--billing-muted-bg)]"
+              ? "bg-[var(--billing-primary-bg)] text-[var(--billing-primary-foreground)] shadow-sm"
+              : "text-[var(--billing-muted-text)]"
           )}
         >
           Products
@@ -38,29 +30,23 @@ export function BillingMobileResponsiveLayout({
         <button
           onClick={() => setMobileTab("cart")}
           className={cn(
-            "flex-1 rounded-md py-2 text-sm font-bold",
+            "flex-1 rounded-sm py-1.5 text-sm font-medium transition-all flex items-center justify-center gap-1",
             mobileTab === "cart"
-              ? "bg-[var(--billing-tab-active-bg)] text-[var(--billing-tab-active-text)] shadow-sm"
-              : "text-[var(--billing-tab-inactive-text)] hover:bg-[var(--billing-muted-bg)]"
+              ? "bg-[var(--billing-primary-bg)] text-[var(--billing-primary-foreground)] shadow-sm"
+              : "text-[var(--billing-muted-text)]"
           )}
         >
-          Cart {cartCount > 0 ? `(${cartCount})` : ""}
+          <span>Cart {cartCount > 0 ? `(${cartCount})` : ""}</span>
+          {cartCount > 0 && <span className="font-extrabold ml-1">- Rs {finalAmount.toFixed(0)}</span>}
         </button>
       </div>
 
-      {/* Content */}
-      {mobileTab === "products" ? productGrid : <div className="min-h-0 flex-1">{cartPanel}</div>}
-
-      {/* Sticky cart button */}
-      {mobileTab === "products" && cartCount > 0 && (
-        <button
-          onClick={() => setMobileTab("cart")}
-          className="flex shrink-0 items-center justify-between rounded-lg bg-[var(--billing-sticky-btn-bg)] px-4 py-3 text-[var(--billing-sticky-btn-text)] shadow-lg"
-        >
-          <span className="font-bold">{cartCount} items</span>
-          <span className="font-extrabold">Rs {finalAmount.toFixed(0)}</span>
-        </button>
-      )}
+      <div className={cn("min-h-0 flex-1", mobileTab === "products" ? "block" : "hidden")}>
+        {productGrid}
+      </div>
+      <div className={cn("min-h-0 flex-1", mobileTab === "cart" ? "block" : "hidden")}>
+        {cartPanel}
+      </div>
     </div>
   );
 }

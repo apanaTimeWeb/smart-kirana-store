@@ -6,96 +6,83 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MessageCircle, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import type { BillData } from "./BillingTypes";
-import { buildWhatsAppMessage } from "./BillingWhatsAppUtils";
+import { buildWhatsAppMessage, printThermalBill } from "./BillingWhatsAppUtils";
+import { useBilling } from "./BillingContext";
 
-interface BillingWhatsAppInvoiceDialogProps {
-  billData: BillData | null;
-  shopName: string;
-  shopAddress?: string;
-  shopPhone?: string;
-  onClose: () => void;
-}
-
-export function BillingWhatsAppInvoiceDialog({
-  billData,
-  shopName,
-  shopAddress,
-  shopPhone,
-  onClose,
-}: BillingWhatsAppInvoiceDialogProps) {
-  const [phone, setPhone] = useState("");
+export function BillingWhatsAppInvoiceDialog() {
+  const { whatsappBillData: billData, setWhatsappBillData, shopName, settings } = useBilling();
+  const shopAddress = settings?.shopAddress;
+  const shopPhone = settings?.shopPhone;
+  const onClose = () => {
+    if (billData) {
+      printThermalBill(
+        billData,
+        shopName,
+        shopAddress,
+        shopPhone,
+        settings?.gstNumber,
+        settings?.gstEnabled
+      );
+    }
+    setWhatsappBillData(null);
+  };
   const { toast } = useToast();
+  const [phone, setPhone] = useState("");
 
   useEffect(() => {
-    if (billData) {
-      const rawPhone = (billData.customerPhone ?? "")
-        .replace(/\D/g, "")
-        .replace(/^91/, "")
-        .slice(0, 10);
-      setPhone(rawPhone);
+    if (billData?.customerPhone) {
+      const cleaned = billData.customerPhone.replace(/\D/g, "");
+      if (cleaned.length >= 10) {
+        setPhone(cleaned.slice(-10));
+      } else {
+        setPhone(cleaned);
+      }
+    } else {
+      setPhone("");
     }
   }, [billData]);
 
+  if (!billData) return null;
+
   const handleSend = () => {
-    if (phone.length < 10) {
-      toast({ title: "Valid 10-digit number daalo", variant: "destructive" });
+    if (phone.length !== 10) {
+      toast({ title: "Valid 10 digit number daalein", variant: "destructive" });
       return;
     }
-    if (!billData) return;
     const msg = buildWhatsAppMessage(billData, shopName, shopAddress, shopPhone);
     window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, "_blank");
-    setPhone("");
-    onClose();
-  };
-
-  const handleClose = () => {
-    setPhone("");
     onClose();
   };
 
   return (
-    <Dialog open={Boolean(billData)} onOpenChange={(open) => { if (!open) handleClose(); }}>
-      <DialogContent className="max-w-sm pointer-events-auto bg-[var(--billing-card-bg)] border-[var(--billing-border)]">
+    <Dialog open={Boolean(billData)} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-md bg-[var(--billing-background-bg)] border-[var(--billing-border)]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[var(--billing-foreground-text)]">
-            <MessageCircle className="h-5 w-5 text-[var(--billing-whatsapp-icon)]" />
-            Bill WhatsApp pe bhejein?
+          <DialogTitle className="flex items-center gap-2 text-xl">
+            <MessageCircle className="h-6 w-6 text-green-500" />
+            WhatsApp Bill
           </DialogTitle>
         </DialogHeader>
-
-        <div className="space-y-4">
-          <div className="rounded-xl border border-[var(--billing-whatsapp-border)] bg-[var(--billing-whatsapp-info-bg)] p-4">
-            <p className="text-sm text-[var(--billing-muted-text)]">
-              Customer ko bill ka summary WhatsApp pe directly bhej sakte hain.
-              Ek click mein WhatsApp open hoga message ke saath.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-semibold text-[var(--billing-foreground-text)]">
-              <Phone className="h-4 w-4 text-[var(--billing-muted-text)]" />
-              WhatsApp Number
+        <div className="flex flex-col gap-5 py-4">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-[var(--billing-foreground-text)]">
+              Customer Mobile Number
             </label>
-            <div className="flex">
-              <div className="flex h-10 items-center rounded-l-md border border-[var(--billing-border)] border-r-0 bg-[var(--billing-muted-bg)] px-3 text-sm text-[var(--billing-muted-text)] select-none">
-                +91
-              </div>
+            <div className="relative">
+              <Phone className="absolute left-3 top-3 h-5 w-5 text-[var(--billing-muted-text)]" />
               <Input
                 type="tel"
-                inputMode="numeric"
-                placeholder="10-digit mobile number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
-                className="rounded-l-none flex-1 border-[var(--billing-border)] bg-[var(--billing-background-bg)] text-[var(--billing-foreground-text)]"
+                placeholder="10 digit number"
+                className="pl-10 h-12 text-lg bg-[var(--billing-card-bg)] border-[var(--billing-border)]"
                 autoFocus
                 onKeyDown={(e) => { if (e.key === "Enter") handleSend(); }}
               />
             </div>
           </div>
-
           <div className="flex gap-2">
-            <Button variant="outline" className="flex-1 border-[var(--billing-border)] text-[var(--billing-foreground-text)] hover:bg-[var(--billing-muted-bg)]" onClick={handleClose}>
+            <Button variant="outline" className="flex-1 border-[var(--billing-border)] text-[var(--billing-foreground-text)] hover:bg-[var(--billing-muted-bg)]" onClick={onClose}>
               Skip
             </Button>
             <Button

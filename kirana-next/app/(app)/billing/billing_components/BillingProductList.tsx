@@ -3,24 +3,17 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Product } from "@/lib/api";
 import { BillingProductCard } from "./BillingProductCard";
+import { useBilling } from "./BillingContext";
 
-interface BillingProductListProps {
-  isLoading: boolean;
-  products: Product[];
-  cartBaseQty: (productId: number) => number;
-  onProductTap: (product: Product) => void;
-  onRemoveTap?: (product: Product) => void;
-}
-
-export function BillingProductList({
-  isLoading,
-  products,
-  cartBaseQty,
-  onProductTap,
-  onRemoveTap,
-}: BillingProductListProps) {
+export function BillingProductList() {
+  const {
+    isLoading,
+    filteredProducts: products,
+    cartBaseQty,
+    handleProductTap,
+    handleProductRemove,
+  } = useBilling();
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -50,8 +43,8 @@ export function BillingProductList({
           key={product.id}
           product={product}
           inCartBaseQty={cartBaseQty(product.id)}
-          onTap={onProductTap}
-          onRemoveTap={onRemoveTap}
+          onTap={handleProductTap}
+          onRemoveTap={handleProductRemove}
         />
       ))}
     </div>

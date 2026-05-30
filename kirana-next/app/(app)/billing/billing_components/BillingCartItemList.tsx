@@ -4,19 +4,10 @@ import React from "react";
 import { CardContent } from "@/components/ui/card";
 import { BillingCartEmptyState } from "./BillingCartEmptyState";
 import { BillingCartItemRow } from "./BillingCartItemRow";
-import type { CartItem as BillingCartItem } from "./BillingTypes";
+import { useBilling } from "./BillingContext";
 
-interface BillingCartItemListProps {
-  cart: BillingCartItem[];
-  onUpdateQty: (lineId: string, delta: number) => void;
-  onRemove: (lineId: string) => void;
-}
-
-export function BillingCartItemList({
-  cart,
-  onUpdateQty,
-  onRemove,
-}: BillingCartItemListProps) {
+export function BillingCartItemList() {
+  const { cart, updateQty: onUpdateQty, removeFromCart: onRemove } = useBilling();
   return (
     <CardContent className="flex-1 overflow-auto p-0">
       {cart.length === 0 ? (

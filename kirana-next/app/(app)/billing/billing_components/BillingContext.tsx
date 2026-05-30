@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import React, { createContext, useContext, useMemo, useState, useEffect } from "react";
 import {
   getGetDashboardSummaryQueryKey,
   getListBillsQueryKey,
@@ -15,10 +15,11 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type { BillData, BillingFilter, CartItem } from "./BillingTypes";
-import { defaultPresetsFor, formatBaseUnits, lineLabel, priceForBaseQuantity, uniqueNumbers } from "./BillingUtils";
+import { formatBaseUnits, lineLabel, priceForBaseQuantity } from "./BillingUtils";
 import { buildWhatsAppMessage, printThermalBill } from "./BillingWhatsAppUtils";
 
-export function useBillingState() {
+// --- Internal Hook for State ---
+function useBillingStateInternal() {
   const { data: products = [], isLoading } = useListProducts();
   const { data: customers = [] } = useListCustomers();
   const { data: settings } = useGetSettings();
@@ -161,7 +162,6 @@ export function useBillingState() {
       const lineId = `${product.id}:fixed`;
       const existing = prev.find((item) => item.lineId === lineId);
       if (existing) {
-        // Increment quantity instead of removing
         return prev.map((item) =>
           item.lineId === lineId
             ? {
@@ -403,13 +403,11 @@ export function useBillingState() {
   };
 
   return {
-    // data
     products,
     customers,
     settings,
     isLoading,
     shopName,
-    // cart state
     cart,
     discount,
     setDiscount,
@@ -424,29 +422,23 @@ export function useBillingState() {
     setEnableGST,
     gstRate,
     setGstRate,
-    // computed
     subtotal,
     taxableValue,
     gstAmount,
     finalAmount,
     cartCount,
-    // product grid
     search,
     setSearch,
     filter,
     setFilter,
     filteredProducts,
     quickProducts,
-    // khula
     khulaProduct,
     setKhulaProduct,
-    // whatsapp
     whatsappBillData,
     setWhatsappBillData,
-    // mobile
     mobileTab,
     setMobileTab,
-    // handlers
     handleProductTap,
     handleProductRemove,
     addKhula,
@@ -455,5 +447,24 @@ export function useBillingState() {
     resetCart,
     handleCheckout,
     createBill,
+    cartBaseQty,
   };
+}
+
+// --- Context Definition ---
+export type BillingContextValue = ReturnType<typeof useBillingStateInternal>;
+
+const BillingContext = createContext<BillingContextValue | null>(null);
+
+export function BillingProvider({ children }: { children: React.ReactNode }) {
+  const value = useBillingStateInternal();
+  return <BillingContext.Provider value={value}>{children}</BillingContext.Provider>;
+}
+
+export function useBilling() {
+  const context = useContext(BillingContext);
+  if (!context) {
+    throw new Error("useBilling must be used within a BillingProvider");
+  }
+  return context;
 }

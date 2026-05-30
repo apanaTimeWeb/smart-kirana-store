@@ -3,13 +3,10 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { type BillingFilter, BILLING_FILTER_OPTIONS } from "./BillingTypes";
+import { useBilling } from "./BillingContext";
 
-interface BillingProductFiltersProps {
-  filter: BillingFilter;
-  setFilter: (value: BillingFilter) => void;
-}
-
-export function BillingProductFilters({ filter, setFilter }: BillingProductFiltersProps) {
+export function BillingProductFilters() {
+  const { filter, setFilter } = useBilling();
   return (
     <div className="flex gap-2 overflow-x-auto pb-1">
       {BILLING_FILTER_OPTIONS.map(({ id: value, label }) => (

@@ -7,44 +7,32 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 import type { BillInputPaymentMode } from "@/lib/api";
 import { GST_RATES, PAYMENT_MODES } from "./BillingTypes";
+import { useBilling } from "./BillingContext";
 
 interface BillingCartAdvancedOptionsProps {
   showOptions: boolean;
-  subtotal: number;
-  discount: number;
-  setDiscount: (value: number) => void;
-  enableGST: boolean;
-  setEnableGST: (value: boolean) => void;
-  gstRate: number;
-  setGstRate: (rate: number) => void;
-  gstAmount: number;
-  paymentMode: BillInputPaymentMode | "";
-  setPaymentMode: (mode: BillInputPaymentMode) => void;
-  setSelectedCustomerId: (id: string) => void;
-  cartLength: number;
-  selectedCustomerId: string;
-  quickPhone: string;
-  setQuickPhone: (phone: string) => void;
 }
 
-export function BillingCartAdvancedOptions({
-  showOptions,
-  subtotal,
-  discount,
-  setDiscount,
-  enableGST,
-  setEnableGST,
-  gstRate,
-  setGstRate,
-  gstAmount,
-  paymentMode,
-  setPaymentMode,
-  setSelectedCustomerId,
-  cartLength,
-  selectedCustomerId,
-  quickPhone,
-  setQuickPhone,
-}: BillingCartAdvancedOptionsProps) {
+export function BillingCartAdvancedOptions({ showOptions }: BillingCartAdvancedOptionsProps) {
+  const {
+    subtotal,
+    discount,
+    setDiscount,
+    enableGST,
+    setEnableGST,
+    gstRate,
+    setGstRate,
+    gstAmount,
+    paymentMode,
+    setPaymentMode,
+    setSelectedCustomerId,
+    cart,
+    selectedCustomerId,
+    quickPhone,
+    setQuickPhone,
+  } = useBilling();
+  
+  const cartLength = cart.length;
   return (
     <div className={cn("w-full flex-col gap-3", showOptions ? "flex" : "hidden")}>
       {/* Subtotal */}

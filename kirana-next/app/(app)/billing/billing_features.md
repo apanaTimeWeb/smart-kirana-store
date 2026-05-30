@@ -7,13 +7,14 @@ Yeh document `Smart Kirana Store` application ke **Billing / POS (Point of Sale)
 Billing module `app/(app)/billing` directory me sthit hai aur yeh poori tarah se Client-side (`"use client"`) state-driven module hai.
 Is module ko strict **"one file, one component, one functionality"** pattern se design kiya gaya hai jisse reusability aur maintainability aasan ho jaye.
 
-- **`page.tsx`**: Main entry point. Yeh layout manage karta hai (Desktop ke liye two-column grid aur Mobile ke liye `BillingMobileResponsiveLayout`), aur `BillingStateHook.ts` hook se saara state receive karke components ko pass karta hai.
+- **`page.tsx`**: Main entry point. Yeh layout manage karta hai (Desktop ke liye two-column grid aur Mobile ke liye `BillingMobileResponsiveLayout`), aur `BillingProvider` se poore module ko wrap karta hai taaki sabhi child components bina prop-drilling ke direct state access kar sakein.
+- **`error.tsx`**: Next.js ki Error Boundary hai. Agar iss module mein koi crash hota hai toh UI poori app ko todne ke bajaye sirf ye page gracefully fail hoga.
 - **`billing.css`**: Billing module ke sabhi custom UI variables yahan define hote hain. Isme saare colors aur theme mappings hain taaki kisi aur project me copy-paste karke reuse kiya ja sake.
 - **`billing_components/`**: Yeh folder sabhi isolated child components aur utility files ko store karta hai, har ek ka ek specific aur descriptive naam hai:
 
 ### Logic & Utilities
-- `BillingStateHook.ts`: Core state management hook (with `localStorage` persistence).
-- `BillingTypes.ts`: TypeScript types and interfaces used across the module.
+- `BillingContext.tsx`: Core state management hook (with `localStorage` persistence) and Context Provider. Ye ensure karta hai ki 'extreme isolation' follow ho aur prop-drilling na ho.
+- `BillingTypes.ts`: TypeScript types and interfaces used across the module. Yahan saara hardcoded data (jaise `GST_RATES`, `PAYMENT_MODES`, `FILTER_OPTIONS`) rakha gaya hai taaki central jagah se control ho sake.
 - `BillingUtils.ts`: General formatting, price calculation, and preset logic.
 - `BillingWhatsAppUtils.ts`: Bill generation ke baad WhatsApp par message bhejna aur thermal print nikalne ke utils.
 
@@ -65,10 +66,11 @@ Is module ko strict **"one file, one component, one functionality"** pattern se 
   - Customer ke WhatsApp par message bhej diya jata hai (`buildWhatsAppMessage`).
   - Thermal Printer connect hone par automatically receipt print ka function call hota hai (`printThermalBill`).
 
-## 🧠 State Management (`BillingStateHook.ts`)
-- Yeh hook is module ka "Brain" hai. React Query (TanStack Query) se data fetch hota hai.
+## 🧠 State Management (`BillingContext.tsx`)
+- Yeh hook aur context provider is module ka "Brain" hai. React Query (TanStack Query) se data fetch hota hai.
+- **Why Context API over Redux?**: Kyunki hamara rule #1 "Extreme Isolation" ka hai. Hum chahte the ki billing ka saara state strictly sirf billing folder tak hi seemit rahe. Agar kal ko ye module delete ya copy kiya jaye, toh kisi global store (jaise Redux) ko modify na karna pade. Context API local module state ke liye best hai aur prop-drilling ko puri tarah khatam kar deta hai.
 - **Auto Save (Persistence)**: Cart ka poora data browser ke `localStorage` me save hota rehta hai. Agar user galti se page refresh kar de ya kisi aur page (jaise Dashboard) par switch karke wapas aaye, toh uska cart automatically restore ho jata hai.
-- Saara cart modification (`updateQty`, `removeFromCart`, `addKhula`, `addFixed`), total calculations, aur API triggers issi ek hook me rakhe gaye hain taaki baaki UI components presentational rahein.
+- Saara cart modification (`updateQty`, `removeFromCart`, `addKhula`, `addFixed`), total calculations, aur API triggers issi ek context me rakhe gaye hain taaki baaki UI components (jaise cart header, footer) apna required data directly `useBilling()` se nikaal sakein aur clean rahein.
 
 ## 🚀 AI & Developer Context: Future Enhancements
 Agar future me aap ya AI isme naye features banana chahein:
@@ -79,6 +81,7 @@ Agar future me aap ya AI isme naye features banana chahein:
 
 ## 📌 Summary for Quick Handover
 - UI do hisso me bati hai: Left side me `BillingProductMainGrid` aur right side me `BillingCartMainPanel`. (Mobile par yeh Tabs me badal jaata hai).
-- Logic ko UI se alag rakhne ke liye `BillingStateHook.ts` ka prayog kiya gaya hai (jisme persistent cart data ki kshamata shamil hai).
+- Logic ko UI se alag rakhne ke liye `BillingContext.tsx` ka prayog kiya gaya hai (jisme persistent cart data ki kshamata shamil hai). Component-level prop drilling ko puri tarah khatam kar diya gaya hai.
+- Hardcoded constants ko `BillingTypes.ts` me centralize kiya gaya hai.
 - Bill generation ke baad WhatsApp invoice aur Thermal Print ka flow already set hai (`BillingWhatsAppUtils.ts` dekhein).
 - **Theming & Reusability**: Sabhi components me styling ke liye `billing.css` se variables (e.g., `var(--billing-primary-bg)`) use kiye gaye hain. Standard Tailwind color utilities hata diye gaye hain taaki is folder ko kisi bhi naye project me paste kiya ja sake.

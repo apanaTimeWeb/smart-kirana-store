@@ -5,53 +5,21 @@ import { CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ChevronDown, ChevronUp, Settings2 } from "lucide-react";
 import { BillingCartAdvancedOptions } from "./BillingCartAdvancedOptions";
-import type { BillInputPaymentMode } from "@/lib/api";
+import { useBilling } from "./BillingContext";
 
-interface BillingCartFooterProps {
-  subtotal: number;
-  discount: number;
-  setDiscount: (value: number) => void;
-  enableGST: boolean;
-  setEnableGST: (value: boolean) => void;
-  gstRate: number;
-  setGstRate: (rate: number) => void;
-  gstAmount: number;
-  paymentMode: BillInputPaymentMode | "";
-  setPaymentMode: (mode: BillInputPaymentMode) => void;
-  setSelectedCustomerId: (id: string) => void;
-  cartLength: number;
-  selectedCustomerId: string;
-  quickPhone: string;
-  setQuickPhone: (phone: string) => void;
-  finalAmount: number;
-  billSuccess: boolean;
-  isCheckoutPending: boolean;
-  onCheckout: () => void;
-  onResetCart: () => void;
-}
-
-export function BillingCartFooter({
-  subtotal,
-  discount,
-  setDiscount,
-  enableGST,
-  setEnableGST,
-  gstRate,
-  setGstRate,
-  gstAmount,
-  paymentMode,
-  setPaymentMode,
-  setSelectedCustomerId,
-  cartLength,
-  selectedCustomerId,
-  quickPhone,
-  setQuickPhone,
-  finalAmount,
-  billSuccess,
-  isCheckoutPending,
-  onCheckout,
-  onResetCart,
-}: BillingCartFooterProps) {
+export function BillingCartFooter() {
+  const {
+    finalAmount,
+    billSuccess,
+    cart,
+    handleCheckout: onCheckout,
+    resetCart: onResetCart,
+    createBill,
+    paymentMode,
+  } = useBilling();
+  
+  const isCheckoutPending = createBill.isPending;
+  const cartLength = cart.length;
   const [showOptions, setShowOptions] = useState(false);
 
   return (
@@ -68,24 +36,7 @@ export function BillingCartFooter({
         </Button>
       </div>
 
-      <BillingCartAdvancedOptions
-        showOptions={showOptions}
-        subtotal={subtotal}
-        discount={discount}
-        setDiscount={setDiscount}
-        enableGST={enableGST}
-        setEnableGST={setEnableGST}
-        gstRate={gstRate}
-        setGstRate={setGstRate}
-        gstAmount={gstAmount}
-        paymentMode={paymentMode}
-        setPaymentMode={setPaymentMode}
-        setSelectedCustomerId={setSelectedCustomerId}
-        cartLength={cartLength}
-        selectedCustomerId={selectedCustomerId}
-        quickPhone={quickPhone}
-        setQuickPhone={setQuickPhone}
-      />
+      <BillingCartAdvancedOptions showOptions={showOptions} />
 
       {/* Total (Always Visible) */}
       <div className="flex w-full justify-between items-center border-t border-[var(--billing-border)] pt-3 mt-1 md:mt-0">

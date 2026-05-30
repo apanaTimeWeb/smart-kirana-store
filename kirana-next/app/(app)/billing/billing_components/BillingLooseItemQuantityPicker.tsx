@@ -1,92 +1,74 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { Product } from "@/lib/api";
-import { formatBaseUnits, priceForBaseQuantity, rateUnit, defaultPresetsFor, uniqueNumbers } from "./BillingUtils";
+import { useBilling } from "./BillingContext";
+import { PRESETS_GRAM, PRESETS_ML, PRESETS_PCS } from "./BillingTypes";
+import { formatBaseUnits, priceForBaseQuantity } from "./BillingUtils";
 
-interface BillingLooseItemQuantityPickerProps {
-  product: Product | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onAdd: (product: Product, baseQuantity: number) => void;
-}
+export function BillingLooseItemQuantityPicker() {
+  const { khulaProduct: product, setKhulaProduct, addKhula } = useBilling();
+  const open = Boolean(product);
+  const onOpenChange = (isOpen: boolean) => {
+    if (!isOpen) setKhulaProduct(null);
+  };
+  const onAdd = addKhula;
+  const [customQty, setCustomQty] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
-export function BillingLooseItemQuantityPicker({ product, open, onOpenChange, onAdd }: BillingLooseItemQuantityPickerProps) {
-  const [custom, setCustom] = useState("");
+  useEffect(() => {
+    if (open) {
+      setCustomQty("");
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [open]);
 
   if (!product) return null;
 
-  const presets = uniqueNumbers([
-    ...(product.popularBaseQuantities ?? []),
-    ...(product.presetBaseQuantities ?? []),
-    ...defaultPresetsFor(product),
-    product.baseQuantity,
-  ]).slice(0, 8);
+  const presets =
+    product.baseUnit === "gram"
+      ? PRESETS_GRAM
+      : product.baseUnit === "ml"
+      ? PRESETS_ML
+      : PRESETS_PCS;
 
-  const add = (baseQuantity: number) => {
-    onAdd(product, baseQuantity);
-    setCustom("");
+  const handleAdd = (qty: number) => {
+    if (qty > 0) onAdd(product, qty);
+  };
+
+  const handleCustomSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const qty = Number(customQty);
+    if (qty > 0) handleAdd(qty);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md bg-[var(--billing-card-bg)] border-[var(--billing-border)]">
+      <DialogContent className="sm:max-w-md bg-[var(--billing-background-bg)] border-[var(--billing-border)]">
         <DialogHeader>
-          <DialogTitle className="text-[var(--billing-foreground-text)]">{product.productName} - Khula</DialogTitle>
+          <DialogTitle className="text-xl">{product.productName}</DialogTitle>
+          <p className="text-sm text-[var(--billing-muted-text)]">
+            Rate: Rs {product.sellingPrice} /{" "}
+            {formatBaseUnits(product.baseQuantity, product.baseUnit)}
+          </p>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="rounded-lg border border-[var(--billing-border)] bg-[var(--billing-khula-rate-bg)] p-3">
-            <p className="text-sm text-[var(--billing-muted-text)]">Rate</p>
-            <p className="text-2xl font-extrabold text-[var(--billing-product-price)]">
-              Rs {product.sellingPrice} / {rateUnit(product)}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            {presets.map((baseQuantity) => (
-              <Button
-                key={baseQuantity}
-                type="button"
-                variant="outline"
-                className="h-14 flex-col gap-0 border-[var(--billing-border)] bg-[var(--billing-background-bg)] text-[var(--billing-foreground-text)] hover:bg-[var(--billing-muted-bg)]"
-                onClick={() => add(baseQuantity)}
-              >
-                <span className="font-bold">{formatBaseUnits(baseQuantity, product.baseUnit)}</span>
-                <span className="text-xs text-[var(--billing-muted-text)]">
-                  Rs {priceForBaseQuantity(product, baseQuantity)}
-                </span>
-              </Button>
-            ))}
-          </div>
-
-          <div className="flex gap-2">
-            <Input
-              type="number"
-              min="0"
-              value={custom}
-              onChange={(e) => setCustom(e.target.value)}
-              placeholder={
-                product.baseUnit === "gram"
-                  ? "Custom gram"
-                  : product.baseUnit === "ml"
-                  ? "Custom ml"
-                  : "Custom pcs"
-              }
-              className="border-[var(--billing-border)] bg-[var(--billing-background-bg)] text-[var(--billing-foreground-text)]"
-            />
+        <div className="grid grid-cols-3 gap-3 py-4">
+          {presets.map((qty) => (
             <Button
-              type="button"
-              disabled={!Number(custom)}
-              onClick={() => add(Number(custom))}
-              className="bg-[var(--billing-primary-bg)] text-[var(--billing-primary-foreground)] hover:opacity-90 disabled:opacity-50"
+              key={qty}
+              variant="outline"
+              className="flex h-16 flex-col items-center justify-center gap-1 border-[var(--billing-border)] hover:bg-[var(--billing-muted-bg)] hover:text-[var(--billing-foreground-text)]"
+              onClick={() => handleAdd(qty)}
             >
-              Add
+              <span className="font-bold">{formatBaseUnits(qty, product.baseUnit)}</span>
+              <span className="text-xs text-[var(--billing-muted-text)]">
+                Rs {priceForBaseQuantity(product, qty).toFixed(1)}
+              </span>
             </Button>
-          </div>
+          ))}
         </div>
       </DialogContent>
     </Dialog>

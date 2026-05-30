@@ -3,21 +3,17 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import type { Product } from "@/lib/api";
+import { useBilling } from "./BillingContext";
 
-interface BillingProductSearchBarProps {
-  search: string;
-  setSearch: (value: string) => void;
-  products: Product[];
-  onProductTap: (product: Product) => void;
-}
+export function BillingProductSearchBar() {
+  const { search, setSearch, products, handleProductTap } = useBilling();
 
-export function BillingProductSearchBar({
-  search,
-  setSearch,
-  products,
-  onProductTap,
-}: BillingProductSearchBarProps) {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && products[0]) {
+      handleProductTap(products[0]);
+    }
+  };
+
   return (
     <div className="relative shrink-0">
       <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--billing-muted-text)]" />
@@ -25,9 +21,7 @@ export function BillingProductSearchBar({
         placeholder="Search: chi, att, barcode, shortcut..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && products[0]) onProductTap(products[0]);
-        }}
+        onKeyDown={handleKeyPress}
         className="h-11 pl-9 border-[var(--billing-border)] bg-[var(--billing-background-bg)] text-[var(--billing-foreground-text)]"
         autoFocus
       />
