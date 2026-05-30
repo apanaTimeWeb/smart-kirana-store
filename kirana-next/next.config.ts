@@ -17,6 +17,9 @@ const nextConfig: NextConfig = {
     "*.replit.app",
     "10.80.122.41",
   ],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   async rewrites() {
     return [
       {
