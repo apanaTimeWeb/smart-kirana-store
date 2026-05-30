@@ -71,14 +71,14 @@ function useStockProductCreatorInternal() {
     if (!name.trim()) errs.push("Product name is required");
     if (sellPrice === "" || Number(sellPrice) <= 0) errs.push("Sell price must be greater than 0");
     if (initialStock === "" || Number(initialStock) < 0) errs.push("Current stock is required");
-    if (!expiryDate) errs.push("Expiry date is required for alerts");
-    
+    // Expiry date is OPTIONAL — non-consumables (batteries, pens, buckets etc.) have no expiry
+
     if (cfg?.group === "wholesale" && (bulkConversionRate === "" || Number(bulkConversionRate) <= 0)) {
       errs.push("Conversion rate (e.g., 1 Bora = ? KG) is required for bulk items");
     }
-    
+
     return errs;
-  }, [name, sellPrice, initialStock, expiryDate, cfg, bulkConversionRate]);
+  }, [name, sellPrice, initialStock, cfg, bulkConversionRate]);
 
   const isValid = errors.length === 0;
 

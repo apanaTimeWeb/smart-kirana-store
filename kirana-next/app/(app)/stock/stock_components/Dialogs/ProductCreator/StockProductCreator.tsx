@@ -445,7 +445,7 @@ function StockProductCreatorInner() {
                   style={{ color: "var(--stock-creator-label-text)" }}
                 >
                   <CalendarDays className="h-3 w-3" /> Expiry
-                  <span style={{ color: "var(--stock-creator-error-text)" }}>*</span>
+                  <span className="normal-case font-normal ml-1" style={{ color: "var(--stock-creator-divider-text)" }}>(optional)</span>
                 </p>
                 <div className="relative">
                   <FieldInput
@@ -459,6 +459,9 @@ function StockProductCreatorInner() {
                     style={{ color: "var(--stock-creator-label-text)" }}
                   />
                 </div>
+                <p className="text-[10px]" style={{ color: "var(--stock-creator-divider-text)" }}>
+                  Food items ke liye zaroori • Pen, Bucket jaise items pe skip karein
+                </p>
               </div>
             </div>
 

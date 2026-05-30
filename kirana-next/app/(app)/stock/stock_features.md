@@ -132,7 +132,7 @@ These have been extracted to their own module-prefixed folders at the root:
 | **Conditional** | Bulk Conversion Rate | Appears only when `BORA` is selected. "1 Bora me kitna KG?" |
 | **Required** | Buy Price + Sell Price | Side-by-side ₹ inputs with live **Margin Badge** (green=profit, red=loss) |
 | **Required** | Current Stock | Number input; unit suffix auto-updates (Pcs / KG / Bora) |
-| **Required** | Expiry Date | Date picker; required for alert system |
+| **Optional** | Expiry Date | Date picker; required for food alerts but optional for non-consumables |
 | **Optional** | Barcode | Hidden inside collapsible "Extra Jankari" section |
 | **Optional** | Location | Hidden inside collapsible "Extra Jankari" section |
 | **Optional** | Low Stock Alert | Default = 5; hidden inside collapsible "Extra Jankari" section |
@@ -246,3 +246,4 @@ Key token groups in `stock.css`:
 | May 2026 | **`hasAttempted` UX** — validation errors are hidden until first save attempt, preventing cluttered empty-form state. |
 | May 2026 | **Collapsible optional section** — Barcode, Location, Low Stock Alert collapsed by default under "Extra Jankari". |
 | May 2026 | **Live Margin Badge** — instant profit/loss % feedback after Buy + Sell price entry. |
+| May 2026 | **Expiry Date Optional** — removed mandatory validation check so non-consumables (pens, buckets, batteries) can be added without an expiry date. Added helpful note in UI. |
