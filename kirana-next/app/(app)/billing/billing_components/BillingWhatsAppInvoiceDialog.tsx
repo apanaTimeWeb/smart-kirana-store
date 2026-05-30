@@ -59,7 +59,7 @@ export function BillingWhatsAppInvoiceDialog() {
       <DialogContent className="sm:max-w-md bg-[var(--billing-background-bg)] border-[var(--billing-border)]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <MessageCircle className="h-6 w-6 text-green-500" />
+            <MessageCircle className="h-6 w-6 text-[var(--billing-whatsapp-icon)]" />
             WhatsApp Bill
           </DialogTitle>
         </DialogHeader>

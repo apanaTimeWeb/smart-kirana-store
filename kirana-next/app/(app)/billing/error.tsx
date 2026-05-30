@@ -17,9 +17,9 @@ export default function Error({
 
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col items-center justify-center gap-4 text-center">
-      <div className="rounded-full bg-red-100 p-4">
+      <div className="rounded-full bg-[var(--billing-error-icon-bg)] p-4">
         <svg
-          className="h-8 w-8 text-red-600"
+          className="h-8 w-8 text-[var(--billing-error-icon-text)]"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -35,7 +35,7 @@ export default function Error({
       </div>
       <div className="max-w-md">
         <h2 className="mb-2 text-2xl font-bold">Billing Module Crash</h2>
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="text-sm text-[var(--billing-error-body-text)] mb-6">
           There was an unexpected error in the billing interface. We've logged the issue.
           Please try again or refresh the page.
         </p>
