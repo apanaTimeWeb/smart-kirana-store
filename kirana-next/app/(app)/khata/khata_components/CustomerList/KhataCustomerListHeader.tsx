@@ -4,8 +4,8 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Plus } from "lucide-react";
-import { useKhata } from "@/app/(app)/khata/context/KhataContext";
-import { KhataConstants } from "@/app/(app)/khata/constants/KhataConstants";
+import { useKhata } from "@/app/(app)/khata/khata_context/KhataContext";
+import { KhataConstants } from "@/app/(app)/khata/khata_constants/KhataConstants";
 
 interface KhataCustomerListHeaderProps {
   totalCustomers: number;

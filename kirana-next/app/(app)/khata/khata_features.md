@@ -14,16 +14,16 @@ app/(app)/khata/
 ├── khata.css                                   ← ALL color tokens for this module (single source of truth for theming)
 ├── khata_features.md                           ← THIS FILE — AI context & architecture map
 │
-├── context/
+├── khata_context/
 │   └── KhataContext.tsx                        ← Brain: all module-level UI state (search, dialogs, transaction mode)
-├── types/
+├── khata_types/
 │   └── KhataTypes.ts                           ← Central types: Zod schemas + re-exports of Customer, CustomerDetail, AppSettings
-├── constants/
+├── khata_constants/
 │   └── KhataConstants.ts                       ← Central data: ALL hardcoded UI strings and config (Single Source of Truth)
-├── utils/
+├── khata_utils/
 │   └── KhataPrintUtils.ts                      ← Pure functions: WhatsApp message builder + thermal print HTML generator
 │
-├── components/
+├── khata_components/
 │   ├── CustomerList/
 │   │   ├── KhataCustomerListContainer.tsx      ← Smart container: fetches customers, handles delete, composes sub-components
 │   │   ├── KhataCustomerListHeader.tsx         ← Search bar + "Add Customer" button (page title row)

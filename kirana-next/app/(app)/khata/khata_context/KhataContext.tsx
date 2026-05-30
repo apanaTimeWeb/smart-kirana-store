@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useMemo, ReactNode } from "react";
 
 interface KhataContextType {
   customerSearch: string;
@@ -27,23 +27,33 @@ export function KhataProvider({ children }: { children: ReactNode }) {
   const [transactionMode, setTransactionMode] = useState<"payment" | "credit" | null>(null);
   const [isReminderOpen, setIsReminderOpen] = useState(false);
 
+  const value = useMemo(
+    () => ({
+      customerSearch,
+      setCustomerSearch,
+      ledgerSearch,
+      setLedgerSearch,
+      selectedLedgerId,
+      setSelectedLedgerId,
+      isAddCustomerOpen,
+      setIsAddCustomerOpen,
+      transactionMode,
+      setTransactionMode,
+      isReminderOpen,
+      setIsReminderOpen,
+    }),
+    [
+      customerSearch,
+      ledgerSearch,
+      selectedLedgerId,
+      isAddCustomerOpen,
+      transactionMode,
+      isReminderOpen,
+    ]
+  );
+
   return (
-    <KhataContext.Provider
-      value={{
-        customerSearch,
-        setCustomerSearch,
-        ledgerSearch,
-        setLedgerSearch,
-        selectedLedgerId,
-        setSelectedLedgerId,
-        isAddCustomerOpen,
-        setIsAddCustomerOpen,
-        transactionMode,
-        setTransactionMode,
-        isReminderOpen,
-        setIsReminderOpen,
-      }}
-    >
+    <KhataContext.Provider value={value}>
       {children}
     </KhataContext.Provider>
   );

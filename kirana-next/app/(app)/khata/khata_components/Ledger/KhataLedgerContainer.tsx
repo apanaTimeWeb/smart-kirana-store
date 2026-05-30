@@ -2,14 +2,14 @@
 
 import React, { useMemo } from "react";
 import { useGetCustomer } from "@/lib/api";
-import { useKhata } from "@/app/(app)/khata/context/KhataContext";
-import { KhataLedgerHeader } from "@/app/(app)/khata/components/Ledger/KhataLedgerHeader";
-import { KhataLedgerActions } from "@/app/(app)/khata/components/Ledger/KhataLedgerActions";
-import { KhataLedgerSearch } from "@/app/(app)/khata/components/Ledger/KhataLedgerSearch";
-import { KhataLedgerTable } from "@/app/(app)/khata/components/Ledger/KhataLedgerTable";
-import { KhataTransactionForm } from "@/app/(app)/khata/components/Forms/KhataTransactionForm";
-import { KhataReminderDialog } from "@/app/(app)/khata/components/Forms/KhataReminderDialog";
-import { KhataLedgerRow } from "@/app/(app)/khata/types/KhataTypes";
+import { useKhata } from "@/app/(app)/khata/khata_context/KhataContext";
+import { KhataLedgerHeader } from "@/app/(app)/khata/khata_components/Ledger/KhataLedgerHeader";
+import { KhataLedgerActions } from "@/app/(app)/khata/khata_components/Ledger/KhataLedgerActions";
+import { KhataLedgerSearch } from "@/app/(app)/khata/khata_components/Ledger/KhataLedgerSearch";
+import { KhataLedgerTable } from "@/app/(app)/khata/khata_components/Ledger/KhataLedgerTable";
+import { KhataTransactionForm } from "@/app/(app)/khata/khata_components/Forms/KhataTransactionForm";
+import { KhataReminderDialog } from "@/app/(app)/khata/khata_components/Forms/KhataReminderDialog";
+import { KhataLedgerRow } from "@/app/(app)/khata/khata_types/KhataTypes";
 
 interface KhataLedgerContainerProps {
   customerId: number;

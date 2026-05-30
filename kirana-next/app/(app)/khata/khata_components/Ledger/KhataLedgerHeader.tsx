@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { KhataConstants } from "@/app/(app)/khata/constants/KhataConstants";
+import { KhataConstants } from "@/app/(app)/khata/khata_constants/KhataConstants";
 
 interface KhataLedgerHeaderProps {
   name: string;

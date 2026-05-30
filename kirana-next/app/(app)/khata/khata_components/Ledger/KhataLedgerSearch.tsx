@@ -3,8 +3,8 @@
 import React from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useKhata } from "@/app/(app)/khata/context/KhataContext";
-import { KhataConstants } from "@/app/(app)/khata/constants/KhataConstants";
+import { useKhata } from "@/app/(app)/khata/khata_context/KhataContext";
+import { KhataConstants } from "@/app/(app)/khata/khata_constants/KhataConstants";
 
 export function KhataLedgerSearch() {
   const { ledgerSearch, setLedgerSearch } = useKhata();

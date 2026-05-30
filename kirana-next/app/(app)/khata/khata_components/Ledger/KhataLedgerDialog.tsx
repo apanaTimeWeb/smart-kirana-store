@@ -12,9 +12,9 @@
 
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useKhata } from "@/app/(app)/khata/context/KhataContext";
-import { KhataConstants } from "@/app/(app)/khata/constants/KhataConstants";
-import { KhataLedgerContainer } from "@/app/(app)/khata/components/Ledger/KhataLedgerContainer";
+import { useKhata } from "@/app/(app)/khata/khata_context/KhataContext";
+import { KhataConstants } from "@/app/(app)/khata/khata_constants/KhataConstants";
+import { KhataLedgerContainer } from "@/app/(app)/khata/khata_components/Ledger/KhataLedgerContainer";
 
 export function KhataLedgerDialog() {
   const { selectedLedgerId, setSelectedLedgerId } = useKhata();
