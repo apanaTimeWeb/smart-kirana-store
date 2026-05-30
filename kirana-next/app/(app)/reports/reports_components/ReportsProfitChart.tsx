@@ -18,10 +18,10 @@ import type { ReportsProfitData } from "./ReportsTypes";
 interface ReportsProfitChartProps {
   isLoading: boolean;
   data?: ReportsProfitData[];
-  moneyFormatter: (value: number) => string;
 }
 
-export function ReportsProfitChart({ isLoading, data, moneyFormatter }: ReportsProfitChartProps) {
+export function ReportsProfitChart({ isLoading, data }: ReportsProfitChartProps) {
+  const { formatMoney } = ReportsConstants.UTILS;
   return (
     <Card className="bg-[var(--reports-card-bg)] border-[var(--reports-border)]">
       <CardHeader className="pb-2">
@@ -53,7 +53,7 @@ export function ReportsProfitChart({ isLoading, data, moneyFormatter }: ReportsP
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: "var(--reports-muted-text)", fontSize: 10 }}
-                tickFormatter={(value) => moneyFormatter(Number(value))}
+                tickFormatter={(value) => formatMoney(Number(value))}
               />
               <Tooltip
                 contentStyle={{
@@ -63,7 +63,7 @@ export function ReportsProfitChart({ isLoading, data, moneyFormatter }: ReportsP
                   fontSize: 12,
                   color: "var(--reports-foreground)",
                 }}
-                formatter={(value) => [moneyFormatter(Number(value)), "Profit"]}
+                formatter={(value) => [formatMoney(Number(value)), "Profit"]}
               />
               <Area
                 type="monotone"

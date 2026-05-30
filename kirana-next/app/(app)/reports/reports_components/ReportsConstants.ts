@@ -39,4 +39,26 @@ export const ReportsConstants = {
     SALES_TREND: "Daily Sales Trend",
     PROFIT_TREND: "Profit Trend",
   },
+
+  /**
+   * Pagination config — single source of truth.
+   * Change ITEMS_PER_PAGE here to affect both the Khata and Stock lists.
+   * Tomorrow, replace with a user-preference API call in this one place.
+   */
+  PAGINATION: {
+    ITEMS_PER_PAGE: 5,
+  },
+
+  /**
+   * Utility functions — pure, no React dependencies.
+   * Centralised here so they can be replaced by backend-driven formatting
+   * (e.g., locale-aware currency) without touching any UI component.
+   */
+  UTILS: {
+    /**
+     * Formats a numeric rupee value for display.
+     * Example: 1500.75 → "Rs 1501"
+     */
+    formatMoney: (value: number): string => `Rs ${value.toFixed(0)}`,
+  },
 };

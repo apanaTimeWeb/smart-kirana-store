@@ -9,6 +9,7 @@ import {
   useGetSalesReport,
 } from "@/lib/api";
 import { useReports } from "./ReportsContext";
+import { ReportsConstants } from "./ReportsConstants";
 import { ReportsHeader } from "./ReportsHeader";
 import { ReportsDatePicker } from "./ReportsDatePicker";
 import { ReportsStatGrid } from "./ReportsStatGrid";
@@ -17,14 +18,26 @@ import { ReportsProfitChart } from "./ReportsProfitChart";
 import { ReportsKhataContainer } from "./ReportsKhataContainer";
 import { ReportsStockContainer } from "./ReportsStockContainer";
 
-function dateToStr(date: Date) {
+/**
+ * Converts a Date object to "yyyy-MM-dd" string for API query params.
+ * Pure utility — no React. Lives here because it is only used by this
+ * container's API calls.
+ */
+function dateToStr(date: Date): string {
   return format(date, "yyyy-MM-dd");
 }
 
-function money(value: number) {
-  return `Rs ${value.toFixed(0)}`;
-}
-
+/**
+ * ReportsDashboardContainer
+ *
+ * Responsibilities (ONE):
+ *   - Fetches data from all 4 report APIs.
+ *   - Derives summary values (totals, counts).
+ *   - Composes the full page layout from isolated sub-components.
+ *
+ * It does NOT format money (→ ReportsConstants.UTILS.formatMoney).
+ * It does NOT manage filter UI state (→ ReportsContext).
+ */
 export function ReportsDashboardContainer() {
   const { dateRange } = useReports();
   const from = dateRange.from ? dateToStr(dateRange.from) : undefined;
@@ -42,7 +55,7 @@ export function ReportsDashboardContainer() {
   const profitMargin = profitReport?.profitMargin ?? 0;
   const pendingCustomers = khataReport?.customers ?? [];
   const totalPending = khataReport?.totalPending ?? 0;
-  
+
   const outOfStockCount = lowStockProducts.filter(
     (product) => product.currentStock === 0 || product.stockInBaseUnit <= 0
   ).length;
@@ -63,19 +76,16 @@ export function ReportsDashboardContainer() {
         pendingCustomersCount={pendingCustomers.length}
         lowStockCount={lowStockProducts.length}
         outOfStockCount={outOfStockCount}
-        moneyFormatter={money}
       />
 
       <div className="grid gap-4 md:grid-cols-2">
         <ReportsSalesChart
           isLoading={salesLoading}
           data={salesReport?.data}
-          moneyFormatter={money}
         />
         <ReportsProfitChart
           isLoading={profitLoading}
           data={profitReport?.data}
-          moneyFormatter={money}
         />
       </div>
 
@@ -83,7 +93,6 @@ export function ReportsDashboardContainer() {
         <ReportsKhataContainer
           isLoading={khataLoading}
           customers={pendingCustomers}
-          moneyFormatter={money}
         />
         <ReportsStockContainer
           isLoading={stockLoading}

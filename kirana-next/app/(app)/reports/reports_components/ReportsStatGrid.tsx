@@ -4,6 +4,7 @@ import React from "react";
 import { IndianRupee, TrendingUp, BookOpen, AlertTriangle } from "lucide-react";
 import { ReportsConstants } from "./ReportsConstants";
 import { ReportsStatCard } from "./ReportsStatCard";
+import type { ReportsStatCardDefinition } from "./ReportsTypes";
 
 interface ReportsStatGridProps {
   isLoading: boolean;
@@ -14,7 +15,6 @@ interface ReportsStatGridProps {
   pendingCustomersCount: number;
   lowStockCount: number;
   outOfStockCount: number;
-  moneyFormatter: (val: number) => string;
 }
 
 export function ReportsStatGrid({
@@ -26,13 +26,14 @@ export function ReportsStatGrid({
   pendingCustomersCount,
   lowStockCount,
   outOfStockCount,
-  moneyFormatter,
 }: ReportsStatGridProps) {
-  const statCards = [
+  const { formatMoney } = ReportsConstants.UTILS;
+
+  const statCards: ReportsStatCardDefinition[] = [
     {
       label: ReportsConstants.LABELS.TOTAL_REVENUE,
       sublabel: ReportsConstants.LABELS.SELECTED_PERIOD_SALE,
-      value: moneyFormatter(totalRevenue),
+      value: formatMoney(totalRevenue),
       icon: IndianRupee,
       colorClass: "text-[var(--reports-sale-color)]",
       bgClass: "bg-[var(--reports-sale-bg)]",
@@ -41,7 +42,7 @@ export function ReportsStatGrid({
     {
       label: ReportsConstants.LABELS.TOTAL_PROFIT,
       sublabel: ReportsConstants.LABELS.ESTIMATED_MARGIN,
-      value: moneyFormatter(totalProfit),
+      value: formatMoney(totalProfit),
       note: `${profitMargin.toFixed(1)}% margin`,
       icon: TrendingUp,
       colorClass: "text-[var(--reports-profit-color)]",
@@ -51,7 +52,7 @@ export function ReportsStatGrid({
     {
       label: ReportsConstants.LABELS.PENDING_KHATA,
       sublabel: ReportsConstants.LABELS.CUSTOMER_DUES,
-      value: moneyFormatter(totalPending),
+      value: formatMoney(totalPending),
       note: `${pendingCustomersCount} customers`,
       icon: BookOpen,
       colorClass: "text-[var(--reports-khata-color)]",

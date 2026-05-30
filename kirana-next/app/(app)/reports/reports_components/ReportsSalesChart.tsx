@@ -18,10 +18,10 @@ import type { ReportsSalesData } from "./ReportsTypes";
 interface ReportsSalesChartProps {
   isLoading: boolean;
   data?: ReportsSalesData[];
-  moneyFormatter: (value: number) => string;
 }
 
-export function ReportsSalesChart({ isLoading, data, moneyFormatter }: ReportsSalesChartProps) {
+export function ReportsSalesChart({ isLoading, data }: ReportsSalesChartProps) {
+  const { formatMoney } = ReportsConstants.UTILS;
   return (
     <Card className="bg-[var(--reports-card-bg)] border-[var(--reports-border)]">
       <CardHeader className="pb-2">
@@ -47,7 +47,7 @@ export function ReportsSalesChart({ isLoading, data, moneyFormatter }: ReportsSa
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: "var(--reports-muted-text)", fontSize: 10 }}
-                tickFormatter={(value) => moneyFormatter(Number(value))}
+                tickFormatter={(value) => formatMoney(Number(value))}
               />
               <Tooltip
                 cursor={{ fill: "var(--reports-muted-bg)" }}
@@ -58,7 +58,7 @@ export function ReportsSalesChart({ isLoading, data, moneyFormatter }: ReportsSa
                   fontSize: 12,
                   color: "var(--reports-foreground)"
                 }}
-                formatter={(value) => [moneyFormatter(Number(value)), "Sales"]}
+                formatter={(value) => [formatMoney(Number(value)), "Sales"]}
               />
               <Bar dataKey="sales" fill="var(--reports-primary)" radius={[4, 4, 0, 0]} />
             </BarChart>
