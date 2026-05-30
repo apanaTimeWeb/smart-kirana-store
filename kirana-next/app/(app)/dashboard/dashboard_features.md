@@ -6,7 +6,7 @@
 
 ## 📁 Directory Structure
 
-```
+```text
 app/(app)/dashboard/
 ├── page.tsx                             ← Shell only: CSS import + DashboardProvider + DashboardPageContent
 ├── loading.tsx                          ← Next.js skeleton loading UI (Server Component)
@@ -14,26 +14,32 @@ app/(app)/dashboard/
 ├── dashboard.css                        ← ALL color tokens for this module (single source of truth for theming)
 ├── dashboard_features.md                ← THIS FILE — AI context & architecture map
 │
-└── dashboard_components/
-    ├── DashboardContext.tsx             ← Data layer: fetches dashboard summary, exposes via Context
-    ├── DashboardTypes.ts               ← Central data: all TS types + hardcoded constants (PAYMENT_MODE_LABELS, ITEMS_PER_PAGE)
-    │
-    ├── DashboardPageContent.tsx        ← Full dashboard UI: heading, 5 stat cards, 3 lists
-    ├── DashboardStatCard.tsx           ← Reusable metric card (Sale, Profit, Khata, Low Stock, Expiry)
-    │
-    ├── DashboardRecentBillsList.tsx    ← Card: recent bills list with search + pagination
-    ├── DashboardLowStockList.tsx       ← Card: low-stock products list with search + pagination
-    ├── DashboardExpiringSoonList.tsx   ← Card: expiring-soon products list with search + pagination
-    │
-    ├── DashboardSearchFilter.tsx       ← Reusable search input with magnifier icon (used by all 3 lists)
-    └── DashboardPagination.tsx         ← Reusable prev/next pagination controls (used by all 3 lists)
+├── context/
+│   └── DashboardContext.tsx             ← Data layer: fetches summary, exposes via memoized Context
+├── types/
+│   └── DashboardTypes.ts                ← TypeScript types for the dashboard
+├── constants/
+│   └── DashboardSharedConstants.ts      ← Central data: statically defined UI arrays and hardcoded configurations
+│
+└── components/
+    ├── Layout/
+    │   └── DashboardPageContent.tsx     ← Full dashboard UI: Maps config array to stat cards and places lists
+    ├── StatCards/
+    │   └── DashboardStatCard.tsx        ← Reusable metric card (Sale, Profit, Khata, Low Stock, Expiry)
+    ├── Lists/
+    │   ├── DashboardRecentBillsList.tsx ← Card: recent bills list with search + pagination
+    │   ├── DashboardLowStockList.tsx    ← Card: low-stock products list with search + pagination
+    │   └── DashboardExpiringSoonList.tsx← Card: expiring-soon products list with search + pagination
+    └── Shared/
+        ├── DashboardSearchFilter.tsx    ← Reusable search input with magnifier icon
+        └── DashboardPagination.tsx      ← Reusable prev/next pagination controls
 ```
 
 ---
 
 ## 🧠 State Management: `DashboardContext.tsx`
 
-A minimal Context that calls `useGetDashboardSummary()` (React Query) and exposes the result to all child components. **No prop drilling** — any component calls `useDashboardContext()` directly.
+A minimal Context that calls `useGetDashboardSummary()` (React Query) and exposes the result to all child components. **No prop drilling** — any component calls `useDashboardContext()` directly. The Context value is wrapped in `useMemo` to prevent large re-render chains across the dashboard sub-folders.
 
 | Value | Type | Purpose |
 |---|---|---|
@@ -43,19 +49,22 @@ A minimal Context that calls `useGetDashboardSummary()` (React Query) and expose
 
 ---
 
-## 📦 Centralized Data: `DashboardTypes.ts`
+## 📦 Centralized Data: `DashboardSharedConstants.ts` & `DashboardTypes.ts`
 
 **Single source of truth for all types and hardcoded data.** Tomorrow when backend replaces these, only this file changes.
 
 | Export | Type | Purpose |
 |---|---|---|
+| **`DashboardTypes.ts`** | | |
 | `DashboardStatSummary` | type | Numeric KPIs (sale, profit, khata, stock counts) |
 | `LowStockProduct` | type | Shape of a low-stock product item |
 | `ExpiringProduct` | type | Shape of an expiring product item |
 | `RecentBill` | type | Shape of a recent bill row |
 | `DashboardSummaryData` | type | Union of all above — the full API response shape |
+| **`DashboardSharedConstants.ts`** | | |
 | `DASHBOARD_CONSTANTS` | `const` | `{ ITEMS_PER_PAGE: 5 }` — pagination config |
 | `PAYMENT_MODE_LABELS` | `Record<string, string>` | `{ cash: "Cash", upi: "UPI", khata: "Khata" }` — badge labels |
+| `DASHBOARD_STAT_CARDS_CONFIG` | `const array` | Hardcoded configuration for stat cards, extracting UI logic from components |
 
 ---
 
@@ -132,7 +141,7 @@ All colors are CSS variables here. To port to another project, only change this 
 
 - **Entry**: `page.tsx` — provider shell only (~20 lines).
 - **UI**: `DashboardPageContent.tsx` — all layout, heading, stat cards, lists grid.
-- **Data**: `DashboardContext.tsx` — single fetch, shared via context. Zero prop drilling.
-- **Types/Constants**: `DashboardTypes.ts` — change here only when API integrates.
+- **Data**: `DashboardContext.tsx` — single fetch, shared via context with `useMemo`. Zero prop drilling.
+- **Types/Constants**: `DashboardTypes.ts` & `DashboardSharedConstants.ts` — change here only when API integrates.
 - **Theming**: `dashboard.css` — all color variables. Copy folder to any project, retheme from here.
-- **Reusable micro-components**: `DashboardStatCard`, `DashboardSearchFilter`, `DashboardPagination` — used across multiple list components, no duplication.
+- **Reusable micro-components**: `DashboardStatCard`, `DashboardSearchFilter`, `DashboardPagination` — organized in feature-based sub-folders.

@@ -39,12 +39,4 @@ export type DashboardSummaryData = DashboardStatSummary & {
   expiringProducts?: ExpiringProduct[];
 };
 
-export const DASHBOARD_CONSTANTS = {
-  ITEMS_PER_PAGE: 5,
-} as const;
 
-export const PAYMENT_MODE_LABELS: Record<string, string> = {
-  khata: "Khata",
-  upi: "UPI",
-  cash: "Cash",
-};

@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PackageOpen } from "lucide-react";
-import { useDashboardContext } from "./DashboardContext";
-import { DASHBOARD_CONSTANTS } from "./DashboardTypes";
-import { DashboardSearchFilter } from "./DashboardSearchFilter";
-import { DashboardPagination } from "./DashboardPagination";
+import { useDashboardContext } from "../../context/DashboardContext";
+import { DASHBOARD_CONSTANTS } from "../../constants/DashboardSharedConstants";
+import { DashboardSearchFilter } from "../Shared/DashboardSearchFilter";
+import { DashboardPagination } from "../Shared/DashboardPagination";
 
 export function DashboardLowStockList() {
   const { summary } = useDashboardContext();

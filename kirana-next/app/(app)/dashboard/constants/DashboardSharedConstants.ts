@@ -1,0 +1,80 @@
+import { IndianRupee, TrendingUp, BookOpen, AlertTriangle, Clock } from "lucide-react";
+import { DashboardSummaryData } from "../types/DashboardTypes";
+
+export const DASHBOARD_CONSTANTS = {
+  ITEMS_PER_PAGE: 5,
+} as const;
+
+export const PAYMENT_MODE_LABELS: Record<string, string> = {
+  khata: "Khata",
+  upi: "UPI",
+  cash: "Cash",
+};
+
+export const DASHBOARD_STAT_CARDS_CONFIG = [
+  {
+    id: "sale",
+    title: "आज की बिक्री",
+    subtitle: "Today's Sale",
+    icon: IndianRupee,
+    colorClass: "text-[var(--dashboard-sale-value)]",
+    bgClass: "bg-[var(--dashboard-sale-bg)]",
+    borderClass: "border-[var(--dashboard-sale-border)]",
+    iconColorClass: "text-[var(--dashboard-sale-icon)]",
+    route: "/history",
+    getValue: (summary: DashboardSummaryData) => `₹${(summary?.todaySale ?? 0).toFixed(0)}`,
+    getNote: (summary: DashboardSummaryData) => `${summary?.todayOrderCount ?? 0} orders today`,
+  },
+  {
+    id: "profit",
+    title: "आज का मुनाफा",
+    subtitle: "Today's Profit",
+    icon: TrendingUp,
+    colorClass: "text-[var(--dashboard-profit-value)]",
+    bgClass: "bg-[var(--dashboard-profit-bg)]",
+    borderClass: "border-[var(--dashboard-profit-border)]",
+    iconColorClass: "text-[var(--dashboard-profit-icon)]",
+    route: "/reports",
+    getValue: (summary: DashboardSummaryData) => `₹${(summary?.todayProfit ?? 0).toFixed(0)}`,
+    getNote: (summary: DashboardSummaryData) => undefined,
+  },
+  {
+    id: "khata",
+    title: "उधार बाकी",
+    subtitle: "Pending Khata",
+    icon: BookOpen,
+    colorClass: "text-[var(--dashboard-khata-value)]",
+    bgClass: "bg-[var(--dashboard-khata-bg)]",
+    borderClass: "border-[var(--dashboard-khata-border)]",
+    iconColorClass: "text-[var(--dashboard-khata-icon)]",
+    route: "/khata",
+    getValue: (summary: DashboardSummaryData) => `₹${(summary?.pendingKhataAmount ?? 0).toFixed(0)}`,
+    getNote: (summary: DashboardSummaryData) => `${summary?.pendingKhataCount ?? 0} customers`,
+  },
+  {
+    id: "lowstock",
+    title: "कम स्टॉक",
+    subtitle: "Low Stock Alert",
+    icon: AlertTriangle,
+    colorClass: "text-[var(--dashboard-lowstock-value)]",
+    bgClass: "bg-[var(--dashboard-lowstock-bg)]",
+    borderClass: "border-[var(--dashboard-lowstock-border)]",
+    iconColorClass: "text-[var(--dashboard-lowstock-icon)]",
+    route: "/stock?filter=low",
+    getValue: (summary: DashboardSummaryData) => `${summary?.lowStockCount ?? 0}`,
+    getNote: (summary: DashboardSummaryData) => `${summary?.outOfStockCount ?? 0} out of stock`,
+  },
+  {
+    id: "expiry",
+    title: "एक्सपायरी अलर्ट",
+    subtitle: "Expiring Soon",
+    icon: Clock,
+    colorClass: "text-[var(--dashboard-expiry-value)]",
+    bgClass: "bg-[var(--dashboard-expiry-bg)]",
+    borderClass: "border-[var(--dashboard-expiry-border)]",
+    iconColorClass: "text-[var(--dashboard-expiry-icon)]",
+    route: "/stock?filter=expiring",
+    getValue: (summary: DashboardSummaryData) => `${summary?.expiringProducts?.length || 0}`,
+    getNote: (summary: DashboardSummaryData) => "items expiring in 15 days",
+  }
+];

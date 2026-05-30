@@ -5,10 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ShoppingBag } from "lucide-react";
-import { useDashboardContext } from "./DashboardContext";
-import { DASHBOARD_CONSTANTS, PAYMENT_MODE_LABELS } from "./DashboardTypes";
-import { DashboardSearchFilter } from "./DashboardSearchFilter";
-import { DashboardPagination } from "./DashboardPagination";
+import { useDashboardContext } from "../../context/DashboardContext";
+import { DASHBOARD_CONSTANTS, PAYMENT_MODE_LABELS } from "../../constants/DashboardSharedConstants";
+import { DashboardSearchFilter } from "../Shared/DashboardSearchFilter";
+import { DashboardPagination } from "../Shared/DashboardPagination";
 
 export function DashboardRecentBillsList() {
   const { summary } = useDashboardContext();
