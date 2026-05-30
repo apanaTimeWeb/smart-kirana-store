@@ -46,7 +46,7 @@ export function HistoryBillList() {
 
       <div className="space-y-3">
         {filteredBills.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground bg-card rounded-lg border border-dashed">
+          <div className="flex flex-col items-center justify-center py-12 text-[var(--history-muted-text)] bg-[var(--history-card-bg)] rounded-lg border border-[var(--history-border)] border-dashed">
             <FileText className="h-10 w-10 mb-2 opacity-20" />
             <p>Koi bill nahi mila.</p>
           </div>
@@ -54,7 +54,7 @@ export function HistoryBillList() {
           filteredBills.map((bill: HistoryBill) => (
             <Card 
               key={bill.id} 
-              className="cursor-pointer hover:border-primary/50 transition-colors"
+              className="cursor-pointer bg-[var(--history-card-bg)] text-[var(--history-card-text)] border-[var(--history-border)] hover:border-[var(--history-primary-border)] transition-colors"
               onClick={() => openBillDetails(bill)}
             >
               <CardContent className="p-4 flex items-center justify-between">
@@ -65,7 +65,7 @@ export function HistoryBillList() {
                       {bill.paymentMode.toUpperCase()}
                     </span>
                   </div>
-                  <div className="text-xs text-muted-foreground mb-1">
+                  <div className="text-xs text-[var(--history-muted-text)] mb-1">
                     {format(new Date(bill.createdAt), "dd MMM yyyy, hh:mm a")}
                   </div>
                   {bill.customerName && (
@@ -79,11 +79,11 @@ export function HistoryBillList() {
                     <div className="font-bold text-base text-[var(--history-primary-text)]">
                       {formatMoney(bill.finalAmount)}
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-[var(--history-muted-text)]">
                       {bill.items.length} items
                     </div>
                   </div>
-                  <ChevronRight className="h-5 w-5 text-muted-foreground opacity-50" />
+                  <ChevronRight className="h-5 w-5 text-[var(--history-muted-text)] opacity-50" />
                 </div>
               </CardContent>
             </Card>

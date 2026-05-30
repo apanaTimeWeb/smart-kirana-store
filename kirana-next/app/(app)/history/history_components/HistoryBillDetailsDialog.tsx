@@ -101,7 +101,7 @@ export function HistoryBillDetailsDialog() {
             </div>
             <div>
               <h2 className="text-xl font-bold">Return Successful</h2>
-              <p className="text-muted-foreground mt-1 text-sm">
+              <p className="text-[var(--history-muted-text)] mt-1 text-sm">
                 Stock aur Khata (agar applicable) adjust ho gaye hain.
               </p>
             </div>
@@ -129,14 +129,14 @@ export function HistoryBillDetailsDialog() {
           </div>
         ) : (
           <>
-            <DialogHeader className="p-4 md:p-5 border-b bg-muted/30 shrink-0">
+            <DialogHeader className="p-4 md:p-5 border-b border-[var(--history-border)] bg-[var(--history-muted-bg)] shrink-0">
               <DialogTitle className="flex justify-between items-center">
                 <span>Bill #{selectedBill.id} Details</span>
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${HISTORY_PAYMENT_MODE_STYLES[selectedBill.paymentMode] || HISTORY_PAYMENT_MODE_STYLES.cash}`}>
                   {selectedBill.paymentMode.toUpperCase()}
                 </span>
               </DialogTitle>
-              <div className="text-xs text-muted-foreground mt-1">
+              <div className="text-xs text-[var(--history-muted-text)] mt-1">
                 {format(new Date(selectedBill.createdAt), "dd MMM yyyy, hh:mm a")}
                 {selectedBill.customerName && ` • 👤 ${selectedBill.customerName}`}
               </div>
@@ -151,7 +151,7 @@ export function HistoryBillDetailsDialog() {
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center justify-between border-b pb-2 gap-2">
+                <div className="flex items-center justify-between border-b border-[var(--history-border)] pb-2 gap-2">
                   <h3 className="font-semibold text-sm whitespace-nowrap">Purchased Items</h3>
                   <HistorySearchFilter 
                     placeholder="Search items..." 
@@ -166,7 +166,7 @@ export function HistoryBillDetailsDialog() {
                   item.productName?.toLowerCase().includes(searchQuery.toLowerCase()) || 
                   item.variantName?.toLowerCase().includes(searchQuery.toLowerCase())
                 ).length === 0 ? (
-                  <div className="text-center py-4 text-xs text-muted-foreground">Koi item nahi mila</div>
+                  <div className="text-center py-4 text-xs text-[var(--history-muted-text)]">Koi item nahi mila</div>
                 ) : (
                 selectedBill.items
                   .filter(item => 
@@ -180,12 +180,12 @@ export function HistoryBillDetailsDialog() {
                   const currentReturnVal = returnQtys[item.productId] ?? "";
 
                   return (
-                    <div key={idx} className="flex items-center justify-between py-2 border-b last:border-0 border-dashed">
+                    <div key={idx} className="flex items-center justify-between py-2 border-b border-[var(--history-border)] last:border-0 border-dashed">
                       <div className="flex-1 min-w-0 pr-3">
                         <p className="font-medium text-sm truncate" title={item.productName || item.variantName}>
-                          {item.productName} {item.variantName && <span className="text-muted-foreground text-xs">({item.variantName})</span>}
+                          {item.productName} {item.variantName && <span className="text-[var(--history-muted-text)] text-xs">({item.variantName})</span>}
                         </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
+                        <p className="text-xs text-[var(--history-muted-text)] mt-0.5">
                           {item.displayQuantity || `${item.quantity} ${item.unit || 'pcs'}`} x {currency} {item.unitPrice}
                         </p>
                         {previousReturnQty > 0 && (
@@ -202,7 +202,7 @@ export function HistoryBillDetailsDialog() {
                         </div>
                         {maxReturnable > 0 ? (
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] text-muted-foreground">Return Qty:</span>
+                            <span className="text-[10px] text-[var(--history-muted-text)]">Return Qty:</span>
                             <Input 
                               type="text" 
                               inputMode="numeric"
@@ -214,7 +214,7 @@ export function HistoryBillDetailsDialog() {
                             />
                           </div>
                         ) : (
-                          <div className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-sm mt-1">
+                          <div className="text-[10px] text-[var(--history-muted-text)] bg-[var(--history-muted-bg)] px-2 py-0.5 rounded-sm mt-1">
                             Fully Returned
                           </div>
                         )}
@@ -226,7 +226,7 @@ export function HistoryBillDetailsDialog() {
 
               <div className="pt-2">
                 <div className="flex justify-between items-center text-sm mb-1">
-                  <span className="text-muted-foreground">Original Total:</span>
+                  <span className="text-[var(--history-muted-text)]">Original Total:</span>
                   <span>{currency} {selectedBill.finalAmount}</span>
                 </div>
                 {hasReturns && (
@@ -238,7 +238,7 @@ export function HistoryBillDetailsDialog() {
               </div>
             </div>
 
-            <div className="p-4 border-t bg-card shrink-0 flex gap-2 flex-wrap sm:flex-nowrap">
+            <div className="p-4 border-t border-[var(--history-border)] bg-[var(--history-card-bg)] shrink-0 flex gap-2 flex-wrap sm:flex-nowrap">
               <Button variant="outline" className="flex-1 min-w-[80px]" onClick={() => printHistoryReceipt(currentBill, currency, settings)}>
                 <Printer className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">Print</span>
               </Button>

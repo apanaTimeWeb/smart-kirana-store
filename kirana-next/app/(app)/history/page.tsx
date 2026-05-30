@@ -12,7 +12,7 @@ export default function HistoryPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Bill History & Returns</h1>
-          <p className="text-muted-foreground text-sm">Purane bills dekhein aur items return karein.</p>
+          <p className="text-[var(--history-muted-text)] text-sm">Purane bills dekhein aur items return karein.</p>
         </div>
         
         <div>

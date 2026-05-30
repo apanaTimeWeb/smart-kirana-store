@@ -23,6 +23,12 @@
 
     --history-returned-item: hsl(215 16% 47%);
     --history-refund-amount: hsl(var(--destructive));
+
+    --history-card-bg: hsl(var(--card, 0 0% 100%));
+    --history-card-text: hsl(var(--card-foreground, 222.2 84% 4.9%));
+    --history-muted-bg: hsl(var(--muted, 210 40% 96.1%));
+    --history-muted-text: hsl(var(--muted-foreground, 215.4 16.3% 46.9%));
+    --history-border: hsl(var(--border, 214.3 31.8% 91.4%));
   }
 
   .dark {
@@ -49,6 +55,12 @@
 
     --history-returned-item: hsl(215 16% 65%);
     --history-refund-amount: hsl(0 84% 65%);
+
+    --history-card-bg: hsl(var(--card, 222.2 84% 4.9%));
+    --history-card-text: hsl(var(--card-foreground, 210 40% 98%));
+    --history-muted-bg: hsl(var(--muted, 217.2 32.6% 17.5%));
+    --history-muted-text: hsl(var(--muted-foreground, 215 20.2% 65.1%));
+    --history-border: hsl(var(--border, 217.2 32.6% 17.5%));
   }
 }
 
