@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen } from "lucide-react";
-import { ReportsConstants } from "./ReportsConstants";
-import type { ReportsKhataCustomer } from "./ReportsTypes";
+import { ReportsConstants } from "../../constants/ReportsSharedConstants";
+import type { ReportsKhataCustomer } from "../../types/ReportsTypes";
 import { ReportsKhataItem } from "./ReportsKhataItem";
 import { ReportsKhataSearchInput } from "./ReportsKhataSearchInput";
 import { ReportsKhataSkeletonList } from "./ReportsKhataSkeletonList";
 import { ReportsKhataEmptyState } from "./ReportsKhataEmptyState";
-import { ReportsPagination } from "./ReportsPagination";
+import { ReportsPagination } from "../Shared/ReportsPagination";
 
 interface ReportsKhataContainerProps {
   isLoading: boolean;

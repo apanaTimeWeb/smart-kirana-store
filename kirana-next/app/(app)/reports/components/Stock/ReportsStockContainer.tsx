@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
-import { ReportsConstants } from "./ReportsConstants";
-import type { ReportsProduct } from "./ReportsTypes";
+import { ReportsConstants } from "../../constants/ReportsSharedConstants";
+import type { ReportsProduct } from "../../types/ReportsTypes";
 import { ReportsStockItem } from "./ReportsStockItem";
 import { ReportsStockSearchInput } from "./ReportsStockSearchInput";
 import { ReportsStockSkeletonList } from "./ReportsStockSkeletonList";
 import { ReportsStockEmptyState } from "./ReportsStockEmptyState";
-import { ReportsPagination } from "./ReportsPagination";
+import { ReportsPagination } from "../Shared/ReportsPagination";
 
 interface ReportsStockContainerProps {
   isLoading: boolean;

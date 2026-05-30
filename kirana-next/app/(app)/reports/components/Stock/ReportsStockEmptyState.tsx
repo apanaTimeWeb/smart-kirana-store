@@ -1,6 +1,6 @@
 import React from "react";
 import { AlertTriangle } from "lucide-react";
-import { ReportsConstants } from "./ReportsConstants";
+import { ReportsConstants } from "../../constants/ReportsSharedConstants";
 
 /**
  * ReportsStockEmptyState

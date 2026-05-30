@@ -1,6 +1,6 @@
 import "./reports.css";
-import { ReportsProvider } from "./reports_components/ReportsContext";
-import { ReportsDashboardContainer } from "./reports_components/ReportsDashboardContainer";
+import { ReportsProvider } from "./context/ReportsContext";
+import { ReportsDashboardContainer } from "./components/Dashboard/ReportsDashboardContainer";
 
 export default function Reports() {
   return (

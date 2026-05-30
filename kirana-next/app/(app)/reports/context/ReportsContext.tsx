@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useMemo, ReactNode } from "react";
 import type { DateRange } from "react-day-picker";
 import { subDays } from "date-fns";
 
@@ -21,15 +21,18 @@ export function ReportsProvider({ children }: { children: ReactNode }) {
   });
   const [calOpen, setCalOpen] = useState(false);
 
+  const value = useMemo(
+    () => ({
+      dateRange,
+      setDateRange,
+      calOpen,
+      setCalOpen,
+    }),
+    [dateRange, calOpen]
+  );
+
   return (
-    <ReportsContext.Provider
-      value={{
-        dateRange,
-        setDateRange,
-        calOpen,
-        setCalOpen,
-      }}
-    >
+    <ReportsContext.Provider value={value}>
       {children}
     </ReportsContext.Provider>
   );

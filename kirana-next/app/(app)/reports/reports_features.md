@@ -6,57 +6,57 @@
 
 ---
 
-## 📁 Directory Structure
+## 📁 Directory Structure (Feature-Based Micro-Modularization)
 
 ```
 app/(app)/reports/
-├── page.tsx                                       ← Root Server Component: ReportsProvider + ReportsDashboardContainer
+├── page.tsx                                       ← Root Server Component
 ├── loading.tsx                                    ← Next.js skeleton loading UI (Server Component)
 ├── error.tsx                                      ← Next.js error boundary (Client Component, "use client")
 ├── reports.css                                    ← ALL color tokens for this module (single source for theming)
 ├── reports_features.md                            ← THIS FILE — AI context & architecture map
 │
-└── reports_components/
+├── constants/
+│   └── ReportsSharedConstants.ts                  ← ALL strings, labels, pagination config, formatMoney util
+│
+├── context/
+│   └── ReportsContext.tsx                         ← Module state: dateRange + calOpen (memoized context provider)
+│
+├── types/
+│   └── ReportsTypes.ts                            ← All TypeScript interfaces for this module
+│
+└── components/
     │
-    │── ── DATA & STATE ─────────────────────────────────────────────────────
-    ├── ReportsContext.tsx                         ← Module state: dateRange + calOpen (only shared UI state)
-    ├── ReportsConstants.ts                        ← ALL strings, labels, pagination config, formatMoney util
-    ├── ReportsTypes.ts                            ← All TypeScript interfaces for this module
+    ├── Dashboard/                                 ← Core overview components and charts
+    │   ├── ReportsDashboardContainer.tsx          ← Fetches all 4 APIs, derives summary values, composes layout
+    │   ├── ReportsHeader.tsx                      ← Static title + subtitle row
+    │   ├── ReportsDatePicker.tsx                  ← Date range popover with calendar + quick-date preset buttons
+    │   ├── ReportsStatGrid.tsx                    ← Builds 4 card definitions, maps to ReportsStatCard
+    │   ├── ReportsStatCard.tsx                    ← One metric card: label, value, icon, themed colors
+    │   ├── ReportsSalesChart.tsx                  ← Bar chart (recharts): daily sales trend
+    │   └── ReportsProfitChart.tsx                 ← Area chart (recharts): profit trend with gradient fill
     │
-    │── ── DASHBOARD ────────────────────────────────────────────────────────
-    ├── ReportsDashboardContainer.tsx              ← Fetches all 4 APIs, derives summary values, composes layout
-    ├── ReportsHeader.tsx                          ← Static title + subtitle row
-    ├── ReportsDatePicker.tsx                      ← Date range popover with calendar + quick-date preset buttons
+    ├── Khata/                                     ← Pending Khata feature
+    │   ├── ReportsKhataContainer.tsx              ← Smart container: search state + pagination + composition
+    │   ├── ReportsKhataSearchInput.tsx            ← Search input field for the Pending Udhaar list
+    │   ├── ReportsKhataSkeletonList.tsx           ← 3 skeleton rows shown while khata API is loading
+    │   ├── ReportsKhataEmptyState.tsx             ← "Koi udhaar nahi" icon + message (zero results)
+    │   └── ReportsKhataItem.tsx                   ← One customer row: name, phone, total due amount
     │
-    │── ── STAT CARDS ───────────────────────────────────────────────────────
-    ├── ReportsStatGrid.tsx                        ← Builds 4 card definitions, maps to ReportsStatCard
-    ├── ReportsStatCard.tsx                        ← One metric card: label, value, icon, themed colors
+    ├── Stock/                                     ← Low Stock feature
+    │   ├── ReportsStockContainer.tsx              ← Smart container: search state + pagination + composition
+    │   ├── ReportsStockSearchInput.tsx            ← Search input field for the Low Stock list
+    │   ├── ReportsStockSkeletonList.tsx           ← 3 skeleton rows shown while stock API is loading
+    │   ├── ReportsStockEmptyState.tsx             ← "Sab stock sahi" icon + message (zero results)
+    │   └── ReportsStockItem.tsx                   ← One product row: name, category, stock badge
     │
-    │── ── CHARTS ───────────────────────────────────────────────────────────
-    ├── ReportsSalesChart.tsx                      ← Bar chart (recharts): daily sales trend
-    ├── ReportsProfitChart.tsx                     ← Area chart (recharts): profit trend with gradient fill
-    │
-    │── ── KHATA SECTION ────────────────────────────────────────────────────
-    ├── ReportsKhataContainer.tsx                  ← Smart container: search state + pagination + composition
-    ├── ReportsKhataSearchInput.tsx                ← Search input field for the Pending Udhaar list
-    ├── ReportsKhataSkeletonList.tsx               ← 3 skeleton rows shown while khata API is loading
-    ├── ReportsKhataEmptyState.tsx                 ← "Koi udhaar nahi" icon + message (zero results)
-    ├── ReportsKhataItem.tsx                       ← One customer row: name, phone, total due amount
-    │
-    │── ── STOCK SECTION ────────────────────────────────────────────────────
-    ├── ReportsStockContainer.tsx                  ← Smart container: search state + pagination + composition
-    ├── ReportsStockSearchInput.tsx                ← Search input field for the Low Stock list
-    ├── ReportsStockSkeletonList.tsx               ← 3 skeleton rows shown while stock API is loading
-    ├── ReportsStockEmptyState.tsx                 ← "Sab stock sahi" icon + message (zero results)
-    ├── ReportsStockItem.tsx                       ← One product row: name, category, stock badge
-    │
-    │── ── SHARED ───────────────────────────────────────────────────────────
-    └── ReportsPagination.tsx                      ← Prev/Next pagination bar shared by both list containers
+    └── Shared/                                    ← Shared UI components across features
+        └── ReportsPagination.tsx                  ← Prev/Next pagination bar shared by both list containers
 ```
 
 ---
 
-## 🧠 State Management: `ReportsContext.tsx`
+## 🧠 State Management: `context/ReportsContext.tsx`
 
 **Only two cross-component state values live here** — date range and calendar open/close.
 Everything else (search queries, pagination page numbers) is local state inside the container components.
@@ -68,20 +68,22 @@ Everything else (search queries, pagination page numbers) is local state inside 
 | `dateRange` | `DateRange` | The selected from/to date range — drives all 4 API queries |
 | `calOpen` | `boolean` | Controls the date picker popover open/close state |
 
+*Note: The context provider uses `useMemo` to prevent massive re-render chains across the sub-folders.*
+
 ### What does NOT live in Context:
 
 - API data (`salesReport`, `profitReport`, `khataReport`, `lowStockProducts`) — fetched by TanStack Query in `ReportsDashboardContainer`
 - Search query for khata/stock — local `useState` inside each Container
 - Pagination page number — local `useState` inside each Container
-- Money formatter — pure function exported from `ReportsConstants.UTILS`, not state at all
+- Money formatter — pure function exported from `ReportsSharedConstants.UTILS`, not state at all
 
 ---
 
-## 📦 Centralized Data: `ReportsConstants.ts` + `ReportsTypes.ts`
+## 📦 Centralized Data: `constants/ReportsSharedConstants.ts`
 
 **Single source of truth for ALL data in this module.** When the backend replaces hardcoded values with API calls, only these files change — zero UI component edits required.
 
-### `ReportsConstants.ts` — All hardcoded data and utilities
+### `ReportsSharedConstants.ts` — All hardcoded data and utilities
 
 | Key Path | Purpose |
 |---|---|
@@ -102,7 +104,7 @@ Everything else (search queries, pagination page numbers) is local state inside 
 | `PAGINATION.ITEMS_PER_PAGE` | Items per page for both Khata and Stock lists (currently `5`) |
 | `UTILS.formatMoney` | Pure function: `(value: number) => "Rs 1234"` — used by all money displays |
 
-### `ReportsTypes.ts` — TypeScript interfaces
+### `types/ReportsTypes.ts` — TypeScript interfaces
 
 | Interface | Purpose |
 |---|---|
@@ -184,38 +186,17 @@ User types in ReportsStockSearchInput
 
 ---
 
-## ⚠️ Known Gotchas (Fixed)
-
-> These issues were found during the enterprise audit and have been resolved. Documented here to prevent regression.
-
-1. **`page.tsx` had `"use client"` unnecessarily.**
-   In Next.js App Router, Server Components CAN render Client Components — the client boundary belongs in the children (`ReportsContext.tsx`). Adding `"use client"` to `page.tsx` prevents Next.js from server-rendering the page shell. **Fixed: removed `"use client"` from `page.tsx`.**
-
-2. **`money()` formatter was defined locally in `ReportsDashboardContainer` and prop-drilled 4 levels deep.**
-   It was passed as `moneyFormatter` to `ReportsStatGrid`, `ReportsSalesChart`, `ReportsProfitChart`, and `ReportsKhataContainer` — which passed it further to `ReportsKhataItem`. This created a 4-level prop chain for a pure utility function. **Fixed: moved to `ReportsConstants.UTILS.formatMoney`; all components import directly.**
-
-3. **`itemsPerPage = 5` was hardcoded in two separate containers.**
-   `ReportsKhataContainer` and `ReportsStockContainer` each had `const itemsPerPage = 5` as a magic number. **Fixed: consolidated to `ReportsConstants.PAGINATION.ITEMS_PER_PAGE`.**
-
-4. **`ReportsKhataContainer` and `ReportsStockContainer` each had 3 responsibilities.**
-   Search input JSX, skeleton loading JSX, and empty state JSX were all inlined. Each violated One Component, One Responsibility. **Fixed: extracted 6 new micro-components (2 search inputs, 2 skeleton lists, 2 empty states).**
-
-5. **`ReportsTypes.ts` was missing key interfaces.**
-   The `statCards` array in `ReportsStatGrid` used anonymous object types. `QUICK_DATES` in constants had no matching type. **Fixed: added `ReportsStatCardDefinition` and `ReportsQuickDate` to `ReportsTypes.ts`.**
-
----
-
 ## 🚀 Future Enhancements
 
 | Feature | Where to Touch | Notes |
 |---|---|---|
 | **Export Reports as PDF** | New `ReportsPdfExport.ts` | Pure function; zero UI changes. Add button in `ReportsHeader.tsx` |
 | **CSV Export** | New `ReportsCsvExport.ts` | Same pattern as PDF |
-| **Change items per page** | `ReportsConstants.PAGINATION.ITEMS_PER_PAGE` | One number to change; affects both Khata and Stock lists |
-| **Backend API for currency format** | `ReportsConstants.UTILS.formatMoney` | One function to swap; zero UI edits |
+| **Change items per page** | `ReportsSharedConstants.PAGINATION.ITEMS_PER_PAGE` | One number to change; affects both Khata and Stock lists |
+| **Backend API for currency format** | `ReportsSharedConstants.UTILS.formatMoney` | One function to swap; zero UI edits |
 | **Add expense tracking to profit** | `ReportsDashboardContainer.tsx` | New API hook + pass to `ReportsProfitChart` |
 | **Sales breakdown by category** | New `ReportsSalesByCategoryChart.tsx` | Add to dashboard grid; zero other file changes |
-| **Multi-language support** | `ReportsConstants.TEXTS` | All strings centralized; swap to i18n object tomorrow |
+| **Multi-language support** | `ReportsSharedConstants.TEXTS` | All strings centralized; swap to i18n object tomorrow |
 | **User-configurable date default** | `ReportsContext.tsx` | Change the `subDays(today, 14)` default; one place only |
 | **Khata customer click → navigate** | `ReportsKhataItem.tsx` | Add `onClick` + `useRouter`; touch only this file |
 
@@ -223,10 +204,10 @@ User types in ReportsStockSearchInput
 
 ## 📌 Quick Handover Summary
 
-- **Brain**: `ReportsContext.tsx` — only `dateRange` and `calOpen`. No prop drilling anywhere.
-- **Data**: `ReportsTypes.ts` (interfaces) + `ReportsConstants.ts` (strings, pagination, formatMoney). One place to swap in API data tomorrow.
+- **Brain**: `context/ReportsContext.tsx` — only `dateRange` and `calOpen`. Proper `useMemo` implemented.
+- **Data**: `types/ReportsTypes.ts` (interfaces) + `constants/ReportsSharedConstants.ts` (strings, pagination, formatMoney). One place to swap in API data tomorrow.
 - **Theming**: `reports.css` — all CSS variables with light + dark mode. Copy this folder to any project and theme from here only.
 - **API layer**: `ReportsDashboardContainer` is the only file that calls APIs. All data flows down via props.
 - **Charts**: `recharts` library. When modifying charts, refer to recharts docs for `XAxis`, `YAxis`, `Tooltip` props.
 - **Lists**: Both Khata and Stock sections follow identical patterns — Container (owns state) → SearchInput + SkeletonList + EmptyState + Item.
-- **Architecture**: 21 component files, each with exactly ONE responsibility. To fix any bug, identify the one file from this map and provide only that file to an AI.
+- **Architecture**: 21 component files, structured into distinct feature sub-folders. To fix any bug, identify the exact feature folder and provide only the necessary micro-file to an AI.

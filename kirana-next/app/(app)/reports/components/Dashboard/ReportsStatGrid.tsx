@@ -2,9 +2,9 @@
 
 import React from "react";
 import { IndianRupee, TrendingUp, BookOpen, AlertTriangle } from "lucide-react";
-import { ReportsConstants } from "./ReportsConstants";
+import { ReportsConstants } from "../../constants/ReportsSharedConstants";
 import { ReportsStatCard } from "./ReportsStatCard";
-import type { ReportsStatCardDefinition } from "./ReportsTypes";
+import type { ReportsStatCardDefinition } from "../../types/ReportsTypes";
 
 interface ReportsStatGridProps {
   isLoading: boolean;

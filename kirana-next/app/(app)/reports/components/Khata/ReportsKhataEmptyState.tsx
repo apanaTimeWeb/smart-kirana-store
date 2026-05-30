@@ -1,6 +1,6 @@
 import React from "react";
 import { BookOpen } from "lucide-react";
-import { ReportsConstants } from "./ReportsConstants";
+import { ReportsConstants } from "../../constants/ReportsSharedConstants";
 
 /**
  * ReportsKhataEmptyState

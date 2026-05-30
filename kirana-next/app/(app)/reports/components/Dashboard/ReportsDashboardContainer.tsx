@@ -8,15 +8,15 @@ import {
   useGetProfitReport,
   useGetSalesReport,
 } from "@/lib/api";
-import { useReports } from "./ReportsContext";
-import { ReportsConstants } from "./ReportsConstants";
+import { useReports } from "../../context/ReportsContext";
+import { ReportsConstants } from "../../constants/ReportsSharedConstants";
 import { ReportsHeader } from "./ReportsHeader";
 import { ReportsDatePicker } from "./ReportsDatePicker";
 import { ReportsStatGrid } from "./ReportsStatGrid";
 import { ReportsSalesChart } from "./ReportsSalesChart";
 import { ReportsProfitChart } from "./ReportsProfitChart";
-import { ReportsKhataContainer } from "./ReportsKhataContainer";
-import { ReportsStockContainer } from "./ReportsStockContainer";
+import { ReportsKhataContainer } from "../Khata/ReportsKhataContainer";
+import { ReportsStockContainer } from "../Stock/ReportsStockContainer";
 
 /**
  * Converts a Date object to "yyyy-MM-dd" string for API query params.

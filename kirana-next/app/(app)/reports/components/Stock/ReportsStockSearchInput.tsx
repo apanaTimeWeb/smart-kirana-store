@@ -3,7 +3,7 @@
 import React from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { ReportsConstants } from "./ReportsConstants";
+import { ReportsConstants } from "../../constants/ReportsSharedConstants";
 
 interface ReportsStockSearchInputProps {
   value: string;

@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { ReportsConstants } from "./ReportsConstants";
-import type { ReportsKhataCustomer } from "./ReportsTypes";
+import { ReportsConstants } from "../../constants/ReportsSharedConstants";
+import type { ReportsKhataCustomer } from "../../types/ReportsTypes";
 
 interface ReportsKhataItemProps {
   customer: ReportsKhataCustomer;
