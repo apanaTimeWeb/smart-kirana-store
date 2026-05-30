@@ -10,22 +10,24 @@
 
 ## 🏗 Architecture Overview
 
-This module follows a strict **"One File, One Component"** rule for extreme AI-isolation. It is designed so that tomorrow if an AI needs to fix a bug in the creator dialog's price fields, you hand it **exactly one file** (`StockProductCreatorPriceFields.tsx`) and the risk of hallucination breaking other components is zero.
+This module follows a strict **"One File, One Component"** rule for extreme AI-isolation. It is designed so that tomorrow if an AI needs to fix a bug in the creator dialog's price fields, you hand it **exactly one file** (`Dialogs/ProductCreator/StockProductCreatorPriceFields.tsx`) and the risk of hallucination breaking other components is zero.
 
-### Two-Tier State Architecture
+The directory is micro-modularized into feature-based subfolders.
 
-```
+### State Architecture (Contexts Folder)
+
+```text
 ┌─────────────────────────────────────────────────────────┐
-│  StockContext.tsx          (Module-level state)          │
+│  Contexts/StockContext.tsx         (Module-level state) │
 │  • Product list (API)      • Search / Filter             │
 │  • Pagination              • Modal open/close toggles    │
 │  • CRUD mutations          • Stats                       │
 ├─────────────────────────────────────────────────────────┤
-│  StockProductCreatorContext.tsx  (Dialog-local state)    │
+│  Contexts/StockProductCreatorContext.tsx (Dialog-local)  │
 │  • 15 form fields           • Validation + errors        │
 │  • Derived values (cfg)     • Submit + reset handlers    │
 ├─────────────────────────────────────────────────────────┤
-│  StockEditVariantDialogContext.tsx (Dialog-local state)  │
+│  Contexts/StockEditVariantDialogContext.tsx (Dialog-local)│
 │  • Draft (VariantDraft)     • patchDraft handler         │
 │  • Unit change auto-wire    • isLoss / margin / errors   │
 └─────────────────────────────────────────────────────────┘
@@ -46,77 +48,85 @@ This module follows a strict **"One File, One Component"** rule for extreme AI-i
 
 ---
 
-### 🟨 Data Layer — Single Source of Truth
+### 🟨 Shared Layer — Data, Types & Utilities (stock_components/Shared)
 
 | File | Purpose |
 |---|---|
-| `StockConstants.ts` | All static data: `UNITS`, `BASE_UNITS`, `MODE_LABEL`, `MODE_CLASS`, `UNIT_CONFIG`, `UNIT_GROUPS`, `STOCK_FILTER_OPTIONS`, **`STOCK_STAT_ITEMS`** (stat card definitions), `STOCK_DEFAULT_CATEGORY`, `STOCK_DEFAULT_LOW_STOCK_ALERT`. **Tomorrow's backend replaces these constants.** |
+| `StockSharedConstants.ts` | All static data: `UNITS`, `BASE_UNITS`, `MODE_LABEL`, `MODE_CLASS`, `UNIT_CONFIG`, `UNIT_GROUPS`, `STOCK_FILTER_OPTIONS`, `STOCK_STAT_ITEMS`, `STOCK_DEFAULT_CATEGORY`, `STOCK_DEFAULT_LOW_STOCK_ALERT`. **Tomorrow's backend replaces these constants.** |
 | `StockTypes.ts` | All TypeScript types: `SellingTypeKey`, `ProductFilter`, `VariantDraft`, `ProductDraft`, `StockStatItem`, `StockProductCreatorFormState`. |
 | `StockUtils.ts` | **Pure utility functions only** (no business logic): `uid`, `numberValue`, `defaultBaseUnit`, `defaultBaseQuantity`, `defaultPresetsFor`, `formatBaseUnits`, `variantDraft`, `toInput`. |
-| `StockDraftTemplates.ts` | **Business logic**: `emptyDraft()` and `buildTemplate()` for constructing default VariantDraft shapes. Separated from StockUtils because this logic may be replaced by an API call. |
-
----
-
-### 🟩 Module-Level State
-
-| File | Purpose |
-|---|---|
-| `StockContext.tsx` | React Context for module-wide state. Contains: product list (from `useListProducts`), search, filter, pagination, modal open/close flags, CRUD mutations (create, update, delete, purchase), and computed stats. Every UI component reads from this. |
-
----
-
-### 🟧 Layout & Display Components
-
-| File | Purpose |
-|---|---|
-| `StockMainLayout.tsx` | Orchestrator: renders all top-level components in order. No logic. |
-| `StockHeader.tsx` | Page title + "Purchase Entry" and "Naya Product" action buttons. |
-| `StockStatsGrid.tsx` | 4 stat cards (Variants, Khula, Quick Billing, Low/Out). Card definitions come from `STOCK_STAT_ITEMS` in constants. |
-| `StockSearchBar.tsx` | Product name/shortcut search input. |
-| `StockFilterBar.tsx` | Filter pill buttons (All, Out, Low, In Stock, etc.). Options come from `STOCK_FILTER_OPTIONS` in constants. |
+| `StockDraftTemplates.ts` | **Business logic**: `emptyDraft()` and `buildTemplate()` for constructing default VariantDraft shapes. |
 | `StockBadge.tsx` | Stock status badge (OK / Low / Out) shown in table rows and mobile cards. |
-| `StockPagination.tsx` | Previous/Next page controls + page info. Supports `compact` mode for mobile. |
+| `StockUnitSelector.tsx` | Reusable searchable unit dropdown (Popover + Command). Used by creator, edit dialog, and extra variant rows. |
 
 ---
 
-### 🟫 Table & Mobile List
+### 🟩 State Management (stock_components/Contexts)
 
 | File | Purpose |
 |---|---|
-| `StockMainTable.tsx` | Desktop table (hidden on mobile). Renders `StockTableRow` for each paginated product. |
-| `StockTableRow.tsx` | Single row in the desktop table: product name, variant, mode badge, conversion, stock, rates, status badge, edit/delete actions. |
-| `StockMobileList.tsx` | Mobile card list (hidden on desktop). Renders `StockMobileCard` for each paginated product. |
-| `StockMobileCard.tsx` | Single card in the mobile list: name, variant, stock, sell price, mode, edit/delete actions. |
+| `StockContext.tsx` | React Context for module-wide state. Contains: product list, search, filter, pagination, modal toggles, mutations. |
+| `StockProductCreatorContext.tsx` | Owns all 15 form state fields + derived values + handlers for the Product Creator. |
+| `StockEditVariantDialogContext.tsx` | Syncs `draft` from the editing product, owns `patchDraft`, `handleUnitChange`, derived values, and `handleSave`. |
 
 ---
 
-### 🟥 Product Creator Dialog — 9 Files
+### 🟧 Layout & Dashboard (stock_components/Layout & stock_components/Dashboard)
 
-> **Context**: `StockProductCreatorContext.tsx` — owns ALL creator form state.
+| File | Purpose |
+|---|---|
+| `Layout/StockMainLayout.tsx` | Orchestrator: renders all top-level components in order. No logic. |
+| `Layout/StockHeader.tsx` | Page title + "Purchase Entry" and "Naya Product" action buttons. |
+| `Dashboard/StockStatsGrid.tsx` | 4 stat cards (Variants, Khula, Quick Billing, Low/Out). |
+
+---
+
+### 🟪 Search & Filter (stock_components/SearchAndFilter)
+
+| File | Purpose |
+|---|---|
+| `StockSearchBar.tsx` | Product name/shortcut search input. |
+| `StockFilterBar.tsx` | Filter pill buttons (All, Out, Low, In Stock, etc.). |
+
+---
+
+### 🟫 Table & Mobile View (stock_components/Table & stock_components/Mobile)
+
+| File | Purpose |
+|---|---|
+| `Table/StockMainTable.tsx` | Desktop table (hidden on mobile). Renders `StockTableRow` for each paginated product. |
+| `Table/StockTableRow.tsx` | Single row in the desktop table. |
+| `Table/StockPagination.tsx` | Previous/Next page controls + page info. |
+| `Mobile/StockMobileList.tsx` | Mobile card list (hidden on desktop). Renders `StockMobileCard` for each paginated product. |
+| `Mobile/StockMobileCard.tsx` | Single card in the mobile list: name, variant, stock, sell price, mode, edit/delete actions. |
+
+---
+
+### 🟥 Product Creator Dialog (stock_components/Dialogs/ProductCreator)
+
 > **Entry Point**: `StockProductCreator.tsx` — renders Dialog shell + sub-components.
 
 | File | Responsibility |
 |---|---|
-| `StockProductCreatorContext.tsx` | Owns all 15 form state fields + derived values (`cfg`, `variantName`, `isValid`, `errors`) + handlers (`handleUnitChange`, `addExtraVariant`, `handleSubmit`, `reset`). |
-| `StockProductCreator.tsx` | Dialog shell (~80 lines). Wraps `StockProductCreatorProvider` + composes sub-components inside the Dialog. |
+| `StockProductCreator.tsx` | Dialog shell (~80 lines). Wraps `StockProductCreatorProvider` + composes sub-components. |
 | `StockProductCreatorNameField.tsx` | "Product Name" labeled input with validation message. Triggers submit on Enter. |
 | `StockProductCreatorUnitField.tsx` | Unit selector + auto-wired pills (Base, Conversion, Mode). |
 | `StockProductCreatorPriceFields.tsx` | 2-column Buy Price + Sell Price grid. |
 | `StockProductCreatorIdentitySection.tsx` | "Product Identity" card: Variant Name override, Category, Brand, Keywords, Shortcut Key. |
-| `StockProductCreatorStockPricingSection.tsx` | "Stock & Pricing Extras" card: MRP, Opening Stock (with base unit hint), Low Stock Alert, Expiry Date, Quick Select toggle. |
-| `StockProductCreatorExtraVariantsSection.tsx` | "Extra Variants / Packs" section: Add Pack button + list of `StockExtraVariantRow` components. |
+| `StockProductCreatorStockPricingSection.tsx` | "Stock & Pricing Extras" card: MRP, Opening Stock, Low Stock Alert, Expiry Date, Quick Select toggle. |
+| `StockProductCreatorExtraVariantsSection.tsx` | "Extra Variants / Packs" section: Add Pack button + list of `StockExtraVariantRow`. |
+| `StockExtraVariantRow.tsx` | Single extra variant/pack row inside the creator. Fully controlled via `onUpdate`/`onRemove` props. |
+| `StockLivePreview.tsx` | Reusable live margin/loss preview card. Used inside the creator dialog. |
 | `StockProductCreatorFooter.tsx` | Fixed footer: validation errors banner + variant count summary + Cancel/Save buttons. |
 
 ---
 
-### 🟪 Edit Variant Dialog — 7 Files
+### 🟪 Edit Variant Dialog (stock_components/Dialogs/EditVariantDialog)
 
-> **Context**: `StockEditVariantDialogContext.tsx` — owns the `draft` state and all edit logic.
 > **Entry Point**: `StockEditVariantDialog.tsx` — renders Dialog shell + sub-components.
 
 | File | Responsibility |
 |---|---|
-| `StockEditVariantDialogContext.tsx` | Syncs `draft` from the editing product (useEffect), owns `patchDraft`, `handleUnitChange`, derived values (`isLoss`, `margin`, `errors`), and `handleSave`. |
 | `StockEditVariantDialog.tsx` | Dialog shell (~60 lines). Wraps `StockEditVariantDialogProvider` + composes sub-components. |
 | `StockEditVariantDialogNameExpiryRow.tsx` | 2-column top row: "Size Name" (required) + "Expiry Date" (optional). |
 | `StockEditVariantDialogUnitSection.tsx` | Unit selector + auto-wired pills (identical behaviour to creator's unit field). |
@@ -126,13 +136,13 @@ This module follows a strict **"One File, One Component"** rule for extreme AI-i
 
 ---
 
-### 🔵 Purchase Entry Dialog — 5 Files
+### 🔵 Purchase Entry Dialog (stock_components/Dialogs/PurchaseDialog)
 
 > **No dedicated context** — the purchase form has only 5 local fields, so state is managed in the parent component and passed as props (one clean level).
 
 | File | Responsibility |
 |---|---|
-| `StockPurchaseDialog.tsx` | Manages 5 local fields, composes sub-components, calls `purchase()` from `StockContext` on submit. |
+| `StockPurchaseDialog.tsx` | Manages 5 local fields, composes sub-components, calls `purchase()` from `StockContext`. |
 | `StockPurchaseDialogProductSelector.tsx` | "Product variant" dropdown — reads `allProducts` from StockContext. |
 | `StockPurchaseDialogQuantityRateFields.tsx` | 2-column Qty + New Purchase Rate inputs. |
 | `StockPurchaseDialogSupplierExpiryFields.tsx` | Supplier (Khata) dropdown (fetches suppliers internally) + Expiry Date input. |
@@ -140,27 +150,17 @@ This module follows a strict **"One File, One Component"** rule for extreme AI-i
 
 ---
 
-### 🟤 Shared Form Widgets
-
-| File | Purpose |
-|---|---|
-| `StockUnitSelector.tsx` | Reusable searchable unit dropdown (Popover + Command). Used by creator, edit dialog, and extra variant rows. |
-| `StockLivePreview.tsx` | Reusable live margin/loss preview card. Used inside the creator dialog. |
-| `StockExtraVariantRow.tsx` | Single extra variant/pack row inside the creator. Fully controlled via `onUpdate`/`onRemove` props. |
-
----
-
 ## 🔑 Key Design Decisions
 
 ### Why TWO context files for the creator?
 
-`StockContext` is module-level and shared by all ~25 components. The creator dialog has 15 local `useState` fields. Without a dedicated context, `StockProductCreator.tsx` would have had to prop-drill all 15 values down to 8 child components — creating a brittle prop chain.
+`StockContext` is module-level and shared by all components. The creator dialog has 15 local `useState` fields. Without a dedicated context, `StockProductCreator.tsx` would have had to prop-drill all 15 values down to 8 child components — creating a brittle prop chain.
 
 Solution: `StockProductCreatorContext` is scoped strictly inside the creator dialog tree. It does not affect or pollute the module-level `StockContext` at all.
 
-### Why no context for PurchaseDialog?
+### Theme Independence
 
-5 fields is too small to justify a context. A context adds ~30 lines of boilerplate. The parent component passes state as props — only one level deep, which is clean and perfectly maintainable.
+All hardcoded Tailwind utility colors (like `text-primary`, `bg-card`) have been replaced by CSS variables `var(--stock-...)` stored centrally in `stock.css`. This module can be dragged and dropped into a completely different project, and themed entirely from that single CSS file.
 
 ### Why is `page.tsx` a Server Component?
 
@@ -172,10 +172,10 @@ Solution: `StockProductCreatorContext` is scoped strictly inside the creator dia
 
 | Feature | Where to change |
 |---|---|
-| Replace hardcoded filter options with API | `StockConstants.ts` → `STOCK_FILTER_OPTIONS` |
-| Replace hardcoded stat cards with API | `StockConstants.ts` → `STOCK_STAT_ITEMS` |
+| Replace hardcoded filter options with API | `StockSharedConstants.ts` → `STOCK_FILTER_OPTIONS` |
+| Replace hardcoded stat cards with API | `StockSharedConstants.ts` → `STOCK_STAT_ITEMS` |
 | Replace default product templates with API | `StockDraftTemplates.ts` → `emptyDraft()` |
-| Replace unit config with API | `StockConstants.ts` → `UNIT_CONFIG`, `UNIT_GROUPS` |
+| Replace unit config with API | `StockSharedConstants.ts` → `UNIT_CONFIG`, `UNIT_GROUPS` |
 | Bulk CSV/Excel upload | New file: `StockBulkUploadDialog.tsx` + context |
 | Stock movement history view | New file: `StockMovementHistoryPanel.tsx` |
 | Master product info editing | New file: `StockEditMasterProductDialog.tsx` |
