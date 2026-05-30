@@ -1,8 +1,8 @@
 /*
- * stock.css � Products Feature Color Tokens
+ * stock.css - Products Feature Color Tokens
  *
  * All colors for the Products page live here.
- * Usage in JSX: className="[color:var(--stock-purchase-rate)]"
+ * Usage in JSX: className=[color:var(--stock-purchase-rate)]
  */
 
 @layer components {
@@ -83,6 +83,89 @@
     --stock-mode-wholesale-bg:       hsl(285 35% 96%);
     --stock-mode-wholesale-text:     hsl(285 44% 34%);
     --stock-mode-wholesale-border:   hsl(285 35% 78%);
+
+    /* ── Creator Dialog ──────────────────────────────────────────── */
+
+    /* Header — uses brand teal per color_code.md */
+    --stock-creator-header-bg:           hsl(var(--card));
+    --stock-creator-header-icon-from:    hsl(var(--primary));       /* teal brand */
+    --stock-creator-header-icon-to:      hsl(174 72% 25%);          /* teal-dark */
+    --stock-creator-header-title:        hsl(var(--foreground));
+    --stock-creator-header-subtitle:     hsl(var(--muted-foreground));
+
+    /* Body */
+    --stock-creator-body-bg:             hsl(var(--background));    /* warm white */
+    --stock-creator-label-text:          hsl(var(--foreground));    /* primary text — always visible */
+    --stock-creator-input-bg:            hsl(var(--card));
+    --stock-creator-input-border:        hsl(var(--border));
+    --stock-creator-input-focus-border:  hsl(var(--primary));       /* teal focus ring */
+    --stock-creator-divider-text:        hsl(var(--muted-foreground));
+
+    /* Unit Buttons — Packet (blue — used for purchase/info per color_code.md) */
+    --stock-creator-unit-packet-active-bg:       hsl(220 70% 96%);
+    --stock-creator-unit-packet-active-border:   hsl(220 70% 60%);
+    --stock-creator-unit-packet-active-text:     hsl(220 70% 34%);
+    --stock-creator-unit-packet-active-icon:     hsl(220 70% 90%);
+    --stock-creator-unit-packet-dot:             hsl(220 70% 55%);
+    --stock-creator-unit-packet-inactive-bg:     hsl(var(--card));
+    --stock-creator-unit-packet-inactive-border: hsl(var(--border));
+    --stock-creator-unit-packet-inactive-text:   hsl(var(--muted-foreground));
+
+    /* Unit Buttons — Khula (amber — warning/khata palette) */
+    --stock-creator-unit-khula-active-bg:      hsl(38 90% 95%);
+    --stock-creator-unit-khula-active-border:  hsl(38 90% 55%);
+    --stock-creator-unit-khula-active-text:    hsl(38 90% 34%);
+    --stock-creator-unit-khula-active-icon:    hsl(38 90% 88%);
+    --stock-creator-unit-khula-dot:            hsl(38 90% 50%);
+
+    /* Unit Buttons — Bora/Bulk (purple — wholesale) */
+    --stock-creator-unit-bora-active-bg:       hsl(285 35% 96%);
+    --stock-creator-unit-bora-active-border:   hsl(285 44% 55%);
+    --stock-creator-unit-bora-active-text:     hsl(285 44% 34%);
+    --stock-creator-unit-bora-active-icon:     hsl(285 35% 88%);
+    --stock-creator-unit-bora-dot:             hsl(285 44% 50%);
+
+    /* Bora Conversion Box */
+    --stock-creator-bora-box-bg:      hsl(285 35% 96%);
+    --stock-creator-bora-box-border:  hsl(285 35% 78%);
+    --stock-creator-bora-box-title:   hsl(285 44% 28%);
+    --stock-creator-bora-box-text:    hsl(285 44% 45%);
+    --stock-creator-bora-icon-bg:     hsl(285 35% 88%);
+    --stock-creator-bora-icon-text:   hsl(285 44% 45%);
+    --stock-creator-bora-unit-bg:     hsl(285 35% 88%);
+    --stock-creator-bora-unit-text:   hsl(285 44% 34%);
+
+    /* Sell Price Field — teal soft highlight (brand color) */
+    --stock-creator-sell-input-border: hsl(174 72% 65%);            /* teal-300 */
+    --stock-creator-sell-input-bg:     hsl(174 72% 97%);            /* teal-50 */
+
+    /* Margin Badge — green=profit, red=loss per color_code.md */
+    --stock-creator-margin-profit-bg:     hsl(142 60% 95%);
+    --stock-creator-margin-profit-border: hsl(142 60% 74%);
+    --stock-creator-margin-profit-text:   hsl(142 60% 28%);
+    --stock-creator-margin-loss-bg:       hsl(0 76% 96%);
+    --stock-creator-margin-loss-border:   hsl(0 76% 82%);
+    --stock-creator-margin-loss-text:     hsl(var(--destructive));
+
+    /* Optional Section */
+    --stock-creator-optional-border:      hsl(var(--border));
+    --stock-creator-optional-header-text: hsl(var(--muted-foreground));
+    --stock-creator-optional-body-bg:     hsl(var(--card));
+
+    /* Footer */
+    --stock-creator-footer-bg:            hsl(var(--card));
+    --stock-creator-footer-border:        hsl(var(--border));
+    --stock-creator-error-bg:             hsl(0 76% 96%);
+    --stock-creator-error-border:         hsl(0 76% 82%);
+    --stock-creator-error-text:           hsl(var(--destructive));
+    --stock-creator-error-dot:            hsl(0 76% 60%);
+
+    /* Save Button — teal primary per color_code.md */
+    --stock-creator-save-btn-bg:          hsl(var(--primary));      /* teal brand */
+    --stock-creator-save-btn-hover:       hsl(174 72% 28%);         /* teal-dark */
+    --stock-creator-save-btn-text:        hsl(var(--primary-foreground)); /* white */
+    --stock-creator-save-btn-disabled-bg: hsl(var(--muted));
+    --stock-creator-save-btn-disabled-text: hsl(var(--muted-foreground));
   }
 
   .dark {
@@ -138,6 +221,56 @@
     --stock-mode-wholesale-bg:       hsl(285 35% 15%);
     --stock-mode-wholesale-text:     hsl(285 35% 60%);
     --stock-mode-wholesale-border:   hsl(285 35% 30%);
+
+    /* ── Creator Dialog (dark overrides) ──────────────────────────── */
+    --stock-creator-body-bg:             hsl(var(--background));
+    --stock-creator-label-text:          hsl(var(--foreground));
+
+    --stock-creator-unit-packet-active-bg:       hsl(220 70% 15%);
+    --stock-creator-unit-packet-active-border:   hsl(220 70% 45%);
+    --stock-creator-unit-packet-active-text:     hsl(220 70% 70%);
+    --stock-creator-unit-packet-active-icon:     hsl(220 70% 22%);
+    --stock-creator-unit-packet-dot:             hsl(220 70% 60%);
+    --stock-creator-unit-packet-inactive-bg:     hsl(var(--card));
+    --stock-creator-unit-packet-inactive-border: hsl(var(--border));
+    --stock-creator-unit-packet-inactive-text:   hsl(var(--muted-foreground));
+
+    --stock-creator-unit-khula-active-bg:      hsl(38 90% 12%);
+    --stock-creator-unit-khula-active-border:  hsl(38 90% 40%);
+    --stock-creator-unit-khula-active-text:    hsl(38 90% 70%);
+    --stock-creator-unit-khula-active-icon:    hsl(38 90% 18%);
+    --stock-creator-unit-khula-dot:            hsl(38 90% 55%);
+
+    --stock-creator-unit-bora-active-bg:       hsl(285 35% 15%);
+    --stock-creator-unit-bora-active-border:   hsl(285 44% 45%);
+    --stock-creator-unit-bora-active-text:     hsl(285 35% 70%);
+    --stock-creator-unit-bora-active-icon:     hsl(285 35% 22%);
+    --stock-creator-unit-bora-dot:             hsl(285 44% 60%);
+
+    --stock-creator-bora-box-bg:      hsl(285 35% 13%);
+    --stock-creator-bora-box-border:  hsl(285 35% 30%);
+    --stock-creator-bora-box-title:   hsl(285 35% 80%);
+    --stock-creator-bora-box-text:    hsl(285 35% 60%);
+    --stock-creator-bora-icon-bg:     hsl(285 35% 22%);
+    --stock-creator-bora-icon-text:   hsl(285 35% 65%);
+    --stock-creator-bora-unit-bg:     hsl(285 35% 22%);
+    --stock-creator-bora-unit-text:   hsl(285 35% 70%);
+
+    /* Sell price highlight — teal dark mode */
+    --stock-creator-sell-input-border: hsl(174 72% 30%);
+    --stock-creator-sell-input-bg:     hsl(174 72% 10%);
+
+    --stock-creator-margin-profit-bg:     hsl(142 60% 12%);
+    --stock-creator-margin-profit-border: hsl(142 60% 28%);
+    --stock-creator-margin-profit-text:   hsl(142 60% 55%);
+    --stock-creator-margin-loss-bg:       hsl(0 76% 13%);
+    --stock-creator-margin-loss-border:   hsl(0 76% 28%);
+    --stock-creator-margin-loss-text:     hsl(0 62% 65%);
+
+    --stock-creator-error-bg:             hsl(0 76% 13%);
+    --stock-creator-error-border:         hsl(0 76% 28%);
+    --stock-creator-error-text:           hsl(0 62% 65%);
+    --stock-creator-error-dot:            hsl(0 62% 55%);
   }
 
 }
