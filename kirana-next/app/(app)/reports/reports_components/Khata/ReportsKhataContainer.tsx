@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen } from "lucide-react";
-import { ReportsConstants } from "../../constants/ReportsSharedConstants";
-import type { ReportsKhataCustomer } from "../../types/ReportsTypes";
+import { ReportsConstants } from "../../reports_constants/ReportsSharedConstants";
+import type { ReportsKhataCustomer } from "../../reports_types/ReportsTypes";
 import { ReportsKhataItem } from "./ReportsKhataItem";
 import { ReportsKhataSearchInput } from "./ReportsKhataSearchInput";
 import { ReportsKhataSkeletonList } from "./ReportsKhataSkeletonList";

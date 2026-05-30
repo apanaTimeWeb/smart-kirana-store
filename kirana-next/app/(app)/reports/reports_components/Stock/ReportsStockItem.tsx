@@ -3,8 +3,8 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { ReportsConstants } from "../../constants/ReportsSharedConstants";
-import type { ReportsProduct } from "../../types/ReportsTypes";
+import { ReportsConstants } from "../../reports_constants/ReportsSharedConstants";
+import type { ReportsProduct } from "../../reports_types/ReportsTypes";
 
 interface ReportsStockItemProps {
   product: ReportsProduct;

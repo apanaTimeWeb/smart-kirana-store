@@ -3,7 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { ReportsConstants } from "../../constants/ReportsSharedConstants";
+import { ReportsConstants } from "../../reports_constants/ReportsSharedConstants";
 
 interface ReportsPaginationProps {
   currentPage: number;

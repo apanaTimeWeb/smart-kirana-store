@@ -8,8 +8,8 @@ import {
   useGetProfitReport,
   useGetSalesReport,
 } from "@/lib/api";
-import { useReports } from "../../context/ReportsContext";
-import { ReportsConstants } from "../../constants/ReportsSharedConstants";
+import { useReports } from "../../reports_context/ReportsContext";
+import { ReportsConstants } from "../../reports_constants/ReportsSharedConstants";
 import { ReportsHeader } from "./ReportsHeader";
 import { ReportsDatePicker } from "./ReportsDatePicker";
 import { ReportsStatGrid } from "./ReportsStatGrid";

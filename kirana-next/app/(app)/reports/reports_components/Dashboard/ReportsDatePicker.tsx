@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { useReports } from "../../context/ReportsContext";
-import { ReportsConstants } from "../../constants/ReportsSharedConstants";
+import { useReports } from "../../reports_context/ReportsContext";
+import { ReportsConstants } from "../../reports_constants/ReportsSharedConstants";
 
 export function ReportsDatePicker() {
   const { dateRange, setDateRange, calOpen, setCalOpen } = useReports();

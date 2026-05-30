@@ -12,8 +12,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { ReportsConstants } from "../../constants/ReportsSharedConstants";
-import type { ReportsProfitData } from "../../types/ReportsTypes";
+import { ReportsConstants } from "../../reports_constants/ReportsSharedConstants";
+import type { ReportsProfitData } from "../../reports_types/ReportsTypes";
 
 interface ReportsProfitChartProps {
   isLoading: boolean;

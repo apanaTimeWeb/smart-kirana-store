@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ReportsConstants } from "../../constants/ReportsSharedConstants";
+import { ReportsConstants } from "../../reports_constants/ReportsSharedConstants";
 
 export function ReportsHeader() {
   return (

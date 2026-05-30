@@ -16,16 +16,16 @@ app/(app)/reports/
 ├── reports.css                                    ← ALL color tokens for this module (single source for theming)
 ├── reports_features.md                            ← THIS FILE — AI context & architecture map
 │
-├── constants/
+├── reports_constants/
 │   └── ReportsSharedConstants.ts                  ← ALL strings, labels, pagination config, formatMoney util
 │
-├── context/
+├── reports_context/
 │   └── ReportsContext.tsx                         ← Module state: dateRange + calOpen (memoized context provider)
 │
-├── types/
+├── reports_types/
 │   └── ReportsTypes.ts                            ← All TypeScript interfaces for this module
 │
-└── components/
+└── reports_components/
     │
     ├── Dashboard/                                 ← Core overview components and charts
     │   ├── ReportsDashboardContainer.tsx          ← Fetches all 4 APIs, derives summary values, composes layout
@@ -56,7 +56,7 @@ app/(app)/reports/
 
 ---
 
-## 🧠 State Management: `context/ReportsContext.tsx`
+## 🧠 State Management: `reports_context/ReportsContext.tsx`
 
 **Only two cross-component state values live here** — date range and calendar open/close.
 Everything else (search queries, pagination page numbers) is local state inside the container components.
@@ -79,7 +79,7 @@ Everything else (search queries, pagination page numbers) is local state inside 
 
 ---
 
-## 📦 Centralized Data: `constants/ReportsSharedConstants.ts`
+## 📦 Centralized Data: `reports_constants/ReportsSharedConstants.ts`
 
 **Single source of truth for ALL data in this module.** When the backend replaces hardcoded values with API calls, only these files change — zero UI component edits required.
 
@@ -104,7 +104,7 @@ Everything else (search queries, pagination page numbers) is local state inside 
 | `PAGINATION.ITEMS_PER_PAGE` | Items per page for both Khata and Stock lists (currently `5`) |
 | `UTILS.formatMoney` | Pure function: `(value: number) => "Rs 1234"` — used by all money displays |
 
-### `types/ReportsTypes.ts` — TypeScript interfaces
+### `reports_types/ReportsTypes.ts` — TypeScript interfaces
 
 | Interface | Purpose |
 |---|---|
@@ -204,8 +204,8 @@ User types in ReportsStockSearchInput
 
 ## 📌 Quick Handover Summary
 
-- **Brain**: `context/ReportsContext.tsx` — only `dateRange` and `calOpen`. Proper `useMemo` implemented.
-- **Data**: `types/ReportsTypes.ts` (interfaces) + `constants/ReportsSharedConstants.ts` (strings, pagination, formatMoney). One place to swap in API data tomorrow.
+- **Brain**: `reports_context/ReportsContext.tsx` — only `dateRange` and `calOpen`. Proper `useMemo` implemented.
+- **Data**: `reports_types/ReportsTypes.ts` (interfaces) + `reports_constants/ReportsSharedConstants.ts` (strings, pagination, formatMoney). One place to swap in API data tomorrow.
 - **Theming**: `reports.css` — all CSS variables with light + dark mode. Copy this folder to any project and theme from here only.
 - **API layer**: `ReportsDashboardContainer` is the only file that calls APIs. All data flows down via props.
 - **Charts**: `recharts` library. When modifying charts, refer to recharts docs for `XAxis`, `YAxis`, `Tooltip` props.
