@@ -12,14 +12,14 @@ import { getListCustomersQueryKey } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
-interface CustomerPickerProps {
+interface BillingCustomerSelectorProps {
   customers: Customer[];
   value: string;
   onChange: (id: string) => void;
   required?: boolean;
 }
 
-export function CustomerPicker({ customers, value, onChange, required }: CustomerPickerProps) {
+export function BillingCustomerSelector({ customers, value, onChange, required }: BillingCustomerSelectorProps) {
   const [addOpen, setAddOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -57,9 +57,10 @@ export function CustomerPicker({ customers, value, onChange, required }: Custome
               role="combobox"
               aria-expanded={open}
               className={cn(
-                "flex-1 justify-between text-left font-normal px-3",
-                !value && "text-muted-foreground",
-                required && !value && "border-[var(--billing-picker-required-border)] bg-[var(--billing-picker-required-bg)] text-foreground"
+                "flex-1 justify-between text-left font-normal px-3 border-[var(--billing-border)] bg-[var(--billing-background-bg)]",
+                !value && "text-[var(--billing-muted-text)]",
+                required && !value && "border-[var(--billing-picker-required-border)] bg-[var(--billing-picker-required-bg)] text-[var(--billing-foreground-text)]",
+                value && "text-[var(--billing-foreground-text)]"
               )}
             >
               <span className="truncate">
@@ -92,7 +93,7 @@ export function CustomerPicker({ customers, value, onChange, required }: Custome
                         )}
                       />
                       {customer.name}{" "}
-                      {customer.totalDue > 0 ? <span className="ml-1 text-destructive">(Due Rs {customer.totalDue.toFixed(0)})</span> : ""}
+                      {customer.totalDue > 0 ? <span className="ml-1 text-[var(--billing-destructive-text)]">(Due Rs {customer.totalDue.toFixed(0)})</span> : ""}
                     </CommandItem>
                   ))}
                 </CommandGroup>
@@ -105,29 +106,33 @@ export function CustomerPicker({ customers, value, onChange, required }: Custome
           type="button"
           variant="outline"
           size="icon"
+          className="border-[var(--billing-border)] bg-[var(--billing-background-bg)] text-[var(--billing-foreground-text)]"
           onClick={() => setAddOpen((open) => !open)}
         >
-          {addOpen ? <X className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
+          {addOpen ? <X className="h-4 w-4" /> : <UserPlus className="h-4 w-4 text-[var(--billing-picker-new-icon)]" />}
         </Button>
       </div>
 
       {addOpen && (
-        <div className="grid gap-2 rounded-lg border bg-card p-3">
+        <div className="grid gap-2 rounded-lg border border-[var(--billing-border)] bg-[var(--billing-card-bg)] p-3">
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Customer name"
+            className="border-[var(--billing-border)] bg-[var(--billing-background-bg)]"
           />
           <Input
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="Phone"
+            className="border-[var(--billing-border)] bg-[var(--billing-background-bg)]"
           />
           <Button
             type="button"
             size="sm"
             onClick={addCustomer}
             disabled={createCustomer.isPending}
+            className="bg-[var(--billing-primary-bg)] text-[var(--billing-primary-foreground)] hover:opacity-90"
           >
             {createCustomer.isPending ? "Saving..." : "Customer Save"}
           </Button>

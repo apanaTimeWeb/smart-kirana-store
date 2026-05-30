@@ -3,7 +3,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-interface MobileBillingViewProps {
+interface BillingMobileResponsiveLayoutProps {
   mobileTab: "products" | "cart";
   setMobileTab: (tab: "products" | "cart") => void;
   cartCount: number;
@@ -12,25 +12,25 @@ interface MobileBillingViewProps {
   cartPanel: React.ReactNode;
 }
 
-export function MobileBillingView({
+export function BillingMobileResponsiveLayout({
   mobileTab,
   setMobileTab,
   cartCount,
   finalAmount,
   productGrid,
   cartPanel,
-}: MobileBillingViewProps) {
+}: BillingMobileResponsiveLayoutProps) {
   return (
     <div className="flex h-[calc(100dvh-3.5rem-4rem)] flex-col gap-3 md:hidden">
       {/* Tab bar */}
-      <div className="flex shrink-0 gap-1 rounded-lg border bg-[var(--billing-tab-bar-bg)] p-1">
+      <div className="flex shrink-0 gap-1 rounded-lg border border-[var(--billing-border)] bg-[var(--billing-tab-bar-bg)] p-1">
         <button
           onClick={() => setMobileTab("products")}
           className={cn(
             "flex-1 rounded-md py-2 text-sm font-bold",
             mobileTab === "products"
               ? "bg-[var(--billing-tab-active-bg)] text-[var(--billing-tab-active-text)] shadow-sm"
-              : "text-[var(--billing-tab-inactive-text)]"
+              : "text-[var(--billing-tab-inactive-text)] hover:bg-[var(--billing-muted-bg)]"
           )}
         >
           Products
@@ -41,7 +41,7 @@ export function MobileBillingView({
             "flex-1 rounded-md py-2 text-sm font-bold",
             mobileTab === "cart"
               ? "bg-[var(--billing-tab-active-bg)] text-[var(--billing-tab-active-text)] shadow-sm"
-              : "text-[var(--billing-tab-inactive-text)]"
+              : "text-[var(--billing-tab-inactive-text)] hover:bg-[var(--billing-muted-bg)]"
           )}
         >
           Cart {cartCount > 0 ? `(${cartCount})` : ""}

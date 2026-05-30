@@ -14,11 +14,11 @@ import {
 } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { type BillData, type BillingFilter, type CartItem } from "./types";
-import { defaultPresetsFor, formatBaseUnits, lineLabel, priceForBaseQuantity, uniqueNumbers } from "./utils";
-import { buildWhatsAppMessage, printThermalBill } from "./whatsapp-utils";
+import type { BillData, BillingFilter, CartItem } from "./BillingTypes";
+import { defaultPresetsFor, formatBaseUnits, lineLabel, priceForBaseQuantity, uniqueNumbers } from "./BillingUtils";
+import { buildWhatsAppMessage, printThermalBill } from "./BillingWhatsAppUtils";
 
-export function useBilling() {
+export function useBillingState() {
   const { data: products = [], isLoading } = useListProducts();
   const { data: customers = [] } = useListCustomers();
   const { data: settings } = useGetSettings();

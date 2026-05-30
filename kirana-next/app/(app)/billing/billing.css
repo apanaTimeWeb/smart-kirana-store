@@ -13,6 +13,19 @@
 @layer components {
 
   :root {
+    /* ── Standard Theme Mappings ──────────────────────────────── */
+    --billing-primary:                  hsl(var(--primary));
+    --billing-primary-foreground:       hsl(var(--primary-foreground));
+    --billing-primary-bg:               hsl(var(--primary));
+    --billing-muted-bg:                 hsl(var(--muted));
+    --billing-muted-text:               hsl(var(--muted-foreground));
+    --billing-card-bg:                  hsl(var(--card));
+    --billing-background-bg:            hsl(var(--background));
+    --billing-foreground-text:          hsl(var(--foreground));
+    --billing-destructive-text:         hsl(var(--destructive));
+    --billing-border:                   hsl(var(--border));
+    --billing-destructive-bg:           hsl(var(--destructive));
+
     /* ── Product Grid ─────────────────────────────────────────── */
     --billing-product-price:            hsl(var(--primary));          /* selling price on product card */
     --billing-product-in-cart-bg:       hsl(174 25% 95%);             /* teal-50 — card bg when in cart */

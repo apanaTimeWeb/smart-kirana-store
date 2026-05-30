@@ -1,5 +1,5 @@
-import { type Product } from "@/lib/api";
-import { type CartItem } from "./types";
+import type { Product } from "@/lib/api";
+import type { CartItem } from "./BillingTypes";
 
 // ─── Stock / Unit Formatting ───────────────────────────────────────────────────
 

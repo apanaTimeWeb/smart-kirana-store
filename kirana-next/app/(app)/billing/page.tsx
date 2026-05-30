@@ -2,19 +2,19 @@
 
 import "./billing.css";
 import React from "react";
-import { useBilling } from "./billing_components/use-billing";
-import { ProductGrid } from "./billing_components/ProductGrid";
-import { CartPanel } from "./billing_components/CartPanel";
-import { MobileBillingView } from "./billing_components/MobileBillingView";
-import { KhulaPicker } from "./billing_components/KhulaPicker";
-import { WhatsAppDialog } from "./billing_components/WhatsAppDialog";
-import { printThermalBill } from "./billing_components/whatsapp-utils";
+import { useBillingState } from "./billing_components/BillingStateHook";
+import { BillingProductMainGrid } from "./billing_components/BillingProductMainGrid";
+import { BillingCartMainPanel } from "./billing_components/BillingCartMainPanel";
+import { BillingMobileResponsiveLayout } from "./billing_components/BillingMobileResponsiveLayout";
+import { BillingLooseItemQuantityPicker } from "./billing_components/BillingLooseItemQuantityPicker";
+import { BillingWhatsAppInvoiceDialog } from "./billing_components/BillingWhatsAppInvoiceDialog";
+import { printThermalBill } from "./billing_components/BillingWhatsAppUtils";
 
 export default function Billing() {
-  const billing = useBilling();
+  const billing = useBillingState();
 
   const productGrid = (
-    <ProductGrid
+    <BillingProductMainGrid
       products={billing.filteredProducts}
       quickProducts={billing.quickProducts}
       isLoading={billing.isLoading}
@@ -33,7 +33,7 @@ export default function Billing() {
   );
 
   const cartPanel = (
-    <CartPanel
+    <BillingCartMainPanel
       cart={billing.cart}
       customers={billing.customers}
       discount={billing.discount}
@@ -71,7 +71,7 @@ export default function Billing() {
       </div>
 
       {/* ── Mobile layout ──────────────────────────────────────────── */}
-      <MobileBillingView
+      <BillingMobileResponsiveLayout
         mobileTab={billing.mobileTab}
         setMobileTab={billing.setMobileTab}
         cartCount={billing.cartCount}
@@ -81,14 +81,14 @@ export default function Billing() {
       />
 
       {/* ── Dialogs ────────────────────────────────────────────────── */}
-      <KhulaPicker
+      <BillingLooseItemQuantityPicker
         product={billing.khulaProduct}
         open={Boolean(billing.khulaProduct)}
         onOpenChange={(open) => !open && billing.setKhulaProduct(null)}
         onAdd={billing.addKhula}
       />
 
-      <WhatsAppDialog
+      <BillingWhatsAppInvoiceDialog
         billData={billing.whatsappBillData}
         shopName={billing.shopName}
         shopAddress={billing.settings?.shopAddress}

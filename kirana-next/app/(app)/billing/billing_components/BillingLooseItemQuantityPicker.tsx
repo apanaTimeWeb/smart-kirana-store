@@ -4,17 +4,17 @@ import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { type Product } from "@/lib/api";
-import { formatBaseUnits, priceForBaseQuantity, rateUnit, defaultPresetsFor, uniqueNumbers } from "./utils";
+import type { Product } from "@/lib/api";
+import { formatBaseUnits, priceForBaseQuantity, rateUnit, defaultPresetsFor, uniqueNumbers } from "./BillingUtils";
 
-interface KhulaPickerProps {
+interface BillingLooseItemQuantityPickerProps {
   product: Product | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAdd: (product: Product, baseQuantity: number) => void;
 }
 
-export function KhulaPicker({ product, open, onOpenChange, onAdd }: KhulaPickerProps) {
+export function BillingLooseItemQuantityPicker({ product, open, onOpenChange, onAdd }: BillingLooseItemQuantityPickerProps) {
   const [custom, setCustom] = useState("");
 
   if (!product) return null;
@@ -33,14 +33,14 @@ export function KhulaPicker({ product, open, onOpenChange, onAdd }: KhulaPickerP
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md bg-[var(--billing-card-bg)] border-[var(--billing-border)]">
         <DialogHeader>
-          <DialogTitle>{product.productName} - Khula</DialogTitle>
+          <DialogTitle className="text-[var(--billing-foreground-text)]">{product.productName} - Khula</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="rounded-lg border bg-[var(--billing-khula-rate-bg)] p-3">
-            <p className="text-sm text-muted-foreground">Rate</p>
+          <div className="rounded-lg border border-[var(--billing-border)] bg-[var(--billing-khula-rate-bg)] p-3">
+            <p className="text-sm text-[var(--billing-muted-text)]">Rate</p>
             <p className="text-2xl font-extrabold text-[var(--billing-product-price)]">
               Rs {product.sellingPrice} / {rateUnit(product)}
             </p>
@@ -52,11 +52,11 @@ export function KhulaPicker({ product, open, onOpenChange, onAdd }: KhulaPickerP
                 key={baseQuantity}
                 type="button"
                 variant="outline"
-                className="h-14 flex-col gap-0"
+                className="h-14 flex-col gap-0 border-[var(--billing-border)] bg-[var(--billing-background-bg)] text-[var(--billing-foreground-text)] hover:bg-[var(--billing-muted-bg)]"
                 onClick={() => add(baseQuantity)}
               >
                 <span className="font-bold">{formatBaseUnits(baseQuantity, product.baseUnit)}</span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-[var(--billing-muted-text)]">
                   Rs {priceForBaseQuantity(product, baseQuantity)}
                 </span>
               </Button>
@@ -76,11 +76,13 @@ export function KhulaPicker({ product, open, onOpenChange, onAdd }: KhulaPickerP
                   ? "Custom ml"
                   : "Custom pcs"
               }
+              className="border-[var(--billing-border)] bg-[var(--billing-background-bg)] text-[var(--billing-foreground-text)]"
             />
             <Button
               type="button"
               disabled={!Number(custom)}
               onClick={() => add(Number(custom))}
+              className="bg-[var(--billing-primary-bg)] text-[var(--billing-primary-foreground)] hover:opacity-90 disabled:opacity-50"
             >
               Add
             </Button>
