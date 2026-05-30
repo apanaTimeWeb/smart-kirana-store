@@ -3,7 +3,6 @@
 import React from "react";
 import { Separator } from "@/components/ui/separator";
 import { useSettings } from "./SettingsContext";
-import { SettingsConstants } from "./SettingsConstants";
 import { SettingsHeader } from "./SettingsHeader";
 import { SettingsShopDetails } from "./SettingsShopDetails";
 import { SettingsGSTConfig } from "./SettingsGSTConfig";
@@ -11,16 +10,20 @@ import { SettingsWhatsAppConfig } from "./SettingsWhatsAppConfig";
 import { SettingsPrinterConfig } from "./SettingsPrinterConfig";
 import { SettingsActiveDevices } from "./SettingsActiveDevices";
 import { SettingsSaveAction } from "./SettingsSaveAction";
+import { SettingsDashboardLoadingFallback } from "./SettingsDashboardLoadingFallback";
 
+/**
+ * SettingsDashboardContainer
+ * Responsibility: Master layout orchestrator for the Settings page.
+ * - Checks API loading state and delegates to SettingsDashboardLoadingFallback
+ * - Arranges all section cards in the correct vertical order
+ * This component has ZERO business logic — it is a pure structural layout.
+ */
 export function SettingsDashboardContainer() {
   const { settingsLoading } = useSettings();
 
   if (settingsLoading) {
-    return (
-      <div className="space-y-6 max-w-3xl text-[var(--settings-muted-text)]">
-        {SettingsConstants.TEXTS.LOADING_SETTINGS}
-      </div>
-    );
+    return <SettingsDashboardLoadingFallback />;
   }
 
   return (

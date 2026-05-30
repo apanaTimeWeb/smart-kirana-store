@@ -1,5 +1,3 @@
-"use client";
-
 import "./settings.css";
 import { SettingsProvider } from "./settings_components/SettingsContext";
 import { SettingsDashboardContainer } from "./settings_components/SettingsDashboardContainer";

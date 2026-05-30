@@ -1,5 +1,39 @@
 import type { SettingsForm } from "./SettingsTypes";
 
+// ─── Device Types ────────────────────────────────────────────────────────────
+// Const array → TypeScript union type is derived FROM this (see SettingsTypes.ts)
+// Tomorrow: swap MOCK_ACTIVE_SESSIONS with a real API call in one place.
+export const SETTINGS_DEVICE_TYPES = [
+  "Computer",
+  "Mobile",
+  "Tablet",
+  "Other",
+] as const;
+
+// ─── Mock Active Sessions ────────────────────────────────────────────────────
+// Single Source of Truth for session data.
+// Replace this with a real API call in SettingsActiveSessionsDataHook.ts
+export const SETTINGS_MOCK_ACTIVE_SESSIONS = [
+  {
+    id: "1",
+    deviceType: "Computer" as const,
+    deviceName: "Windows PC - Chrome",
+    ip: "182.68.45.123",
+    location: "Patna, Bihar",
+    lastActive: "Just now",
+    isCurrent: true,
+  },
+  {
+    id: "2",
+    deviceType: "Mobile" as const,
+    deviceName: "Redmi Note 12",
+    ip: "182.68.112.78",
+    location: "Patna, Bihar",
+    lastActive: "2 hours ago",
+    isCurrent: false,
+  },
+];
+
 export const SettingsConstants = {
   DEFAULTS: {
     shopName: "Smart Kirana Store",

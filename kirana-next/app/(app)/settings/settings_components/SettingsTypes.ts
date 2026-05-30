@@ -1,6 +1,12 @@
+import { SETTINGS_DEVICE_TYPES } from "./SettingsConstants";
+
+// DeviceType is derived from the SETTINGS_DEVICE_TYPES array.
+// Do NOT add values here manually — add them to SettingsConstants.ts instead.
+export type DeviceType = (typeof SETTINGS_DEVICE_TYPES)[number];
+
 export type SettingsActiveSession = {
   id: string;
-  deviceType: "Computer" | "Mobile" | "Tablet" | "Other";
+  deviceType: DeviceType;
   deviceName: string;
   ip: string;
   location?: string;
