@@ -1,24 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { useListBills } from "@/lib/api";
-import { Bill } from "@/lib/api/types";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, FileText, ChevronRight, Loader2 } from "lucide-react";
+import { FileText, ChevronRight, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
-import { BillDetailsDialog } from "./BillDetailsDialog";
-import { useGetSettings } from "@/lib/api";
+import { useHistoryContext } from "./HistoryContext";
+import { HistoryBill, HISTORY_PAYMENT_MODE_STYLES } from "./HistoryTypes";
+import { HistorySearchFilter } from "./HistorySearchFilter";
+import { HistoryBillDetailsDialog } from "./HistoryBillDetailsDialog";
 
-export function BillHistoryList() {
-  const { data: bills, isLoading } = useListBills();
-  const { data: settings } = useGetSettings();
-  const currency = settings?.currency ?? "Rs";
-
+export function HistoryBillList() {
+  const { bills, isLoadingBills, currency, openBillDetails } = useHistoryContext();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   const formatMoney = (amount: number) => `${currency} ${amount.toFixed(2)}`;
 
@@ -35,30 +28,21 @@ export function BillHistoryList() {
     return list;
   }, [bills, searchQuery]);
 
-  const handleBillClick = (bill: Bill) => {
-    setSelectedBill(bill);
-    setDialogOpen(true);
-  };
-
-  if (isLoading) {
+  if (isLoadingBills) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--history-primary-text)]" />
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input 
-          placeholder="Search by Bill # or Customer Name..." 
-          className="pl-9 h-11"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
+      <HistorySearchFilter 
+        placeholder="Search by Bill # or Customer Name..."
+        value={searchQuery}
+        onChange={setSearchQuery}
+      />
 
       <div className="space-y-3">
         {filteredBills.length === 0 ? (
@@ -67,21 +51,17 @@ export function BillHistoryList() {
             <p>Koi bill nahi mila.</p>
           </div>
         ) : (
-          filteredBills.map((bill) => (
+          filteredBills.map((bill: HistoryBill) => (
             <Card 
               key={bill.id} 
               className="cursor-pointer hover:border-primary/50 transition-colors"
-              onClick={() => handleBillClick(bill)}
+              onClick={() => openBillDetails(bill)}
             >
               <CardContent className="p-4 flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-bold text-base">Bill #{bill.id}</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${
-                      bill.paymentMode === "khata" ? "text-warning border-amber-300 bg-amber-50" :
-                      bill.paymentMode === "upi" ? "text-primary border-teal-300 bg-teal-50" :
-                      "text-positive border-green-300 bg-green-50"
-                    }`}>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${HISTORY_PAYMENT_MODE_STYLES[bill.paymentMode] || HISTORY_PAYMENT_MODE_STYLES.cash}`}>
                       {bill.paymentMode.toUpperCase()}
                     </span>
                   </div>
@@ -96,7 +76,7 @@ export function BillHistoryList() {
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="text-right">
-                    <div className="font-bold text-base text-primary">
+                    <div className="font-bold text-base text-[var(--history-primary-text)]">
                       {formatMoney(bill.finalAmount)}
                     </div>
                     <div className="text-xs text-muted-foreground">
@@ -111,12 +91,7 @@ export function BillHistoryList() {
         )}
       </div>
 
-      <BillDetailsDialog 
-        bill={selectedBill} 
-        open={dialogOpen} 
-        onOpenChange={setDialogOpen}
-        currency={currency}
-      />
+      <HistoryBillDetailsDialog />
     </div>
   );
 }

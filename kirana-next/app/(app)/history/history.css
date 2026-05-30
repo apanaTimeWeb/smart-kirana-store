@@ -1,7 +1,54 @@
-.history-returned-item {
-  color: #6B7280; /* muted-foreground */
+@layer components {
+  :root {
+    --history-warning-text: hsl(var(--warning, 38 90% 42%));
+    --history-warning-border: hsl(38 90% 70%);
+    --history-warning-bg: hsl(38 90% 95%);
+
+    --history-primary-text: hsl(var(--primary));
+    --history-primary-border: hsl(174 72% 70%);
+    --history-primary-bg: hsl(174 25% 95%);
+
+    --history-positive-text: hsl(var(--positive, 142 60% 28%));
+    --history-positive-border: hsl(142 60% 70%);
+    --history-positive-bg: hsl(142 60% 97%);
+
+    --history-destructive-text: hsl(var(--destructive));
+    --history-destructive-border: hsl(0 84% 88%);
+    --history-destructive-bg: hsl(0 84% 97%);
+
+    --history-success-text: hsl(142 70% 35%);
+    --history-success-bg: hsl(142 70% 90%);
+    --history-success-btn-bg: hsl(142 70% 40%);
+    --history-success-btn-hover: hsl(142 70% 35%);
+
+    --history-returned-item: hsl(215 16% 47%);
+    --history-refund-amount: hsl(var(--destructive));
+  }
+
+  .dark {
+    --history-warning-text: hsl(38 90% 60%);
+    --history-warning-border: hsl(38 90% 30%);
+    --history-warning-bg: hsl(38 90% 15%);
+
+    --history-primary-text: hsl(var(--primary));
+    --history-primary-border: hsl(174 72% 30%);
+    --history-primary-bg: hsl(174 72% 15%);
+
+    --history-positive-text: hsl(142 60% 50%);
+    --history-positive-border: hsl(142 60% 30%);
+    --history-positive-bg: hsl(142 60% 15%);
+
+    --history-destructive-text: hsl(0 84% 65%);
+    --history-destructive-border: hsl(0 84% 25%);
+    --history-destructive-bg: hsl(0 84% 15%);
+
+    --history-success-text: hsl(142 60% 50%);
+    --history-success-bg: hsl(142 60% 15%);
+    --history-success-btn-bg: hsl(142 60% 30%);
+    --history-success-btn-hover: hsl(142 60% 25%);
+
+    --history-returned-item: hsl(215 16% 65%);
+    --history-refund-amount: hsl(0 84% 65%);
+  }
 }
 
-.history-refund-amount {
-  color: #E53535; /* destructive */
-}
