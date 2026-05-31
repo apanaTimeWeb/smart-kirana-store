@@ -13,7 +13,7 @@ import { defaultPresetsFor, uid } from "../stock_utils/StockUtils";
 import { useStock } from "./StockContext";
 
 function useStockProductCreatorInternal() {
-  const { isAddOpen, setIsAddOpen, create, isCreating } = useStock();
+  const { isAddOpen, setIsAddOpen, create, isCreating, prefillData } = useStock();
 
   // Core required fields
   const [name, setName] = useState("");
@@ -29,6 +29,16 @@ function useStockProductCreatorInternal() {
   const [barcode, setBarcode] = useState("");
   const [location, setLocation] = useState("");
   const [lowStockAlert, setLowStockAlert] = useState<number | "">(STOCK_DEFAULT_LOW_STOCK_ALERT);
+
+  // Sync prefillData when dialog opens
+  React.useEffect(() => {
+    if (isAddOpen && prefillData) {
+      setName(prefillData.name);
+      setBrand(prefillData.brand);
+    }
+  }, [isAddOpen, prefillData]);
+
+
 
   // Hardcoded/Hidden advanced fields for API compatibility
   const category = STOCK_DEFAULT_CATEGORY;

@@ -367,18 +367,27 @@ export function storeGetProducts(params?: { search?: string; lowStock?: boolean 
 
 export function storeCreateProduct(input: ProductInput): Product[] {
   const now = new Date().toISOString();
-  const master: ProductMaster = {
-    id: nextMasterId++,
-    name: input.name.trim(),
-    category: input.category.trim() || "General",
-    brand: input.brand?.trim() || undefined,
-    searchKeywords: input.searchKeywords ?? [],
-    shortcut: input.shortcut?.trim() || undefined,
-    isActive: true,
-    createdAt: now,
-  };
+  
+  const inputName = input.name.trim().toLowerCase();
+  const inputBrand = (input.brand || "").trim().toLowerCase();
 
-  data.productMasters.push(master);
+  let master = data.productMasters.find(
+    (m) => m.name.toLowerCase() === inputName && (m.brand || "").toLowerCase() === inputBrand
+  );
+
+  if (!master) {
+    master = {
+      id: nextMasterId++,
+      name: input.name.trim(),
+      category: input.category.trim() || "General",
+      brand: input.brand?.trim() || undefined,
+      searchKeywords: input.searchKeywords ?? [],
+      shortcut: input.shortcut?.trim() || undefined,
+      isActive: true,
+      createdAt: now,
+    };
+    data.productMasters.push(master);
+  }
 
   const variants = input.variants.map((variant) => withComputedFields({
     id: nextProductId++,

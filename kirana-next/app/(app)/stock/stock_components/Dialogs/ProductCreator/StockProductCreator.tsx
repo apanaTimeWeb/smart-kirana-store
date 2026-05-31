@@ -11,6 +11,7 @@ import {
   MapPin, Bell, IndianRupee, Boxes, Zap, ChevronDown, ChevronUp, Tag
 } from "lucide-react";
 import { StockProductCreatorProvider, useStockProductCreator } from "../../../stock_context/StockProductCreatorContext";
+import { useStock } from "../../../stock_context/StockContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -145,6 +146,27 @@ function StockProductCreatorInner() {
     lowStockAlert, setLowStockAlert,
     errors, isValid, handleSubmit,
   } = useStockProductCreator();
+  
+  const { allProducts } = useStock();
+
+  const uniqueMasterProducts = React.useMemo(() => {
+    const map = new Map<string, string>(); // name -> brand
+    allProducts.forEach(p => {
+      if (p.productName) {
+        map.set(p.productName, p.brand || "");
+      }
+    });
+    return Array.from(map.entries());
+  }, [allProducts]);
+
+  // Auto-fill brand when name matches exactly
+  React.useEffect(() => {
+    if (!name.trim()) return;
+    const existing = uniqueMasterProducts.find(([mName]) => mName.toLowerCase() === name.trim().toLowerCase());
+    if (existing && existing[1] && !brand) {
+      setBrand(existing[1]);
+    }
+  }, [name, uniqueMasterProducts, brand, setBrand]);
 
   const [showOptional, setShowOptional] = useState(false);
   const [hasAttempted, setHasAttempted] = useState(false);
@@ -262,7 +284,13 @@ function StockProductCreatorInner() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 autoFocus
+                list="product-masters-list"
               />
+              <datalist id="product-masters-list">
+                {uniqueMasterProducts.map(([mName]) => (
+                  <option key={mName} value={mName} />
+                ))}
+              </datalist>
             </div>
 
             {/* 1b. Brand */}
