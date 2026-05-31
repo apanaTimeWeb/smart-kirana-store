@@ -70,6 +70,21 @@ export function BillingLooseItemQuantityPicker() {
             </Button>
           ))}
         </div>
+
+        <form onSubmit={handleCustomSubmit} className="flex gap-2 items-center">
+          <Input
+            ref={inputRef}
+            type="number"
+            placeholder={`Custom Qty (in ${product.baseUnit})`}
+            value={customQty}
+            onChange={(e) => setCustomQty(e.target.value)}
+            className="flex-1 bg-[var(--billing-background-bg)] border-[var(--billing-border)] focus-visible:ring-[var(--billing-primary)]"
+            autoFocus
+          />
+          <Button type="submit" disabled={!customQty || Number(customQty) <= 0} className="bg-[var(--billing-primary)] text-[var(--billing-primary-foreground)] hover:opacity-90">
+            Add
+          </Button>
+        </form>
       </DialogContent>
     </Dialog>
   );
