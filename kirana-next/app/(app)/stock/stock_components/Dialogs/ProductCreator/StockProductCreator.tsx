@@ -312,57 +312,7 @@ function StockProductCreatorInner() {
               </div>
             </div>
 
-            {/* 2b. Bora/Carton/Tin Conversion Box (conditional) */}
-            {(unitType === "BORA" || unitType === "CARTON" || unitType === "BOX" || unitType === "TIN") && (
-              <div
-                className="rounded-2xl border p-4 space-y-3 animate-in slide-in-from-top-2 duration-200"
-                style={{
-                  backgroundColor: "var(--stock-creator-bora-box-bg)",
-                  borderColor:     "var(--stock-creator-bora-box-border)",
-                }}
-              >
-                <div className="flex items-start gap-2.5">
-                  <div
-                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg mt-0.5"
-                    style={{
-                      backgroundColor: "var(--stock-creator-bora-icon-bg)",
-                      color:           "var(--stock-creator-bora-icon-text)",
-                    }}
-                  >
-                    {unitType === "CARTON" || unitType === "BOX" ? <Boxes className="h-4 w-4" /> : <Factory className="h-4 w-4" />}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold" style={{ color: "var(--stock-creator-bora-box-title)" }}>
-                      {unitType === "BORA" ? "Bora me kitna KG hai?" : unitType === "TIN" ? "Tin me kitne Litre hai?" : "Carton me kitne Piece hai?"}
-                    </p>
-                    <p className="text-xs mt-0.5" style={{ color: "var(--stock-creator-bora-box-text)" }}>
-                      System isko exact units me convert karke stock track karega
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <FieldInput
-                    type="number"
-                    placeholder={unitType === "BORA" ? "50" : unitType === "TIN" ? "15" : "12"}
-                    value={bulkConversionRate}
-                    onChange={(e) => setBulkConversionRate(e.target.value !== "" ? Number(e.target.value) : "")}
-                    style={{
-                      borderColor:     "var(--stock-creator-bora-box-border)",
-                      backgroundColor: "var(--stock-creator-input-bg)",
-                    }}
-                  />
-                  <div
-                    className="shrink-0 px-3 py-2.5 rounded-xl text-sm font-bold"
-                    style={{
-                      backgroundColor: "var(--stock-creator-bora-unit-bg)",
-                      color:           "var(--stock-creator-bora-unit-text)",
-                    }}
-                  >
-                    {unitType === "BORA" ? "KG" : unitType === "TIN" ? "Litre" : "Piece"}
-                  </div>
-                </div>
-              </div>
-            )}
+
 
             {/* 3. Stock & Expiry */}
             <div className="grid grid-cols-2 gap-3">
@@ -417,6 +367,58 @@ function StockProductCreatorInner() {
                 </p>
               </div>
             </div>
+
+            {/* 3b. Bora/Carton/Tin Conversion Box (moved here for logical flow) */}
+            {(unitType === "BORA" || unitType === "CARTON" || unitType === "BOX" || unitType === "TIN") && (
+              <div
+                className="rounded-2xl border p-4 space-y-3 animate-in slide-in-from-top-2 duration-200"
+                style={{
+                  backgroundColor: "var(--stock-creator-bora-box-bg)",
+                  borderColor:     "var(--stock-creator-bora-box-border)",
+                }}
+              >
+                <div className="flex items-start gap-2.5">
+                  <div
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg mt-0.5"
+                    style={{
+                      backgroundColor: "var(--stock-creator-bora-icon-bg)",
+                      color:           "var(--stock-creator-bora-icon-text)",
+                    }}
+                  >
+                    {unitType === "CARTON" || unitType === "BOX" ? <Boxes className="h-4 w-4" /> : <Factory className="h-4 w-4" />}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold" style={{ color: "var(--stock-creator-bora-box-title)" }}>
+                      {unitType === "BORA" ? "Bora me kitna KG hai?" : unitType === "TIN" ? "Tin me kitne Litre hai?" : "Carton me kitne Piece hai?"}
+                    </p>
+                    <p className="text-xs mt-0.5" style={{ color: "var(--stock-creator-bora-box-text)" }}>
+                      System isko exact units me convert karke stock track karega
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <FieldInput
+                    type="number"
+                    placeholder={unitType === "BORA" ? "50" : unitType === "TIN" ? "15" : "12"}
+                    value={bulkConversionRate}
+                    onChange={(e) => setBulkConversionRate(e.target.value !== "" ? Number(e.target.value) : "")}
+                    style={{
+                      borderColor:     "var(--stock-creator-bora-box-border)",
+                      backgroundColor: "var(--stock-creator-input-bg)",
+                    }}
+                  />
+                  <div
+                    className="shrink-0 px-3 py-2.5 rounded-xl text-sm font-bold"
+                    style={{
+                      backgroundColor: "var(--stock-creator-bora-unit-bg)",
+                      color:           "var(--stock-creator-bora-unit-text)",
+                    }}
+                  >
+                    {unitType === "BORA" ? "KG" : unitType === "TIN" ? "Litre" : "Piece"}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Divider */}
             <div className="relative py-1">
