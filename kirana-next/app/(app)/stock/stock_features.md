@@ -235,7 +235,6 @@ Key token groups in `stock.css`:
 | Master product info editing | New file: `StockEditMasterProductDialog.tsx` |
 | **Shrinkage / Yield Loss (Sukhad)** | Add shrinkage % to `StockProductCreatorContext` to account for moisture loss/spillage when selling Bora items loose |
 | **Stock Adjustments / Write-offs** | New dialog `StockAdjustmentDialog.tsx` to handle damaged, rat-bitten, or expired stock (minus stock without billing) |
-| **Multi-Tier Wholesale (Strips/Ladi)**| Update `StockSharedConstants.ts` & logic to support Box -> Ladi -> Piece (2-tier conversion) for items like Shampoo/Medicines |
 | **Packaging Material Tracking** | Automatically deduct 1 polybag inventory when selling Khula items in `BillingContext.tsx` |
 
 ---

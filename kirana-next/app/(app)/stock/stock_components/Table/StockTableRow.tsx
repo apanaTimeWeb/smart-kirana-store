@@ -4,7 +4,7 @@ import React from "react";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, MinusCircle } from "lucide-react";
 import { Product } from "@/lib/api";
 import { StockBadge } from "../Shared/StockBadge";
 import { useStock } from "../../stock_context/StockContext";
@@ -12,7 +12,7 @@ import { MODE_CLASS, MODE_LABEL } from "../../stock_constants/StockSharedConstan
 import { formatBaseUnits } from "../../stock_utils/StockUtils";
 
 export function StockTableRow({ product }: { product: Product }) {
-  const { setEditingProduct, remove } = useStock();
+  const { setEditingProduct, remove, setAdjustingProduct } = useStock();
 
   return (
     <TableRow>
@@ -47,6 +47,9 @@ export function StockTableRow({ product }: { product: Product }) {
         <StockBadge product={product} />
       </TableCell>
       <TableCell className="text-right">
+        <Button variant="ghost" size="icon" className="text-orange-600" onClick={() => setAdjustingProduct(product)}>
+          <MinusCircle className="h-4 w-4" />
+        </Button>
         <Button variant="ghost" size="icon" onClick={() => setEditingProduct(product)}>
           <Edit className="h-4 w-4" />
         </Button>

@@ -23,6 +23,7 @@ function useStockStateInternal() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [adjustingProduct, setAdjustingProduct] = useState<Product | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -142,6 +143,23 @@ function useStockStateInternal() {
     });
   };
 
+  const adjustStock = (product: Product, reduceQty: number, reason: string) => {
+    const newStock = Math.max(0, product.currentStock - reduceQty);
+    const newStockInBase = Math.max(0, product.stockInBaseUnit - (reduceQty * product.baseQuantity));
+    
+    updateProduct.mutate({ 
+      id: product.id, 
+      data: { currentStock: newStock, stockInBaseUnit: newStockInBase } 
+    }, {
+      onSuccess: () => {
+        invalidate();
+        setAdjustingProduct(null);
+        toast({ title: `Stock adjusted (${reason})` });
+      },
+      onError: () => toast({ title: "Stock adjust nahi hua", variant: "destructive" }),
+    });
+  };
+
   return {
     search,
     handleSearchChange,
@@ -153,6 +171,8 @@ function useStockStateInternal() {
     setIsPurchaseOpen,
     editingProduct,
     setEditingProduct,
+    adjustingProduct,
+    setAdjustingProduct,
     currentPage,
     setCurrentPage,
     totalPages,
@@ -171,6 +191,8 @@ function useStockStateInternal() {
     isRemoving: deleteProduct.isPending,
     purchase,
     isPurchasing: addPurchase.isPending,
+    adjustStock,
+    isAdjusting: updateProduct.isPending,
   };
 }
 

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, MinusCircle } from "lucide-react";
 import { Product } from "@/lib/api";
 import { StockBadge } from "../Shared/StockBadge";
 import { useStock } from "../../stock_context/StockContext";
@@ -35,6 +35,9 @@ export function StockMobileCard({ product }: { product: Product }) {
         </div>
       </div>
       <div className="mt-3 flex justify-end gap-1">
+        <Button variant="ghost" size="icon" className="h-8 w-8 text-orange-600" onClick={() => setAdjustingProduct(product)}>
+          <MinusCircle className="h-4 w-4" />
+        </Button>
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingProduct(product)}>
           <Edit className="h-4 w-4" />
         </Button>
