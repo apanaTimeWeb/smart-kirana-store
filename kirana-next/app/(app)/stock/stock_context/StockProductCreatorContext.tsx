@@ -35,7 +35,7 @@ function useStockProductCreatorInternal() {
 
   const handleUnitChange = (newUnit: string) => {
     setUnitType(newUnit);
-    if (newUnit !== "BORA" && newUnit !== "BOX" && newUnit !== "CARTON") {
+    if (newUnit !== "BORA" && newUnit !== "BOX" && newUnit !== "CARTON" && newUnit !== "TIN") {
       setBulkConversionRate("");
     }
   };

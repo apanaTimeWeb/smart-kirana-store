@@ -161,7 +161,7 @@ function StockProductCreatorInner() {
   const isProfit = margin !== null && Number(margin) > 0;
   const isLoss   = margin !== null && Number(margin) < 0;
 
-  const stockLabel = unitType === "BORA" ? "Bora" : unitType === "KG" ? "KG" : "Pcs";
+  const stockLabel = (unitType === "BORA" || unitType === "TIN") ? unitType === "BORA" ? "Bora" : "Tin" : unitType === "CARTON" || unitType === "BOX" ? "Carton" : unitType === "KG" ? "KG" : unitType === "LITRE" ? "Litre" : "Pcs";
 
   return (
     <Dialog open={isAddOpen} onOpenChange={handleOpenChange}>
@@ -228,10 +228,10 @@ function StockProductCreatorInner() {
               />
             </div>
 
-            {/* 2. Unit Type — 3 Tap Buttons */}
+            {/* 2. Unit Type — 6 Tap Buttons */}
             <div className="space-y-2">
               <FieldLabel required>Kaisa Bikta Hai?</FieldLabel>
-              <div className="grid grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                 <UnitButton
                   active={unitType === "PACKET"}
                   onClick={() => handleUnitChange("PACKET")}
@@ -241,26 +241,52 @@ function StockProductCreatorInner() {
                   unitKey="packet"
                 />
                 <UnitButton
+                  active={unitType === "CARTON"}
+                  onClick={() => handleUnitChange("CARTON")}
+                  icon={<Boxes className="h-5 w-5" />}
+                  label="Carton"
+                  sublabel="Bulk Pieces"
+                  unitKey="bora" 
+                />
+                
+                <UnitButton
                   active={unitType === "KG"}
                   onClick={() => handleUnitChange("KG")}
                   icon={<Scale className="h-5 w-5" />}
-                  label="Khula"
-                  sublabel="KG / Litre"
+                  label="KG (Khula)"
+                  sublabel="Loose Weight"
                   unitKey="khula"
                 />
                 <UnitButton
                   active={unitType === "BORA"}
                   onClick={() => handleUnitChange("BORA")}
                   icon={<Factory className="h-5 w-5" />}
-                  label="Bora / Bulk"
-                  sublabel="Wholesale"
+                  label="Bora"
+                  sublabel="Bulk Weight"
+                  unitKey="bora"
+                />
+
+                <UnitButton
+                  active={unitType === "LITRE"}
+                  onClick={() => handleUnitChange("LITRE")}
+                  icon={<Zap className="h-5 w-5" />}
+                  label="Litre (Khula)"
+                  sublabel="Loose Liquid"
+                  unitKey="khula"
+                />
+                <UnitButton
+                  active={unitType === "TIN"}
+                  onClick={() => handleUnitChange("TIN")}
+                  icon={<Factory className="h-5 w-5" />}
+                  label="Tin"
+                  sublabel="Bulk Liquid"
                   unitKey="bora"
                 />
               </div>
             </div>
 
-            {/* 2b. Bora Conversion Box (conditional) */}
-            {unitType === "BORA" && (
+            {/* 2b. Bora/Carton/Tin Conversion Box (conditional) */}
+            {(unitType === "BORA" || unitType === "CARTON" || unitType === "BOX" || unitType === "TIN") && (
               <div
                 className="rounded-2xl border p-4 space-y-3 animate-in slide-in-from-top-2 duration-200"
                 style={{
@@ -276,21 +302,21 @@ function StockProductCreatorInner() {
                       color:           "var(--stock-creator-bora-icon-text)",
                     }}
                   >
-                    <Factory className="h-4 w-4" />
+                    {unitType === "CARTON" || unitType === "BOX" ? <Boxes className="h-4 w-4" /> : <Factory className="h-4 w-4" />}
                   </div>
                   <div>
                     <p className="text-sm font-bold" style={{ color: "var(--stock-creator-bora-box-title)" }}>
-                      Bora me kitna maal hai?
+                      {unitType === "BORA" ? "Bora me kitna KG hai?" : unitType === "TIN" ? "Tin me kitne Litre hai?" : "Carton me kitne Piece hai?"}
                     </p>
                     <p className="text-xs mt-0.5" style={{ color: "var(--stock-creator-bora-box-text)" }}>
-                      System isko grams me convert karke exact stock track karega
+                      System isko exact units me convert karke stock track karega
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <FieldInput
                     type="number"
-                    placeholder="50"
+                    placeholder={unitType === "BORA" ? "50" : unitType === "TIN" ? "15" : "12"}
                     value={bulkConversionRate}
                     onChange={(e) => setBulkConversionRate(e.target.value !== "" ? Number(e.target.value) : "")}
                     style={{
@@ -305,7 +331,7 @@ function StockProductCreatorInner() {
                       color:           "var(--stock-creator-bora-unit-text)",
                     }}
                   >
-                    KG / Piece
+                    {unitType === "BORA" ? "KG" : unitType === "TIN" ? "Litre" : "Piece"}
                   </div>
                 </div>
               </div>
