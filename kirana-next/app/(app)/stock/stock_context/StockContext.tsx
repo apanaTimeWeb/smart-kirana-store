@@ -149,7 +149,7 @@ function useStockStateInternal() {
     
     updateProduct.mutate({ 
       id: product.id, 
-      data: { currentStock: newStock, stockInBaseUnit: newStockInBase } 
+      data: { stockInBaseUnit: newStockInBase } 
     }, {
       onSuccess: () => {
         invalidate();

@@ -9,7 +9,7 @@ import { useStock } from "../../stock_context/StockContext";
 import { MODE_LABEL } from "../../stock_constants/StockSharedConstants";
 
 export function StockMobileCard({ product }: { product: Product }) {
-  const { setEditingProduct, remove } = useStock();
+  const { setEditingProduct, remove, setAdjustingProduct } = useStock();
 
   return (
     <div className="rounded-lg border bg-[var(--stock-card-bg)] p-3">
