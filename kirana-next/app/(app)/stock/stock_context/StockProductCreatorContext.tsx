@@ -25,6 +25,7 @@ function useStockProductCreatorInternal() {
   const [expiryDate, setExpiryDate] = useState("");
 
   // Optional fields
+  const [brand, setBrand] = useState("");
   const [barcode, setBarcode] = useState("");
   const [location, setLocation] = useState("");
   const [lowStockAlert, setLowStockAlert] = useState<number | "">(STOCK_DEFAULT_LOW_STOCK_ALERT);
@@ -82,9 +83,9 @@ function useStockProductCreatorInternal() {
 
   const isValid = errors.length === 0;
 
-  // Reset all fields
   const reset = useCallback(() => {
     setName("");
+    setBrand("");
     setBarcode("");
     setUnitType("PACKET");
     setBulkConversionRate("");
@@ -120,7 +121,7 @@ function useStockProductCreatorInternal() {
     create({
       name: name.trim(),
       category: category,
-      brand: "", // Unused in simple UI
+      brand: brand.trim(), // Use the brand from state
       keywords: location.trim(), // Storing location in keywords for now to avoid changing the DB schema
       shortcut: barcode.trim(), // Storing barcode in shortcut for now to avoid changing the DB schema
       sellingTypes: {
@@ -144,6 +145,7 @@ function useStockProductCreatorInternal() {
     handleOpenChange,
     isCreating,
     name, setName,
+    brand, setBrand,
     barcode, setBarcode,
     unitType, handleUnitChange,
     bulkConversionRate, setBulkConversionRate,

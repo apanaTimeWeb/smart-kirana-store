@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Plus, Package, Scale, Factory, Barcode, CalendarDays,
-  MapPin, Bell, IndianRupee, Boxes, Zap, ChevronDown, ChevronUp
+  MapPin, Bell, IndianRupee, Boxes, Zap, ChevronDown, ChevronUp, Tag
 } from "lucide-react";
 import { StockProductCreatorProvider, useStockProductCreator } from "../../../stock_context/StockProductCreatorContext";
 import { Button } from "@/components/ui/button";
@@ -133,6 +133,7 @@ function StockProductCreatorInner() {
   const {
     isAddOpen, handleOpenChange, isCreating,
     name, setName,
+    brand, setBrand,
     barcode, setBarcode,
     unitType, handleUnitChange,
     bulkConversionRate, setBulkConversionRate,
@@ -262,6 +263,22 @@ function StockProductCreatorInner() {
                 onChange={(e) => setName(e.target.value)}
                 autoFocus
               />
+            </div>
+
+            {/* 1b. Brand */}
+            <div className="space-y-2">
+              <FieldLabel>
+                Brand <span className="normal-case font-normal ml-1" style={{ color: "var(--stock-creator-divider-text)" }}>(optional)</span>
+              </FieldLabel>
+              <div className="relative">
+                <FieldInput
+                  placeholder="e.g. Lux, Dove, Haldiram…"
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
+                  className="pl-9"
+                />
+                <Tag className="absolute left-3 top-3.5 h-4 w-4 pointer-events-none" style={{ color: "var(--stock-creator-label-text)" }} />
+              </div>
             </div>
 
             {/* 2. Unit Type — 6 Tap Buttons */}
