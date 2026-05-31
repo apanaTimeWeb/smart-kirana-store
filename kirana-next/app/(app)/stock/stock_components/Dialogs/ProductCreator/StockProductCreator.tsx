@@ -181,6 +181,15 @@ function StockProductCreatorInner() {
     return "1 Piece kitne me bikega?";
   };
 
+  const getStockLabelText = () => {
+    if (unitType === "CARTON" || unitType === "BOX") return "Abhi total kitne Carton hain?";
+    if (unitType === "BORA") return "Abhi total kitne Bora hain?";
+    if (unitType === "TIN") return "Abhi total kitne Tin hain?";
+    if (unitType === "KG") return "Abhi total kitne KG hain?";
+    if (unitType === "LITRE") return "Abhi total kitne Litre hain?";
+    return "Abhi total kitne Packet/Piece hain?";
+  };
+
   const getStockPlaceholder = () => {
     if (unitType === "CARTON" || unitType === "BOX") return "Jaise 5 carton...";
     if (unitType === "BORA") return "Jaise 2 bora...";
@@ -322,7 +331,7 @@ function StockProductCreatorInner() {
                   className="text-[10px] font-semibold uppercase tracking-wide flex items-center gap-1"
                   style={{ color: "var(--stock-creator-label-text)" }}
                 >
-                  <Boxes className="h-3 w-3" /> Abhi Kitna Stock Hai?
+                  <Boxes className="h-3 w-3" /> {getStockLabelText()}
                   <span style={{ color: "var(--stock-creator-error-text)" }}>*</span>
                 </p>
                 <div className="relative">
