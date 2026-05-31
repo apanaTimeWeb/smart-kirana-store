@@ -34,7 +34,7 @@ export const BILLING_FILTER_OPTIONS = [
   { id: "khula", label: "Khula" },
   { id: "fixed", label: "Fixed" },
   { id: "variant", label: "Variant" },
-  { id: "wholesale", label: "Bora" },
+  { id: "wholesale", label: "Bulk" },
   { id: "low", label: "Low" },
   { id: "in", label: "In Stock" },
 ] as const;
