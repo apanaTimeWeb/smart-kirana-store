@@ -94,14 +94,19 @@ Cart state is auto-saved to `localStorage` under key `"billing_draft_state"`. On
 
 | Export | Type | Purpose |
 |---|---|---|
-| `BILLING_FILTER_OPTIONS` | `const` array | Filter chip data (id + label) |
+| `BILLING_FILTER_OPTIONS` | `const` array | Filter chip data (id + label). *Note: The 'Bora' filter was renamed to 'Bulk' to support `CARTON`, `BORA`, and `TIN` seamlessly.* |
 | `BillingFilter` | derived type | Union of all filter ids |
 | `PAYMENT_MODES` | `const` array | `[{id, label}]` for Cash, UPI, Khata |
 | `GST_RATES` | `const` tuple | `[5, 12, 18, 28]` |
 | `PRESETS_GRAM` | `const` tuple | Quantity presets for gram-based khula items |
 | `PRESETS_ML` | `const` tuple | Quantity presets for ml-based khula items |
 | `PRESETS_PCS` | `const` tuple | Quantity presets for piece-based khula items |
-| `MODE_LABEL` | `Record` | Display labels for selling modes |
+| `MODE_LABEL` | `Record` | Display labels for selling modes (`khula`, `fixed`, `variant`, `wholesale`) |
+
+### Seamless Support for Expanded Stock Units
+Thanks to the abstraction of `baseUnit` and `sellingMode` from the Stock module:
+- **`LITRE`** items automatically use the Khula Keypad (because `sellingMode="khula"`) and display in `ml` / `Litre` using `PRESETS_ML`.
+- **`CARTON` & `TIN`** items are automatically classified under the "Bulk" (`wholesale`) filter and treated as whole units during quick-add.
 | `CartItem` | type | Shape of one cart line item |
 | `BillData` | type | Shape of a completed bill (for WhatsApp/print) |
 

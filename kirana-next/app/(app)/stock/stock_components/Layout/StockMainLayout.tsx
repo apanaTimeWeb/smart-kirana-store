@@ -10,6 +10,7 @@ import { StockMobileList } from "../Mobile/StockMobileList";
 import { StockProductCreator } from "../Dialogs/ProductCreator/StockProductCreator";
 import { StockPurchaseDialog } from "../Dialogs/PurchaseDialog/StockPurchaseDialog";
 import { StockEditVariantDialog } from "../Dialogs/EditVariantDialog/StockEditVariantDialog";
+import { StockAdjustmentDialog } from "../Dialogs/StockAdjustmentDialog";
 
 export function StockMainLayout() {
   return (
@@ -24,6 +25,7 @@ export function StockMainLayout() {
       <StockProductCreator />
       <StockPurchaseDialog />
       <StockEditVariantDialog />
+      <StockAdjustmentDialog />
     </div>
   );
 }
