@@ -128,21 +128,21 @@ These have been extracted to their own module-prefixed folders at the root:
 | Section | Fields | Notes |
 |---|---|---|
 | **Required** | Product Name | Text input, auto-focused on open |
-| **Required** | Unit Type | 3 tap-buttons: `PACKET` (blue), `KG/Khula` (amber), `BORA/Bulk` (purple) |
-| **Conditional** | Bulk Conversion Rate | Appears only when `BORA` is selected. "1 Bora me kitna KG?" |
-| **Required** | Buy Price + Sell Price | Side-by-side ₹ inputs with live **Margin Badge** (green=profit, red=loss) |
-| **Required** | Current Stock | Number input; unit suffix auto-updates (Pcs / KG / Bora) |
-| **Optional** | Expiry Date | Date picker; required for food alerts but optional for non-consumables |
+| **Required** | Unit Type | 6 tap-buttons: `PACKET`, `CARTON`, `KG (Khula)`, `BORA`, `LITRE (Khula)`, `TIN`. Covers all loose and bulk product variants. |
+| **Required** | Current Stock & Expiry | Asked *before* rate. Labels dynamically translate (e.g. "Abhi total kitne Carton hain?"). Expiry is optional. |
+| **Conditional** | Bulk Conversion Box | Appears when `BORA`, `CARTON`, or `TIN` is selected. Asked *after* stock (e.g. "Carton me kitne Piece hai?") |
+| **Required** | Buy Price + Sell Price | Labels dynamically translate (e.g. "1 Carton kitne ka aaya?"). Side-by-side ₹ inputs with live **Margin Badge**. |
 | **Optional** | Barcode | Hidden inside collapsible "Extra Jankari" section |
 | **Optional** | Location | Hidden inside collapsible "Extra Jankari" section |
 | **Optional** | Low Stock Alert | Default = 5; hidden inside collapsible "Extra Jankari" section |
 
 #### Key UX Behaviours
 
+- **Logical Flow & Dynamic Translations**: The input sequence precisely matches physical shopkeeper reality (Select Unit -> Enter Stock -> Enter Conversion -> Enter Price). Field labels and placeholders dynamically translate based on unit type to "Shopkeeper Bhasha" (e.g. "1 Bora kitne ka aaya?").
 - **`hasAttempted` state**: Validation error messages are hidden on first open. They only appear after the user clicks "Product Save Karo" once. This prevents a cluttered empty-form experience.
 - **Collapsible optional section**: Barcode, Location, and Low Stock Alert are collapsed by default under "+ Extra Jankari (Optional)" to maintain the 2-click fast flow.
 - **Live Margin Badge**: Appears instantly after both Buy and Sell prices are typed. Shows % margin and ₹ profit-per-unit (green) or loss warning (red).
-- **Unit suffix**: The stock input's right-side label dynamically shows `Pcs`, `KG`, or `Bora` based on selected unit type.
+- **Unit suffix**: The stock input's right-side label dynamically shows `Piece`, `KG`, `Litre`, `Carton`, `Bora`, or `Tin` based on selected unit type.
 
 #### Conversion Logic (Inside `StockProductCreatorContext`)
 
@@ -162,12 +162,7 @@ These have been extracted to their own module-prefixed folders at the root:
 
 | File | Responsibility |
 |---|---|
-| `StockEditVariantDialog.tsx` | Dialog shell (~60 lines). Wraps `StockEditVariantDialogProvider` + composes sub-components. |
-| `StockEditVariantDialogNameExpiryRow.tsx` | 2-column top row: "Size Name" (required) + "Expiry Date" (optional). |
-| `StockEditVariantDialogUnitSection.tsx` | Unit selector + auto-wired pills (identical behaviour to creator's unit field). |
-| `StockEditVariantDialogPriceMarginSection.tsx` | Buy + Sell Price grid + inline margin/loss preview box. |
-| `StockEditVariantDialogStockExtrasSection.tsx` | "Stock & Extras" card (Current Stock, Low Alert, MRP) + Quick Select toggle card. |
-| `StockEditVariantDialogFooter.tsx` | Fixed footer: validation errors banner + Cancel/Save buttons. |
+| `StockEditVariantDialog.tsx` | Dialog shell. Wraps `StockEditVariantDialogProvider`. Now perfectly mirrors the `StockProductCreator` layout (6 unit types, dynamic labels, logical sequential flow) for absolute UX consistency. |
 
 ---
 
@@ -182,6 +177,14 @@ These have been extracted to their own module-prefixed folders at the root:
 | `StockPurchaseDialogQuantityRateFields.tsx` | 2-column Qty + New Purchase Rate inputs. |
 | `StockPurchaseDialogSupplierExpiryFields.tsx` | Supplier (Khata) dropdown (fetches suppliers internally) + Expiry Date input. |
 | `StockPurchaseDialogStockPreview.tsx` | Preview box: shows base units to be added + current stock level. |
+
+---
+
+### 🟨 Stock Adjustments (stock_components/Dialogs)
+
+| File | Responsibility |
+|---|---|
+| `StockAdjustmentDialog.tsx` | Provides a UI to instantly reduce stock manually without billing (e.g. for Damage, Expiry, Personal Use, Lost). Prevents deduction greater than current stock. Interacts directly with `StockContext`'s `adjustStock` mutation. |
 
 ---
 
@@ -234,7 +237,6 @@ Key token groups in `stock.css`:
 | Stock movement history view | New file: `StockMovementHistoryPanel.tsx` |
 | Master product info editing | New file: `StockEditMasterProductDialog.tsx` |
 | **Shrinkage / Yield Loss (Sukhad)** | Add shrinkage % to `StockProductCreatorContext` to account for moisture loss/spillage when selling Bora items loose |
-| **Stock Adjustments / Write-offs** | New dialog `StockAdjustmentDialog.tsx` to handle damaged, rat-bitten, or expired stock (minus stock without billing) |
 | **Packaging Material Tracking** | Automatically deduct 1 polybag inventory when selling Khula items in `BillingContext.tsx` |
 
 ---
@@ -250,3 +252,6 @@ Key token groups in `stock.css`:
 | May 2026 | **Collapsible optional section** — Barcode, Location, Low Stock Alert collapsed by default under "Extra Jankari". |
 | May 2026 | **Live Margin Badge** — instant profit/loss % feedback after Buy + Sell price entry. |
 | May 2026 | **Expiry Date Optional** — removed mandatory validation check so non-consumables (pens, buckets, batteries) can be added without an expiry date. Added helpful note in UI. |
+| May 2026 | **Expanded Unit Types** — Added `CARTON` (Bulk Pieces), `LITRE` (Loose Liquid), and `TIN` (Bulk Liquid) to product creator and edit dialogs. |
+| May 2026 | **Logical Flow & Dynamic Labels** — Reordered forms (Unit -> Stock -> Conversion -> Price) and made all labels/placeholders dynamic (e.g. "1 Carton kitne me bikega?"). Applied to both Add and Edit dialogs. |
+| May 2026 | **Stock Adjustments / Write-offs** — Added `StockAdjustmentDialog` to allow shopkeepers to deduct damaged/expired stock without generating a bill. Integrated into Mobile Card and Desktop Table. |
