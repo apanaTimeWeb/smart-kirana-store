@@ -24,7 +24,7 @@ The directory is micro-modularized into feature-based subfolders.
 │  • CRUD mutations          • Stats                           │
 ├─────────────────────────────────────────────────────────────┤
 │  stock_context/StockProductCreatorContext.tsx (Dialog-local)  │
-│  • 9 form fields (name, unitType, bulkConversionRate,        │
+│  • 10 form fields (name, unitType, bulkConversionRate,       │
 │    buyPrice, sellPrice, initialStock, expiryDate,            │
 │    barcode, location, lowStockAlert)                         │
 │  • Derived: actualBaseQuantity, stockInBase, lowStockInBase  │
@@ -77,7 +77,7 @@ These have been extracted to their own module-prefixed folders at the root:
 | File | Purpose |
 |---|---|
 | `StockContext.tsx` | React Context for module-wide state. Contains: product list, search, filter, pagination, modal toggles, mutations. |
-| `StockProductCreatorContext.tsx` | Owns all 9 form state fields (name, unitType, bulkConversionRate, buyPrice, sellPrice, initialStock, expiryDate, barcode, location, lowStockAlert) + derived base-unit calculations + validation errors + submit/reset handlers. **Simplified from 15 fields to 9 in the 2-click refactor.** |
+| `StockProductCreatorContext.tsx` | Owns all 10 form state fields (name, unitType, bulkConversionRate, buyPrice, sellPrice, initialStock, expiryDate, barcode, location, lowStockAlert) + derived base-unit calculations + validation errors + submit/reset handlers. **Simplified from 15 fields to 10 in the 2-click refactor.** |
 | `StockEditVariantDialogContext.tsx` | Syncs `draft` from the editing product, owns `patchDraft`, `handleUnitChange`, derived values, and `handleSave`. |
 
 ---
@@ -162,7 +162,7 @@ These have been extracted to their own module-prefixed folders at the root:
 
 | File | Responsibility |
 |---|---|
-| `StockEditVariantDialog.tsx` | Dialog shell. Wraps `StockEditVariantDialogProvider`. Now perfectly mirrors the `StockProductCreator` layout (6 unit types, dynamic labels, logical sequential flow) for absolute UX consistency. |
+| `StockEditVariantDialog.tsx` | Dialog shell. Wraps `StockEditVariantDialogProvider`. Mirrors the `StockProductCreator` layout (6 unit types, dynamic labels, logical sequential flow) for absolute UX consistency, but also includes **MRP** and **Quick Select (Fast Billing)** fields in the optional section. |
 
 ---
 
@@ -192,11 +192,11 @@ These have been extracted to their own module-prefixed folders at the root:
 
 ### Why a Single-File Creator?
 
-The original creator dialog was split into 8 sub-components (`StockProductCreatorNameField`, `StockProductCreatorPriceFields`, etc.) for maximum AI-isolation. However, the dialog was redesigned into a **"2-click" mobile-first flow** (May 2026) with a significantly smaller form surface (9 fields vs 15+). At this simpler scale, sub-components added overhead without isolation benefit — a single AI context window can now hold the entire creator. The file is kept **under ~430 lines** to stay within a single AI context window.
+The original creator dialog was split into 8 sub-components (`StockProductCreatorNameField`, `StockProductCreatorPriceFields`, etc.) for maximum AI-isolation. However, the dialog was redesigned into a **"2-click" mobile-first flow** (May 2026) with a significantly smaller form surface (10 fields vs 15+). At this simpler scale, sub-components added overhead without isolation benefit — a single AI context window can now hold the entire creator. The file is kept **under ~430 lines** to stay within a single AI context window.
 
 ### Why TWO context files for the creator?
 
-`StockContext` is module-level and shared by all components. The creator dialog has 9 local `useState` fields. Without a dedicated context, `StockProductCreator.tsx` would have had to prop-drill values down to child components — creating a brittle prop chain.
+`StockContext` is module-level and shared by all components. The creator dialog has 10 local `useState` fields. Without a dedicated context, `StockProductCreator.tsx` would have had to prop-drill values down to child components — creating a brittle prop chain.
 
 Solution: `StockProductCreatorContext` is scoped strictly inside the creator dialog tree. It does not affect or pollute the module-level `StockContext` at all.
 
@@ -221,32 +221,14 @@ Key token groups in `stock.css`:
 
 ---
 
-## 🚀 Future Enhancement Points
 
-| Feature | Where to change |
-|---|---|
-| Replace hardcoded filter options with API | `stock_constants/StockSharedConstants.ts` → `STOCK_FILTER_OPTIONS` |
-| Replace hardcoded stat cards with API | `stock_constants/StockSharedConstants.ts` → `STOCK_STAT_ITEMS` |
-| Replace default product templates with API | `stock_utils/StockDraftTemplates.ts` → `emptyDraft()` |
-| Replace unit config with API | `stock_constants/StockSharedConstants.ts` → `UNIT_CONFIG`, `UNIT_GROUPS` |
-| Barcode camera scanner | Add camera scan handler in `StockProductCreator.tsx` (barcode field already exists) |
-| Expiry date batch tracking (FIFO) | Extend `StockProductCreatorContext` to support multiple expiry entries per product |
-| Low stock push notification | Hook into `lowStockAlert` field already saved via `StockProductCreatorContext` |
-| Location-based product finder | Hook into `location` field (saved as `keywords`) — build a search/filter UI |
-| Bulk CSV/Excel upload | New file: `StockBulkUploadDialog.tsx` + context |
-| Stock movement history view | New file: `StockMovementHistoryPanel.tsx` |
-| Master product info editing | New file: `StockEditMasterProductDialog.tsx` |
-| **Shrinkage / Yield Loss (Sukhad)** | Add shrinkage % to `StockProductCreatorContext` to account for moisture loss/spillage when selling Bora items loose |
-| **Packaging Material Tracking** | Automatically deduct 1 polybag inventory when selling Khula items in `BillingContext.tsx` |
-
----
 
 ## 📋 Changelog
 
 | Date | Change |
 |---|---|
 | May 2026 | **Product Creator redesigned** — replaced 8-sub-component architecture with a single-file `StockProductCreator.tsx` (2-click mobile-first form). |
-| May 2026 | **`StockProductCreatorContext` simplified** — from 15 fields to 9 fields matching the new simplified form. |
+| May 2026 | **`StockProductCreatorContext` simplified** — from 15 fields to 10 fields matching the new simplified form. |
 | May 2026 | **CSS tokens updated** — creator dialog tokens aligned with `color_code.md`: save button uses `--primary` (teal), sell price highlight uses teal, header icon uses teal, labels use `--foreground` for proper visibility in both dark/light mode. |
 | May 2026 | **`hasAttempted` UX** — validation errors are hidden until first save attempt, preventing cluttered empty-form state. |
 | May 2026 | **Collapsible optional section** — Barcode, Location, Low Stock Alert collapsed by default under "Extra Jankari". |
