@@ -161,7 +161,34 @@ function StockProductCreatorInner() {
   const isProfit = margin !== null && Number(margin) > 0;
   const isLoss   = margin !== null && Number(margin) < 0;
 
-  const stockLabel = (unitType === "BORA" || unitType === "TIN") ? unitType === "BORA" ? "Bora" : "Tin" : unitType === "CARTON" || unitType === "BOX" ? "Carton" : unitType === "KG" ? "KG" : unitType === "LITRE" ? "Litre" : "Pcs";
+  const stockLabel = (unitType === "BORA" || unitType === "TIN") ? unitType === "BORA" ? "Bora" : "Tin" : unitType === "CARTON" || unitType === "BOX" ? "Carton" : unitType === "KG" ? "KG" : unitType === "LITRE" ? "Litre" : "Piece";
+
+  const getBuyLabel = () => {
+    if (unitType === "CARTON" || unitType === "BOX") return "1 Carton kitne ka aaya?";
+    if (unitType === "BORA") return "1 Bora kitne ka aaya?";
+    if (unitType === "TIN") return "1 Tin kitne ka aaya?";
+    if (unitType === "KG") return "1 KG kitne ka aaya?";
+    if (unitType === "LITRE") return "1 Litre kitne ka aaya?";
+    return "1 Piece kitne ka aaya?";
+  };
+
+  const getSellLabel = () => {
+    if (unitType === "CARTON" || unitType === "BOX") return "1 Carton kitne me bikega?";
+    if (unitType === "BORA") return "1 Bora kitne me bikega?";
+    if (unitType === "TIN") return "1 Tin kitne me bikega?";
+    if (unitType === "KG") return "1 KG kitne me bikega?";
+    if (unitType === "LITRE") return "1 Litre kitne me bikega?";
+    return "1 Piece kitne me bikega?";
+  };
+
+  const getStockPlaceholder = () => {
+    if (unitType === "CARTON" || unitType === "BOX") return "Jaise 5 carton...";
+    if (unitType === "BORA") return "Jaise 2 bora...";
+    if (unitType === "TIN") return "Jaise 3 tin...";
+    if (unitType === "KG") return "Jaise 10 kg...";
+    if (unitType === "LITRE") return "Jaise 15 litre...";
+    return "Jaise 50 piece...";
+  };
 
   return (
     <Dialog open={isAddOpen} onOpenChange={handleOpenChange}>
@@ -337,14 +364,85 @@ function StockProductCreatorInner() {
               </div>
             )}
 
-            {/* 3. Buy & Sell Rate */}
+            {/* 3. Stock & Expiry */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Current Stock */}
+              <div className="space-y-1.5">
+                <p
+                  className="text-[10px] font-semibold uppercase tracking-wide flex items-center gap-1"
+                  style={{ color: "var(--stock-creator-label-text)" }}
+                >
+                  <Boxes className="h-3 w-3" /> Abhi Kitna Stock Hai?
+                  <span style={{ color: "var(--stock-creator-error-text)" }}>*</span>
+                </p>
+                <div className="relative">
+                  <FieldInput
+                    type="number"
+                    placeholder={getStockPlaceholder()}
+                    value={initialStock}
+                    onChange={(e) => setInitialStock(e.target.value !== "" ? Number(e.target.value) : "")}
+                    className="pr-14 font-bold"
+                  />
+                  <span
+                    className="absolute right-3 top-3.5 text-xs font-semibold"
+                    style={{ color: "var(--stock-creator-label-text)" }}
+                  >
+                    {stockLabel}
+                  </span>
+                </div>
+              </div>
+              {/* Expiry Date */}
+              <div className="space-y-1.5">
+                <p
+                  className="text-[10px] font-semibold uppercase tracking-wide flex items-center gap-1"
+                  style={{ color: "var(--stock-creator-label-text)" }}
+                >
+                  <CalendarDays className="h-3 w-3" /> Expiry
+                  <span className="normal-case font-normal ml-1" style={{ color: "var(--stock-creator-divider-text)" }}>(optional)</span>
+                </p>
+                <div className="relative">
+                  <FieldInput
+                    type="date"
+                    value={expiryDate}
+                    onChange={(e) => setExpiryDate(e.target.value)}
+                    className="pl-9 text-sm [color-scheme:light] dark:[color-scheme:dark]"
+                  />
+                  <CalendarDays
+                    className="absolute left-3 top-3.5 h-4 w-4 pointer-events-none"
+                    style={{ color: "var(--stock-creator-label-text)" }}
+                  />
+                </div>
+                <p className="text-[10px]" style={{ color: "var(--stock-creator-divider-text)" }}>
+                  Food items ke liye zaroori • Pen, Bucket pe skip karein
+                </p>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="relative py-1">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-dashed" style={{ borderColor: "var(--stock-creator-input-border)" }} />
+              </div>
+              <div className="relative flex justify-center">
+                <span
+                  className="px-3 text-[11px] font-semibold uppercase tracking-wider"
+                  style={{
+                    backgroundColor: "var(--stock-creator-body-bg)",
+                    color: "var(--stock-creator-divider-text)",
+                  }}
+                >
+                  Daam (Rate)
+                </span>
+              </div>
+            </div>
+
+            {/* 4. Buy & Sell Rate */}
             <div className="space-y-2">
-              <FieldLabel>Rate (Buy &amp; Sell)</FieldLabel>
               <div className="grid grid-cols-2 gap-3">
                 {/* Buy Price */}
                 <div className="space-y-1.5">
                   <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--stock-creator-label-text)" }}>
-                    Kharid (Buy)
+                    {getBuyLabel()}
                   </p>
                   <div className="relative">
                     <IndianRupee
@@ -363,7 +461,7 @@ function StockProductCreatorInner() {
                 {/* Sell Price — highlighted */}
                 <div className="space-y-1.5">
                   <p className="text-[10px] font-semibold uppercase tracking-wide flex items-center gap-1" style={{ color: "var(--stock-creator-label-text)" }}>
-                    Bikri (Sell) <span style={{ color: "var(--stock-creator-error-text)" }}>*</span>
+                    {getSellLabel()} <span style={{ color: "var(--stock-creator-error-text)" }}>*</span>
                   </p>
                   <div className="relative">
                     <IndianRupee
@@ -411,86 +509,13 @@ function StockProductCreatorInner() {
                   <span>Margin: {margin}%</span>
                   {isProfit && (
                     <span className="ml-auto">
-                      Profit ₹{(Number(sellPrice) - Number(buyPrice)).toFixed(0)}/unit
+                      Profit ₹{(Number(sellPrice) - Number(buyPrice)).toFixed(0)}/{stockLabel.toLowerCase()}
                     </span>
                   )}
                   {isLoss && <span className="ml-auto">Loss! Buy price zyada hai</span>}
                 </div>
               )}
             </div>
-
-            {/* Divider */}
-            <div className="relative py-1">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-dashed" style={{ borderColor: "var(--stock-creator-input-border)" }} />
-              </div>
-              <div className="relative flex justify-center">
-                <span
-                  className="px-3 text-[11px] font-semibold uppercase tracking-wider"
-                  style={{
-                    backgroundColor: "var(--stock-creator-body-bg)",
-                    color: "var(--stock-creator-divider-text)",
-                  }}
-                >
-                  Stock &amp; Expiry
-                </span>
-              </div>
-            </div>
-
-            {/* 4. Stock & Expiry */}
-            <div className="grid grid-cols-2 gap-3">
-              {/* Current Stock */}
-              <div className="space-y-1.5">
-                <p
-                  className="text-[10px] font-semibold uppercase tracking-wide flex items-center gap-1"
-                  style={{ color: "var(--stock-creator-label-text)" }}
-                >
-                  <Boxes className="h-3 w-3" /> Stock
-                  <span style={{ color: "var(--stock-creator-error-text)" }}>*</span>
-                </p>
-                <div className="relative">
-                  <FieldInput
-                    type="number"
-                    placeholder="0"
-                    value={initialStock}
-                    onChange={(e) => setInitialStock(e.target.value !== "" ? Number(e.target.value) : "")}
-                    className="pr-14 font-bold"
-                  />
-                  <span
-                    className="absolute right-3 top-3.5 text-xs font-semibold"
-                    style={{ color: "var(--stock-creator-label-text)" }}
-                  >
-                    {stockLabel}
-                  </span>
-                </div>
-              </div>
-              {/* Expiry Date */}
-              <div className="space-y-1.5">
-                <p
-                  className="text-[10px] font-semibold uppercase tracking-wide flex items-center gap-1"
-                  style={{ color: "var(--stock-creator-label-text)" }}
-                >
-                  <CalendarDays className="h-3 w-3" /> Expiry
-                  <span className="normal-case font-normal ml-1" style={{ color: "var(--stock-creator-divider-text)" }}>(optional)</span>
-                </p>
-                <div className="relative">
-                  <FieldInput
-                    type="date"
-                    value={expiryDate}
-                    onChange={(e) => setExpiryDate(e.target.value)}
-                    className="pl-9 text-sm [color-scheme:light] dark:[color-scheme:dark]"
-                  />
-                  <CalendarDays
-                    className="absolute left-3 top-3.5 h-4 w-4 pointer-events-none"
-                    style={{ color: "var(--stock-creator-label-text)" }}
-                  />
-                </div>
-                <p className="text-[10px]" style={{ color: "var(--stock-creator-divider-text)" }}>
-                  Food items ke liye zaroori • Pen, Bucket jaise items pe skip karein
-                </p>
-              </div>
-            </div>
-
             {/* 5. Optional Collapsible Section */}
             <div
               className="rounded-2xl border border-dashed overflow-hidden"
