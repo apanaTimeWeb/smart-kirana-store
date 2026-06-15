@@ -9,7 +9,7 @@ import { KhataLedgerSearch } from "@/app/(app)/khata/khata_components/Ledger/Kha
 import { KhataLedgerTable } from "@/app/(app)/khata/khata_components/Ledger/KhataLedgerTable";
 import { KhataTransactionForm } from "@/app/(app)/khata/khata_components/Forms/KhataTransactionForm";
 import { KhataReminderDialog } from "@/app/(app)/khata/khata_components/Forms/KhataReminderDialog";
-import { KhataLedgerRow } from "@/app/(app)/khata/khata_types/KhataTypes";
+import { KhataLedgerRow, CustomerDetail } from "@/app/(app)/khata/khata_types/KhataTypes";
 
 interface KhataLedgerContainerProps {
   customerId: number;
@@ -22,7 +22,7 @@ export function KhataLedgerContainer({ customerId }: KhataLedgerContainerProps) 
   const ledgerRows = useMemo((): KhataLedgerRow[] => {
     if (!detail?.transactions) return [];
     let balance = 0;
-    return detail.transactions.map((tx: any) => {
+    return detail.transactions.map((tx: CustomerDetail["transactions"][0]) => {
       balance += tx.type === "credit" ? tx.amount : -tx.amount;
       return { ...tx, balance };
     });
