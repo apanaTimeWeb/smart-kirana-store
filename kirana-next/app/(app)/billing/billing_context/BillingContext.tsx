@@ -389,7 +389,7 @@ function useBillingStateInternal() {
             setDiscount(0);
             setSelectedCustomerId("");
             setQuickPhone("");
-            setPaymentMode("");
+            setPaymentMode("cash");
             setEnableGST(false);
             setBillSuccess(false);
             setMobileTab("products");
