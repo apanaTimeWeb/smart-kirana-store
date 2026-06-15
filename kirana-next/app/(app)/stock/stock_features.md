@@ -68,7 +68,6 @@ These have been extracted to their own module-prefixed folders at the root:
 | File | Purpose |
 |---|---|
 | `StockBadge.tsx` | Stock status badge (OK / Low / Out) shown in table rows and mobile cards. |
-| `StockUnitSelector.tsx` | Reusable searchable unit dropdown (Popover + Command). Used by creator, edit dialog, and extra variant rows. |
 
 ---
 

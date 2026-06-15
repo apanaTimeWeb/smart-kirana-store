@@ -42,7 +42,8 @@ function useStockProductCreatorInternal() {
 
   // Hardcoded/Hidden advanced fields for API compatibility
   const category = STOCK_DEFAULT_CATEGORY;
-  const quickSelect = false;
+  const [quickSelect, setQuickSelect] = useState(false);
+  const [mrp, setMrp] = useState<number | "">("");
 
   const handleUnitChange = (newUnit: string) => {
     setUnitType(newUnit);
@@ -105,6 +106,8 @@ function useStockProductCreatorInternal() {
     setExpiryDate("");
     setLocation("");
     setLowStockAlert(STOCK_DEFAULT_LOW_STOCK_ALERT);
+    setQuickSelect(false);
+    setMrp("");
   }, []);
 
   // Submit
@@ -118,7 +121,7 @@ function useStockProductCreatorInternal() {
       baseUnit: cfg.baseUnit,
       baseQuantity: actualBaseQuantity,
       sellingMode: cfg.sellingMode,
-      mrp: Number(sellPrice), // Default MRP to Sell Price in simple UI
+      mrp: mrp !== "" ? Number(mrp) : Number(sellPrice), // Default MRP to Sell Price in simple UI
       purchasePrice: buyPrice !== "" ? Number(buyPrice) : 0,
       sellingPrice: Number(sellPrice),
       quickSelect,
@@ -165,6 +168,8 @@ function useStockProductCreatorInternal() {
     expiryDate, setExpiryDate,
     location, setLocation,
     lowStockAlert, setLowStockAlert,
+    mrp, setMrp,
+    quickSelect, setQuickSelect,
     errors,
     isValid,
     handleSubmit,
