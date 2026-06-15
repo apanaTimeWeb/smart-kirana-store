@@ -8,11 +8,13 @@ import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Plus, Package, Scale, Factory, Barcode, CalendarDays,
-  MapPin, Bell, IndianRupee, Boxes, Zap, ChevronDown, ChevronUp
+  MapPin, Bell, IndianRupee, Boxes, Zap, ChevronDown, ChevronUp, Tag, Star
 } from "lucide-react";
 import { StockProductCreatorProvider, useStockProductCreator } from "../../../stock_context/StockProductCreatorContext";
+import { useStock } from "../../../stock_context/StockContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
 // ── Shared Field Label ────────────────────────────────────────────────────────
@@ -133,6 +135,7 @@ function StockProductCreatorInner() {
   const {
     isAddOpen, handleOpenChange, isCreating,
     name, setName,
+    brand, setBrand,
     barcode, setBarcode,
     unitType, handleUnitChange,
     bulkConversionRate, setBulkConversionRate,
@@ -142,8 +145,31 @@ function StockProductCreatorInner() {
     expiryDate, setExpiryDate,
     location, setLocation,
     lowStockAlert, setLowStockAlert,
+    mrp, setMrp,
+    quickSelect, setQuickSelect,
     errors, isValid, handleSubmit,
   } = useStockProductCreator();
+  
+  const { allProducts } = useStock();
+
+  const uniqueMasterProducts = React.useMemo(() => {
+    const map = new Map<string, string>(); // name -> brand
+    allProducts.forEach(p => {
+      if (p.productName) {
+        map.set(p.productName, p.brand || "");
+      }
+    });
+    return Array.from(map.entries());
+  }, [allProducts]);
+
+  // Auto-fill brand when name matches exactly
+  React.useEffect(() => {
+    if (!name.trim()) return;
+    const existing = uniqueMasterProducts.find(([mName]) => mName.toLowerCase() === name.trim().toLowerCase());
+    if (existing && existing[1] && !brand) {
+      setBrand(existing[1]);
+    }
+  }, [name, uniqueMasterProducts, brand, setBrand]);
 
   const [showOptional, setShowOptional] = useState(false);
   const [hasAttempted, setHasAttempted] = useState(false);
@@ -261,7 +287,29 @@ function StockProductCreatorInner() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 autoFocus
+                list="product-masters-list"
               />
+              <datalist id="product-masters-list">
+                {uniqueMasterProducts.map(([mName]) => (
+                  <option key={mName} value={mName} />
+                ))}
+              </datalist>
+            </div>
+
+            {/* 1b. Brand */}
+            <div className="space-y-2">
+              <FieldLabel>
+                Brand <span className="normal-case font-normal ml-1" style={{ color: "var(--stock-creator-divider-text)" }}>(optional)</span>
+              </FieldLabel>
+              <div className="relative">
+                <FieldInput
+                  placeholder="e.g. Lux, Dove, Haldiram…"
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
+                  className="pl-9"
+                />
+                <Tag className="absolute left-3 top-3.5 h-4 w-4 pointer-events-none" style={{ color: "var(--stock-creator-label-text)" }} />
+              </div>
             </div>
 
             {/* 2. Unit Type — 6 Tap Buttons */}
@@ -602,6 +650,46 @@ function StockProductCreatorInner() {
                         Jab stock is limit se<br />neeche aaye, alert milega.
                       </p>
                     </div>
+                  </div>
+
+                  {/* MRP */}
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-semibold uppercase tracking-wide flex items-center gap-1.5" style={{ color: "var(--stock-creator-label-text)" }}>
+                      <Tag className="h-3 w-3" /> MRP ₹
+                    </p>
+                    <div className="relative">
+                      <IndianRupee
+                        className="absolute left-3 top-3.5 h-4 w-4 pointer-events-none"
+                        style={{ color: "var(--stock-creator-label-text)" }}
+                      />
+                      <FieldInput
+                        type="number"
+                        placeholder="0"
+                        value={mrp}
+                        onChange={(e) => setMrp(e.target.value !== "" ? Number(e.target.value) : "")}
+                        className="pl-8"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Quick Select Checkbox */}
+                  <div className="space-y-1.5 pt-1">
+                    <label className="flex items-start gap-3 cursor-pointer group p-3 rounded-xl border border-dashed hover:bg-[var(--stock-creator-input-bg)] transition-colors">
+                      <Checkbox
+                        checked={quickSelect}
+                        onCheckedChange={(checked) => setQuickSelect(Boolean(checked))}
+                        className="mt-0.5"
+                      />
+                      <div className="space-y-1">
+                        <p className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 group-hover:text-primary transition-colors">
+                          <Star className="h-3 w-3 text-amber-500" />
+                          Fast Billing Me Dikhaye
+                        </p>
+                        <p className="text-[10px] leading-snug" style={{ color: "var(--stock-creator-label-text)" }}>
+                          Pin this product to the Quick-Select panel on the billing screen for 2-click checkout.
+                        </p>
+                      </div>
+                    </label>
                   </div>
                 </div>
               )}

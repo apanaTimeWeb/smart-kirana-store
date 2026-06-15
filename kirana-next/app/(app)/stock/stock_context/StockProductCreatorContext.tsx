@@ -13,7 +13,7 @@ import { defaultPresetsFor, uid } from "../stock_utils/StockUtils";
 import { useStock } from "./StockContext";
 
 function useStockProductCreatorInternal() {
-  const { isAddOpen, setIsAddOpen, create, isCreating } = useStock();
+  const { isAddOpen, setIsAddOpen, create, isCreating, prefillData } = useStock();
 
   // Core required fields
   const [name, setName] = useState("");
@@ -25,13 +25,25 @@ function useStockProductCreatorInternal() {
   const [expiryDate, setExpiryDate] = useState("");
 
   // Optional fields
+  const [brand, setBrand] = useState("");
   const [barcode, setBarcode] = useState("");
   const [location, setLocation] = useState("");
   const [lowStockAlert, setLowStockAlert] = useState<number | "">(STOCK_DEFAULT_LOW_STOCK_ALERT);
 
+  // Sync prefillData when dialog opens
+  React.useEffect(() => {
+    if (isAddOpen && prefillData) {
+      setName(prefillData.name);
+      setBrand(prefillData.brand);
+    }
+  }, [isAddOpen, prefillData]);
+
+
+
   // Hardcoded/Hidden advanced fields for API compatibility
   const category = STOCK_DEFAULT_CATEGORY;
-  const quickSelect = false;
+  const [quickSelect, setQuickSelect] = useState(false);
+  const [mrp, setMrp] = useState<number | "">("");
 
   const handleUnitChange = (newUnit: string) => {
     setUnitType(newUnit);
@@ -82,9 +94,9 @@ function useStockProductCreatorInternal() {
 
   const isValid = errors.length === 0;
 
-  // Reset all fields
   const reset = useCallback(() => {
     setName("");
+    setBrand("");
     setBarcode("");
     setUnitType("PACKET");
     setBulkConversionRate("");
@@ -94,6 +106,8 @@ function useStockProductCreatorInternal() {
     setExpiryDate("");
     setLocation("");
     setLowStockAlert(STOCK_DEFAULT_LOW_STOCK_ALERT);
+    setQuickSelect(false);
+    setMrp("");
   }, []);
 
   // Submit
@@ -107,7 +121,7 @@ function useStockProductCreatorInternal() {
       baseUnit: cfg.baseUnit,
       baseQuantity: actualBaseQuantity,
       sellingMode: cfg.sellingMode,
-      mrp: Number(sellPrice), // Default MRP to Sell Price in simple UI
+      mrp: mrp !== "" ? Number(mrp) : Number(sellPrice), // Default MRP to Sell Price in simple UI
       purchasePrice: buyPrice !== "" ? Number(buyPrice) : 0,
       sellingPrice: Number(sellPrice),
       quickSelect,
@@ -120,7 +134,7 @@ function useStockProductCreatorInternal() {
     create({
       name: name.trim(),
       category: category,
-      brand: "", // Unused in simple UI
+      brand: brand.trim(), // Use the brand from state
       keywords: location.trim(), // Storing location in keywords for now to avoid changing the DB schema
       shortcut: barcode.trim(), // Storing barcode in shortcut for now to avoid changing the DB schema
       sellingTypes: {
@@ -144,6 +158,7 @@ function useStockProductCreatorInternal() {
     handleOpenChange,
     isCreating,
     name, setName,
+    brand, setBrand,
     barcode, setBarcode,
     unitType, handleUnitChange,
     bulkConversionRate, setBulkConversionRate,
@@ -153,6 +168,8 @@ function useStockProductCreatorInternal() {
     expiryDate, setExpiryDate,
     location, setLocation,
     lowStockAlert, setLowStockAlert,
+    mrp, setMrp,
+    quickSelect, setQuickSelect,
     errors,
     isValid,
     handleSubmit,

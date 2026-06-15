@@ -367,18 +367,27 @@ export function storeGetProducts(params?: { search?: string; lowStock?: boolean 
 
 export function storeCreateProduct(input: ProductInput): Product[] {
   const now = new Date().toISOString();
-  const master: ProductMaster = {
-    id: nextMasterId++,
-    name: input.name.trim(),
-    category: input.category.trim() || "General",
-    brand: input.brand?.trim() || undefined,
-    searchKeywords: input.searchKeywords ?? [],
-    shortcut: input.shortcut?.trim() || undefined,
-    isActive: true,
-    createdAt: now,
-  };
+  
+  const inputName = input.name.trim().toLowerCase();
+  const inputBrand = (input.brand || "").trim().toLowerCase();
 
-  data.productMasters.push(master);
+  let master = data.productMasters.find(
+    (m) => m.name.toLowerCase() === inputName && (m.brand || "").toLowerCase() === inputBrand
+  );
+
+  if (!master) {
+    master = {
+      id: nextMasterId++,
+      name: input.name.trim(),
+      category: input.category.trim() || "General",
+      brand: input.brand?.trim() || undefined,
+      searchKeywords: input.searchKeywords ?? [],
+      shortcut: input.shortcut?.trim() || undefined,
+      isActive: true,
+      createdAt: now,
+    };
+    data.productMasters.push(master);
+  }
 
   const variants = input.variants.map((variant) => withComputedFields({
     id: nextProductId++,
@@ -568,6 +577,34 @@ export function storeAddKhataTransaction(
   c.totalDue = tx.type === "credit" ? c.totalDue + tx.amount : Math.max(0, c.totalDue - tx.amount);
   persist();
   return newTx;
+}
+
+export function storeUpdateKhataTransaction(
+  customerId: number,
+  transactionId: number,
+  txUpdate: Partial<{ type: "credit" | "payment"; amount: number; description: string }>
+) {
+  const c = data.customers.find((customer) => customer.id === customerId) as any;
+  if (!c) throw new Error("Customer not found");
+  
+  c.transactions = c.transactions ?? [];
+  const t = c.transactions.find((tx: any) => tx.id === transactionId);
+  if (!t) throw new Error("Transaction not found");
+
+  if (txUpdate.type !== undefined) t.type = txUpdate.type;
+  if (txUpdate.amount !== undefined) t.amount = txUpdate.amount;
+  if (txUpdate.description !== undefined) t.description = txUpdate.description;
+
+  // Recalculate totalDue from scratch to ensure perfect mathematical consistency
+  c.totalDue = c.transactions.reduce((acc: number, curr: any) => {
+    return acc + (curr.type === "credit" ? curr.amount : -curr.amount);
+  }, 0);
+  
+  // Prevent negative balance
+  if (c.totalDue < 0) c.totalDue = 0;
+
+  persist();
+  return t;
 }
 
 export function storeGetSuppliers(params?: { search?: string }): Supplier[] {

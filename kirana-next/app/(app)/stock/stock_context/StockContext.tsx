@@ -24,6 +24,7 @@ function useStockStateInternal() {
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [adjustingProduct, setAdjustingProduct] = useState<Product | null>(null);
+  const [prefillData, setPrefillData] = useState<{name: string, brand: string} | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -104,6 +105,7 @@ function useStockStateInternal() {
       onSuccess: () => {
         invalidate();
         setIsAddOpen(false);
+        setPrefillData(null);
         toast({ title: "Product master aur variants add ho gaye" });
       },
       onError: () => toast({ title: "Product add nahi hua", variant: "destructive" }),
@@ -160,6 +162,11 @@ function useStockStateInternal() {
     });
   };
 
+  const openAddVariantFor = (product: Product) => {
+    setPrefillData({ name: product.productName, brand: product.brand || "" });
+    setIsAddOpen(true);
+  };
+
   return {
     search,
     handleSearchChange,
@@ -173,6 +180,9 @@ function useStockStateInternal() {
     setEditingProduct,
     adjustingProduct,
     setAdjustingProduct,
+    prefillData,
+    setPrefillData,
+    openAddVariantFor,
     currentPage,
     setCurrentPage,
     totalPages,
