@@ -3,7 +3,7 @@
 import { useQuery, useMutation, type UseQueryOptions } from "@tanstack/react-query";
 import {
   storeGetCustomers, storeGetCustomer, storeCreateCustomer,
-  storeDeleteCustomer, storeAddKhataTransaction,
+  storeDeleteCustomer, storeAddKhataTransaction, storeUpdateKhataTransaction
 } from "./store";
 import type { Customer, CustomerDetail, KhataTransaction } from "./types";
 
@@ -58,5 +58,19 @@ export function useAddKhataTransaction() {
       id: number;
       data: { type: "credit" | "payment"; amount: number; description: string };
     }) => Promise.resolve(storeAddKhataTransaction(id, data) as KhataTransaction),
+  });
+}
+
+export function useUpdateKhataTransaction() {
+  return useMutation({
+    mutationFn: async ({
+      id,
+      txId,
+      data,
+    }: {
+      id: number;
+      txId: number;
+      data: Partial<{ type: "credit" | "payment"; amount: number; description: string }>;
+    }) => Promise.resolve(storeUpdateKhataTransaction(id, txId, data) as KhataTransaction),
   });
 }

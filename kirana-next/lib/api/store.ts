@@ -579,6 +579,34 @@ export function storeAddKhataTransaction(
   return newTx;
 }
 
+export function storeUpdateKhataTransaction(
+  customerId: number,
+  transactionId: number,
+  txUpdate: Partial<{ type: "credit" | "payment"; amount: number; description: string }>
+) {
+  const c = data.customers.find((customer) => customer.id === customerId) as any;
+  if (!c) throw new Error("Customer not found");
+  
+  c.transactions = c.transactions ?? [];
+  const t = c.transactions.find((tx: any) => tx.id === transactionId);
+  if (!t) throw new Error("Transaction not found");
+
+  if (txUpdate.type !== undefined) t.type = txUpdate.type;
+  if (txUpdate.amount !== undefined) t.amount = txUpdate.amount;
+  if (txUpdate.description !== undefined) t.description = txUpdate.description;
+
+  // Recalculate totalDue from scratch to ensure perfect mathematical consistency
+  c.totalDue = c.transactions.reduce((acc: number, curr: any) => {
+    return acc + (curr.type === "credit" ? curr.amount : -curr.amount);
+  }, 0);
+  
+  // Prevent negative balance
+  if (c.totalDue < 0) c.totalDue = 0;
+
+  persist();
+  return t;
+}
+
 export function storeGetSuppliers(params?: { search?: string }): Supplier[] {
   let list = (data.suppliers || []) as Supplier[];
   if (params?.search) {
