@@ -5,6 +5,7 @@ import { StockHeader } from "./StockHeader";
 import { StockStatsGrid } from "../Dashboard/StockStatsGrid";
 import { StockSearchBar } from "../SearchAndFilter/StockSearchBar";
 import { StockFilterBar } from "../SearchAndFilter/StockFilterBar";
+import { StockCategoryTabBar } from "../Browse/StockCategoryTabBar";
 import { StockMainTable } from "../Table/StockMainTable";
 import { StockMobileList } from "../Mobile/StockMobileList";
 import { StockProductCreator } from "../Dialogs/ProductCreator/StockProductCreator";
@@ -14,14 +15,15 @@ import { StockAdjustmentDialog } from "../Dialogs/StockAdjustmentDialog";
 
 export function StockMainLayout() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <StockHeader />
       <StockStatsGrid />
       <StockSearchBar />
+      <StockCategoryTabBar />
       <StockFilterBar />
       <StockMainTable />
       <StockMobileList />
-      
+
       <StockProductCreator />
       <StockPurchaseDialog />
       <StockEditVariantDialog />

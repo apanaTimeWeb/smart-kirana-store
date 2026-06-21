@@ -4,6 +4,12 @@ import { STOCK_STAT_ITEMS } from "../stock_constants/StockSharedConstants";
 export type SellingTypeKey = "khula" | "fixed" | "multiple";
 export type ProductFilter = "all" | "in" | "low" | "out" | "khula" | "wholesale" | "quick" | "expiring";
 
+/** Controls how the expiry field behaves in the product creator. */
+export type ExpiryRule = "required" | "never";
+
+/** First-step discriminator in the Add Product dialog. */
+export type ItemKind = "branded" | "loose";
+
 export type VariantDraft = ProductVariantInput & {
   rowId: string;
   expiryDate?: string;
@@ -27,10 +33,11 @@ export type StockStatItem = (typeof STOCK_STAT_ITEMS)[number];
 // Used by StockProductCreatorContext.tsx
 export type StockProductCreatorFormState = {
   name: string;
+  itemKind: ItemKind;       // "branded" or "loose" — first step in creator
+  categoryId: string;       // Selected category id from CategoryMaster
   unitType: string;
   buyPrice: number | "";
   sellPrice: number | "";
-  category: string;
   brand: string;
   keywords: string;
   shortcut: string;

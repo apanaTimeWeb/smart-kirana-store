@@ -1,0 +1,356 @@
+// CategoryMaster.ts
+// Single source of truth for all 15 kirana categories.
+// Each entry drives: unit family, expiry rule, loose permission,
+// default low-stock alert, unit label, and the API UnitType mapping.
+
+import { UnitType, BaseUnit, SellingMode } from "@/lib/api";
+
+// ── Expiry Rule ────────────────────────────────────────────────────────────────
+// "required"       → must enter expiry if product has a brand (packaged)
+// "never"          → field is hidden for all products in this category
+export type ExpiryRule = "required" | "never";
+
+// ── Unit family (for display / icon logic) ─────────────────────────────────────
+export type UnitFamily = "PIECES" | "WEIGHT" | "VOLUME";
+
+// ── Category config ────────────────────────────────────────────────────────────
+export type CategoryConfig = {
+  id: string;
+  name: string;             // Display name (English)
+  nameHindi: string;        // Hindi label shown in UI
+  icon: string;             // Emoji icon
+  unitFamily: UnitFamily;
+  expiryRule: ExpiryRule;
+  allowLoose: boolean;      // Whether "Khula Item" toggle appears
+
+  // Unit config that gets passed to the existing API
+  defaultUnitType: UnitType;       // The UNIT_CONFIG key to use for the variant
+  defaultBaseUnit: BaseUnit;       // "gram" | "ml" | "piece"
+  defaultBaseQuantity: number;     // Base qty per 1 selling unit
+  defaultSellingMode: SellingMode; // "fixed" | "khula" | "wholesale"
+  sellingUnitLabel: string;        // Human label shown in forms, e.g. "Packet", "KG"
+  looseUnitType: UnitType;         // Unit type to use for loose/khula items
+  looseUnitLabel: string;          // Label for loose e.g. "KG", "Litre"
+
+  defaultLowStockAlert: number;    // In selling units (shown to user)
+  color: string;                   // CSS HSL string used for category card accent
+  colorText: string;               // Text color on the card
+};
+
+// ── Master List ────────────────────────────────────────────────────────────────
+export const CATEGORY_MASTER: CategoryConfig[] = [
+  {
+    id: "atta_flour",
+    name: "Atta & Flour",
+    nameHindi: "Atta & Maida",
+    icon: "🌾",
+    unitFamily: "WEIGHT",
+    expiryRule: "never",
+    allowLoose: true,
+    defaultUnitType: "PACKET",
+    defaultBaseUnit: "gram",
+    defaultBaseQuantity: 1000,      // 1 packet = 1000g (1 kg default)
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Packet (1 KG)",
+    looseUnitType: "KG",
+    looseUnitLabel: "KG",
+    defaultLowStockAlert: 5,
+    color: "hsl(38 90% 94%)",
+    colorText: "hsl(38 90% 30%)",
+  },
+  {
+    id: "dal_pulses",
+    name: "Dal & Pulses",
+    nameHindi: "Dal & Dals",
+    icon: "🫘",
+    unitFamily: "WEIGHT",
+    expiryRule: "never",
+    allowLoose: true,
+    defaultUnitType: "PACKET",
+    defaultBaseUnit: "gram",
+    defaultBaseQuantity: 1000,
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Packet (1 KG)",
+    looseUnitType: "KG",
+    looseUnitLabel: "KG",
+    defaultLowStockAlert: 5,
+    color: "hsl(24 80% 94%)",
+    colorText: "hsl(24 80% 30%)",
+  },
+  {
+    id: "rice_grains",
+    name: "Rice & Grains",
+    nameHindi: "Chawal & Anaj",
+    icon: "🍚",
+    unitFamily: "WEIGHT",
+    expiryRule: "never",
+    allowLoose: true,
+    defaultUnitType: "PACKET",
+    defaultBaseUnit: "gram",
+    defaultBaseQuantity: 1000,
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Packet (1 KG)",
+    looseUnitType: "KG",
+    looseUnitLabel: "KG",
+    defaultLowStockAlert: 5,
+    color: "hsl(60 60% 94%)",
+    colorText: "hsl(60 60% 28%)",
+  },
+  {
+    id: "sugar_salt",
+    name: "Sugar, Salt & Jaggery",
+    nameHindi: "Cheeni, Namak & Gur",
+    icon: "🧂",
+    unitFamily: "WEIGHT",
+    expiryRule: "never",
+    allowLoose: true,
+    defaultUnitType: "PACKET",
+    defaultBaseUnit: "gram",
+    defaultBaseQuantity: 1000,
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Packet (1 KG)",
+    looseUnitType: "KG",
+    looseUnitLabel: "KG",
+    defaultLowStockAlert: 5,
+    color: "hsl(200 60% 94%)",
+    colorText: "hsl(200 60% 28%)",
+  },
+  {
+    id: "cooking_oil",
+    name: "Cooking Oil",
+    nameHindi: "Tel",
+    icon: "🛢️",
+    unitFamily: "VOLUME",
+    expiryRule: "required",
+    allowLoose: true,
+    defaultUnitType: "POUCH",
+    defaultBaseUnit: "ml",
+    defaultBaseQuantity: 1000,      // 1 pouch = 1000ml = 1L
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Pouch (1 Litre)",
+    looseUnitType: "LITRE",
+    looseUnitLabel: "Litre",
+    defaultLowStockAlert: 3,
+    color: "hsl(45 90% 94%)",
+    colorText: "hsl(45 90% 28%)",
+  },
+  {
+    id: "ghee_vanaspati",
+    name: "Ghee & Vanaspati",
+    nameHindi: "Ghee",
+    icon: "🧈",
+    unitFamily: "PIECES",
+    expiryRule: "required",
+    allowLoose: false,
+    defaultUnitType: "PACKET",
+    defaultBaseUnit: "piece",
+    defaultBaseQuantity: 1,
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Jar / Tin",
+    looseUnitType: "KG",
+    looseUnitLabel: "KG",
+    defaultLowStockAlert: 3,
+    color: "hsl(52 95% 94%)",
+    colorText: "hsl(52 95% 28%)",
+  },
+  {
+    id: "masala_spices",
+    name: "Masala & Spices",
+    nameHindi: "Masala & Msamale",
+    icon: "🌶️",
+    unitFamily: "WEIGHT",
+    expiryRule: "required",
+    allowLoose: true,
+    defaultUnitType: "PACKET",
+    defaultBaseUnit: "gram",
+    defaultBaseQuantity: 100,       // 1 packet = 100g default for spices
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Packet (100g)",
+    looseUnitType: "KG",
+    looseUnitLabel: "KG",
+    defaultLowStockAlert: 10,
+    color: "hsl(0 80% 94%)",
+    colorText: "hsl(0 80% 32%)",
+  },
+  {
+    id: "biscuits_snacks",
+    name: "Biscuits & Snacks",
+    nameHindi: "Biscuit & Namkeen",
+    icon: "🍪",
+    unitFamily: "PIECES",
+    expiryRule: "required",
+    allowLoose: false,
+    defaultUnitType: "PACKET",
+    defaultBaseUnit: "piece",
+    defaultBaseQuantity: 1,
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Packet",
+    looseUnitType: "PACKET",
+    looseUnitLabel: "Packet",
+    defaultLowStockAlert: 10,
+    color: "hsl(32 90% 94%)",
+    colorText: "hsl(32 90% 28%)",
+  },
+  {
+    id: "noodles_instant",
+    name: "Noodles & Instant Food",
+    nameHindi: "Noodles & Instant Khana",
+    icon: "🍜",
+    unitFamily: "PIECES",
+    expiryRule: "required",
+    allowLoose: false,
+    defaultUnitType: "PACKET",
+    defaultBaseUnit: "piece",
+    defaultBaseQuantity: 1,
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Packet",
+    looseUnitType: "PACKET",
+    looseUnitLabel: "Packet",
+    defaultLowStockAlert: 10,
+    color: "hsl(15 80% 94%)",
+    colorText: "hsl(15 80% 30%)",
+  },
+  {
+    id: "beverages",
+    name: "Beverages & Cold Drinks",
+    nameHindi: "Thanda & Drinks",
+    icon: "🥤",
+    unitFamily: "PIECES",
+    expiryRule: "required",
+    allowLoose: false,
+    defaultUnitType: "BOTTLE",
+    defaultBaseUnit: "piece",
+    defaultBaseQuantity: 1,
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Bottle / Can",
+    looseUnitType: "BOTTLE",
+    looseUnitLabel: "Bottle",
+    defaultLowStockAlert: 12,
+    color: "hsl(210 80% 94%)",
+    colorText: "hsl(210 80% 28%)",
+  },
+  {
+    id: "dairy_frozen",
+    name: "Dairy & Frozen",
+    nameHindi: "Dudh & Dairy",
+    icon: "🥛",
+    unitFamily: "PIECES",
+    expiryRule: "required",
+    allowLoose: true,
+    defaultUnitType: "POUCH",
+    defaultBaseUnit: "piece",
+    defaultBaseQuantity: 1,
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Packet / Pouch",
+    looseUnitType: "LITRE",
+    looseUnitLabel: "Litre",
+    defaultLowStockAlert: 5,
+    color: "hsl(190 60% 94%)",
+    colorText: "hsl(190 60% 26%)",
+  },
+  {
+    id: "personal_care",
+    name: "Personal Care",
+    nameHindi: "Saundarya & Swasthya",
+    icon: "🧴",
+    unitFamily: "PIECES",
+    expiryRule: "never",
+    allowLoose: false,
+    defaultUnitType: "PIECE",
+    defaultBaseUnit: "piece",
+    defaultBaseQuantity: 1,
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Piece",
+    looseUnitType: "PIECE",
+    looseUnitLabel: "Piece",
+    defaultLowStockAlert: 5,
+    color: "hsl(300 40% 94%)",
+    colorText: "hsl(300 40% 28%)",
+  },
+  {
+    id: "household_cleaning",
+    name: "Household & Cleaning",
+    nameHindi: "Ghar ki Safai",
+    icon: "🧹",
+    unitFamily: "PIECES",
+    expiryRule: "never",
+    allowLoose: false,
+    defaultUnitType: "PIECE",
+    defaultBaseUnit: "piece",
+    defaultBaseQuantity: 1,
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Piece / Packet",
+    looseUnitType: "PIECE",
+    looseUnitLabel: "Piece",
+    defaultLowStockAlert: 3,
+    color: "hsl(174 50% 94%)",
+    colorText: "hsl(174 50% 24%)",
+  },
+  {
+    id: "medicine_health",
+    name: "Medicine & Health",
+    nameHindi: "Dawai & Sehat",
+    icon: "💊",
+    unitFamily: "PIECES",
+    expiryRule: "required",
+    allowLoose: false,
+    defaultUnitType: "PIECE",
+    defaultBaseUnit: "piece",
+    defaultBaseQuantity: 1,
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Strip / Bottle",
+    looseUnitType: "PIECE",
+    looseUnitLabel: "Strip",
+    defaultLowStockAlert: 5,
+    color: "hsl(340 60% 94%)",
+    colorText: "hsl(340 60% 28%)",
+  },
+  {
+    id: "pooja_stationery",
+    name: "Pooja & Stationery",
+    nameHindi: "Pooja & Stationery",
+    icon: "🪔",
+    unitFamily: "PIECES",
+    expiryRule: "never",
+    allowLoose: false,
+    defaultUnitType: "PIECE",
+    defaultBaseUnit: "piece",
+    defaultBaseQuantity: 1,
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Piece / Packet",
+    looseUnitType: "PIECE",
+    looseUnitLabel: "Piece",
+    defaultLowStockAlert: 3,
+    color: "hsl(265 50% 94%)",
+    colorText: "hsl(265 50% 28%)",
+  },
+  {
+    id: "tea_coffee",
+    name: "Tea & Coffee",
+    nameHindi: "Chai & Coffee",
+    icon: "☕",
+    unitFamily: "WEIGHT",
+    expiryRule: "required",
+    allowLoose: true,
+    defaultUnitType: "PACKET",
+    defaultBaseUnit: "gram",
+    defaultBaseQuantity: 250,
+    defaultSellingMode: "fixed",
+    sellingUnitLabel: "Packet (250g)",
+    looseUnitType: "KG",
+    looseUnitLabel: "KG",
+    defaultLowStockAlert: 5,
+    color: "hsl(28 70% 94%)",
+    colorText: "hsl(28 70% 28%)",
+  },
+];
+
+// ── Lookup helpers ─────────────────────────────────────────────────────────────
+export const getCategoryById = (id: string): CategoryConfig | undefined =>
+  CATEGORY_MASTER.find((c) => c.id === id);
+
+export const getCategoryIcon = (id: string): string =>
+  getCategoryById(id)?.icon ?? "📦";
+
+export const getCategoryName = (id: string): string =>
+  getCategoryById(id)?.name ?? id;

@@ -20,6 +20,7 @@ import { toInput } from "../stock_utils/StockUtils";
 function useStockStateInternal() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<ProductFilter>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -64,6 +65,9 @@ function useStockStateInternal() {
 
   const visibleProducts = useMemo(() => {
     return sortedProducts.filter((product) => {
+      // Category filter
+      if (categoryFilter !== "all" && product.category !== categoryFilter) return false;
+      // Status filter
       if (filter === "in") return product.currentStock > product.lowStockThreshold;
       if (filter === "low") return product.currentStock > 0 && product.currentStock <= product.lowStockThreshold;
       if (filter === "out") return product.currentStock <= 0 || product.stockInBaseUnit <= 0;
@@ -77,7 +81,7 @@ function useStockStateInternal() {
       }
       return true;
     });
-  }, [filter, sortedProducts]);
+  }, [filter, categoryFilter, sortedProducts]);
 
   const stats = useMemo(() => {
     const khula = allProducts.filter((product) => product.sellingMode === "khula").length;
@@ -96,6 +100,11 @@ function useStockStateInternal() {
 
   const handleFilterChange = (value: ProductFilter) => {
     setFilter(value);
+    setCurrentPage(1);
+  };
+
+  const handleCategoryFilterChange = (value: string) => {
+    setCategoryFilter(value);
     setCurrentPage(1);
   };
 
@@ -172,6 +181,8 @@ function useStockStateInternal() {
     handleSearchChange,
     filter,
     handleFilterChange,
+    categoryFilter,
+    setCategoryFilter: handleCategoryFilterChange,
     isAddOpen,
     setIsAddOpen,
     isPurchaseOpen,
